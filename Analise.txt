@@ -1,0 +1,114 @@
+each ordinary thief is a singular thread
+master thief is a thread as well
+
+3 OTs form an assault party
+assault parties are independent  - they dont need to communicate with one another
+
+OTs individually report a canvas to the MT (collection site????)
+
+OTs need to communicate between themselves but must do so through a shared memory region(in this case through the corresponding assault party memory region????)
+
+
+
+
+
+Random values:
+maximum thief displacement (2-6)
+room-concentration site distance (15-30) 
+paintings per room (8-16)
+
+Static values:
+maximum distance between thieves (3)
+number of thieves (6 OT + 1MT)
+number of rooms (5)
+
+
+Tentative Method Listing:
+
+Concentration Site:
+amINeeded?
+prepareExcursion
+
+
+Collection Site:
+appraiseSit
+startOperations
+prepareAssaultParty
+sendAssaultParty
+sumUpResults
+
+
+Assault Party #:
+amINeeded
+sendAssaultParty
+crawlIn
+reverseDirection
+
+Museum:
+
+
+OT:
+handACanvas
+rollACanvas
+
+MT:
+collectACanvas
+takeARest
+
+
+ReentrantLock methods:
+
+lock,unlock, await, signal, signalAll
+
+
+
+monitores:
+general repo of information
+collection site (?)
+concentration site (?)
+
+
+data structure:
+-Thief: (implements MasterThief)
+    - int State;
+-oThief (extends Thief):
+    - char Situation ('W' or 'P')
+    - int MD (Maximum displacement); (2...6)
+    - int presentPosition (distance to current room);
+    - int carryingCanvas (1 or 0);
+
+-AssaultParty:
+    - int RoomId; (1...5)
+    - int[] thiefId; //size 3, fifo
+    - int currentNumOfThieves;(?)
+
+-museumRoom:
+    - int roomID;
+    - int paintsInRoom (1...5); //current number of paintings in room
+    - int distanceToSite (15...30); //distance to gathering site
+
+-Museum:
+    - int[] museumRoom; //maybe a stack?
+
+---------------------------------------------------------------
+main - pasta a conter o main
+sharedRegions - monitores
+commonInfrastructure - tipos de dados (neste caso o FIFO)
+entities - threads
+---------------------------------------------------------------
+
+analise de sincronia entre eventos:
+
+AssaultParties sao geradas em grupos de 3, na disciplina fifo
+portanto a partida a sua geraçao e assicrona, mas os relatos do
+amINeeded sao sincronos
+
+movimentos sao sincronos entre ladroes da mesma party mas assincronos
+entre parties
+
+handACanvas tem que ser sincronizado entre todos os ladroes: apenas 
+um ladrao o pode estar a executar a qualquer momento
+
+acessos ao repositorio tambem e sincrono entre as regioes partilhadas
+
+
