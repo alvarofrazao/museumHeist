@@ -25,13 +25,18 @@ number of rooms (5)
 
 Tentative Method Listing:
 
-Concentration Site:
-amINeeded?
-prepareExcursion
+Control Site:
+appraiseSit
+takeARest
+collectACanvas
+handACanvas
 
+Concentration Site:
+amINeeded
+prepareExcursion
+prepareAssaultParty
 
 Collection Site:
-appraiseSit
 startOperations
 prepareAssaultParty
 sendAssaultParty
@@ -42,18 +47,16 @@ Assault Party #:
 amINeeded
 sendAssaultParty
 crawlIn
+crawlOut
 reverseDirection
 
 Museum:
-
-
-OT:
-handACanvas
 rollACanvas
 
+OT:
+
+
 MT:
-collectACanvas
-takeARest
 
 
 ReentrantLock methods:

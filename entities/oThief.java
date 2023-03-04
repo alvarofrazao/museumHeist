@@ -15,8 +15,7 @@ public class oThief extends Thread{
     protected int state;
 
     oThief()
-    {
-        
+    {   
         Random rand = new Random();
         this.MD = rand.nextInt(4)+2;
         this.Sit = 'W'; 
