@@ -39,7 +39,6 @@ prepareAssaultParty
 Collection Site:
 startOperations
 prepareAssaultParty
-sendAssaultParty
 sumUpResults
 
 

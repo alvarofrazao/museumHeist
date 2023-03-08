@@ -1,18 +1,22 @@
 package infrastructure;
 
+import java.util.Random;
+
 public class MuseumRoom {
     private int roomID;
 
     private int paintsInRoom;
 
     private int distanceToSite;
+    
 
 
-    public MuseumRoom(int roomID,int paintsInRoom, int distanceToSite)
+    public MuseumRoom(int roomID)
     {
+        Random rand = new Random();
+        this.paintsInRoom = ((rand.nextInt(1) + 1) * 9) - 1;
         this.roomID = roomID;
-        this.paintsInRoom = paintsInRoom;
-        this.distanceToSite = distanceToSite;
+        this.distanceToSite = ((rand.nextInt(1) + 1) * 16) - 1;
     }
 
     public int getID()
@@ -20,9 +24,9 @@ public class MuseumRoom {
         return roomID;
     }
 
-    public void decrementPaints()
+    public void paintTaken()
     {
-        this.paintsInRoom--;
+        paintsInRoom--;
     }
 
     public int getPaintsInRoom()

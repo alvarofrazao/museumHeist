@@ -1,9 +1,13 @@
 package entities;
 
 public class mStates {
-    public static final int planningTheHeist    = 1;
-    public static final int decidingWhatToDo    = 2;
-    public static final int assemblingAGroup    = 3;
-    public static final int presentingTheReport = 4;
-    public static final int waitingForArrival   = 5; 
+    protected static final int PLANNING_THE_HEIST = 0;
+    protected static final int DECIDING_WHAT_TO_DO = 1;
+    protected static final int ASSEMBLING_A_GROUP = 2;
+    protected static final int WAITING_FOR_GROUP_ARRIVAL = 3;
+    protected static final int PRESENTING_THE_REPORT = 4;
+
+    protected mStates() {
+
+    }
 }

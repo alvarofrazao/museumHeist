@@ -1,56 +1,54 @@
 package infrastructure;
 /**
- *    Parametric memory.
+ *    Generic memory.
  *    Non-instantiatable data type. It must be derived.
  *    Errors are reported.
- *
- *    @param <R> data type of stored objects
  */
 
- public abstract class MemObject<R>
+ public abstract class MemObject
 
  {
    /**
     *   Internal storage area.
     */
  
-    protected R [] mem;
+    protected Object [] mem;
  
    /**
     *   Memory instantiation.
-    *   The instantiation only takes place if the memory exists.
+    *   The instantiation only takes place if the memory size is meaningful (greater than zero).
     *
-    *     @param storage memory to be used
-    *     @throws MemException when the memory does not exist
+    *     @param nElem memory size
+    *     @throws MemException when an illegal size is passed
     */
  
-    protected MemObject (R [] storage) throws MemException
+    protected MemObject (int nElem) throws MemException
     {
-      if (storage != null)
-         mem = storage;
-         else throw new MemException ("Illegal storage device!");
+      if (nElem > 0)
+         mem = new Object [nElem];
+         else throw new MemException ("Illegal storage size!");
     }
  
    /**
     *   Memory write.
-    *   A parametric object is written into it.
+    *   A generic object is written into it.
     *   Virtual method, it has to be overridden in a derived data type.
     *
-    *    @param val parametric object to be written
+    *    @param val generic object to be written
     *    @throws MemException when the memory is full
     */
  
-    protected abstract void write (R val) throws MemException;
+    protected abstract void write (Object val) throws MemException;
  
    /**
     *   Memory read.
-    *   A parametric object is read from it.
+    *   A generic object is read from it.
     *   Virtual method, it has to be overridden in a derived data type.
     *
-    *    @return last parametric object that was written
+    *    @return last generic object that was written
     *    @throws MemException when the memory is empty
     */
  
-    protected abstract R read () throws MemException;
+    protected abstract Object read () throws MemException;
  }
  
