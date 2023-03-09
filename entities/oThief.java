@@ -38,7 +38,7 @@ public class oThief extends Thread {
         this.concentSite = concentSite;
     }
 
-    public int getCurPos() {
+    public int getCurPos() { //thief distance to assigned room, may not be reasonable to directly assign
         return currentPosition;
     }
 

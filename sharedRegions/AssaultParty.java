@@ -8,7 +8,12 @@ import entities.oThief;
 public class AssaultParty {
 
     private int currentRoomID;
-    private oThief[] thieves;
+    private oThief[] thieves; //use the entirety of the thief object or just thief IDs?
+                              //thief IDs seem more reasonable since we can reference
+                              // the current thread and use it's ID to see it's position
+                              //is this reasonable?
+                              //each thief needs to have its position in the party:
+                              //directly assigned or discovered during runtime?
     private int currentThiefNum; // (?) tentative
     private int thiefMax;
     private ReentrantLock lock;
@@ -44,6 +49,7 @@ public class AssaultParty {
     public boolean crawlIn() {
         // oThief curThread = (oThief)Thread.currentThread();
         // to copy and paste into other methods requiring this action
+        //figuring out movement logic and algorithm
 
         if (hasArrived == thiefMax) {
             return false;
@@ -63,6 +69,9 @@ public class AssaultParty {
     }
 
     public void reverseDirection() {
+        //blocks all thieves until whole party is ready to move out
+        //changes direction variable to -1;
+        //changes hasArrived to 0, since movement target has changed 
 
     }
 }

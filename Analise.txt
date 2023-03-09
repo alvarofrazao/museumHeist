@@ -107,5 +107,42 @@ this.lock = lock;
 this.cond = lock.newCondition(); 
 //maybe correct????? is this a reference to 
 //the lock argument's condition, or a new condition entirely
+//manter equipas estaticas - abordagem mais facil e recomendada pelo prof 
+
+tentative movement algorithm:
+MD - maximum thief displacement for one increment
+S - maximum distance between 2 consecutive thieves in a single party
+D - distance from room to site
+
+oThief[] thieves;
+oThief curThread = (oThief)Thread.currentThread();
+
+pseudocodigo:
+
+AssaultParty.lock()
+if(thieves[curThiefPPos].getCurPos() <= Museum.getRoom(roomNumber).getDistance())
+{
+    if(thieves[curThiefPPos].getCurPos() < (thieves[curThiefPPos+1].getCurPos()+S))
+    {
+        incrementMovement;
+        AssaultParty.unlock();
+        return;
+    }
+    else
+    {
+        AssaultParty.unlock();
+        return;
+    }
+
+}
 
 
+Assault Parties being static might change the amINeeded interpretation
+
+9/3 todo list:
+implement movement algorithms (figure out calculations)
+remove MuseumRoom.java and finish implementing the Museum region
+change random number generation calculations for the needed variables
+check condition variable implementation - reference vs object corrections
+start implementing the configuration class
+possibly start working on code documentation and interaction diagram
