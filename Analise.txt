@@ -23,52 +23,35 @@ number of thieves (6 OT + 1MT)
 number of rooms (5)
 
 
-Tentative Method Listing:
+Final Method Listing:
 
 Control Site:
-appraiseSit
-takeARest
-collectACanvas
-handACanvas
+appraiseSit --atribuido
+takeARest --atribuido
+collectACanvas --atribuido
+handACanvas --atribuido
+sendAssaultParty --atribuido
 
 Concentration Site:
-amINeeded
-prepareExcursion
-prepareAssaultParty
+amINeeded --atribuido
+prepareExcursion --atribuido
+prepareAssaultParty --atribuido
 
 Collection Site:
-startOperations
-prepareAssaultParty
-sumUpResults
-
+startOperations --atribuido
+sumUpResults --atribuido
 
 Assault Party #:
-amINeeded
-sendAssaultParty
-crawlIn
-crawlOut
-reverseDirection
+crawlIn --atribuido
+crawlOut --atribuido
+reverseDirection --atribuido
 
 Museum:
-rollACanvas
-
-OT:
-
-
-MT:
-
+rollACanvas --atribuido
 
 ReentrantLock methods:
 
 lock,unlock, await, signal, signalAll
-
-
-
-monitores:
-general repo of information
-collection site (?)
-concentration site (?)
-
 
 data structure:
 -Thief: (implements MasterThief)
@@ -84,7 +67,7 @@ data structure:
     - int[] thiefId; //size 3, fifo
     - int currentNumOfThieves;(?)
 
--museumRoom:
+-museumRoom: --removed
     - int roomID;
     - int paintsInRoom (1...5); //current number of paintings in room
     - int distanceToSite (15...30); //distance to gathering site
@@ -112,5 +95,17 @@ handACanvas tem que ser sincronizado entre todos os ladroes: apenas
 um ladrao o pode estar a executar a qualquer momento
 
 acessos ao repositorio tambem e sincrono entre as regioes partilhadas
+
+
+mar 9:
+museum is a single shared region, as opposed to initial intended approach of every room
+being a single shared region. this means that the Museum class needs to be changed.
+
+change random number generation methods for all random variables
+
+this.lock = lock;
+this.cond = lock.newCondition(); 
+//maybe correct????? is this a reference to 
+//the lock argument's condition, or a new condition entirely
 
 

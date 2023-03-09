@@ -4,6 +4,8 @@ import java.util.Random;
 import entities.oStates;
 import sharedRegions.*;
 
+import java.lang.Math;
+
 public class oThief extends Thread {
 
     protected char Sit;// either waiting to join AP ('W') or in party ('P')
@@ -26,7 +28,7 @@ public class oThief extends Thread {
 
     oThief(AssaultParty[] arrayAP, ControlSite controlSite, ConcentrationSite concentSite) {
         Random rand = new Random();
-        this.MD = rand.nextInt(4) + 2;
+        this.MD = rand.nextInt(4) + 2; // change rng
         this.Sit = 'W';
         this.currentPosition = 99; // (?)
         this.carryingCanvas = 0;
@@ -52,32 +54,35 @@ public class oThief extends Thread {
         return MD;
     }
 
-
-
     @Override
     public void run() {
         try {
             while (true) {
                 switch (state) {
                     case (oStates.CONCENTRATION_SITE): {
-                        while(concentSite.amINeeded())
-                        {
+                        while (concentSite.amINeeded()) {
                             curAP = concentSite.prepareExcursion();
                         }
                         break;
                     }
                     case (oStates.CRAWLING_INWARDS): {
-                        while(arrayAP[curAP].crawlIn());
-                        
+                        while (arrayAP[curAP].crawlIn())
+                            ;
+                        // crawlIn is both a blocking method and a
+                        // state transition method
                         break;
                     }
                     case (oStates.AT_A_ROOM): {
+                        // call and block on rollACanvas
+                        // reverseDirection is the state changing method
                         break;
                     }
                     case (oStates.CRAWLING_OUTWARDS): {
                         break;
                     }
                     case (oStates.COLLECTION_SITE): {
+                        // call and block on handACanvas
+                        // amINeeded call changes state
                         break;
                     }
                 }

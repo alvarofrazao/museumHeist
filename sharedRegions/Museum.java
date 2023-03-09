@@ -15,7 +15,7 @@ public class Museum {
 
     public boolean rollACanvas(int roomID)
     {
-        if(museumRooms[roomID].getPaintsInRoom() > 0)
+        if(museumRooms[roomID].getPaintsInRoom() > 0) //tentative implementation, most likely incorrect
         {
             museumRooms[roomID].paintTaken();
             return true;
@@ -23,4 +23,8 @@ public class Museum {
         else return false;
     }
     
+    public MuseumRoom getRoom(int roomID)
+    {
+        return museumRooms[roomID];
+    }
 }
