@@ -8,15 +8,14 @@ import entities.oThief;
 public class ConcentrationSite {
 
     private ReentrantLock lock;
-    private Condition lockCond;
+    private Condition cond;
     private AssaultParty[] aParties;
     private GeneralRepos repos;
 
-    ConcentrationSite(ReentrantLock lock, AssaultParty[] aParties) {
-        this.lock = lock;
-        this.aParties = aParties;
-        this.lockCond = lock.newCondition();
-    }
+    ConcentrationSite(AssaultParty[] aParties) {
+        this.lock = new ReentrantLock();
+        this.cond = lock.newCondition();
+        this.aParties = aParties;    }
 
     public int prepareExcursion() {
         int id;

@@ -10,11 +10,13 @@ public class oThief extends Thread {
 
     protected char Sit;// either waiting to join AP ('W') or in party ('P')
 
+    protected int thiefID;
+
     protected int MD; // thief's maximum displacement
 
     protected int currentPosition;
 
-    protected int carryingCanvas;
+    protected boolean carryingCanvas;
 
     protected int curAP;
 
@@ -26,23 +28,36 @@ public class oThief extends Thread {
 
     protected ConcentrationSite concentSite;
 
-    oThief(AssaultParty[] arrayAP, ControlSite controlSite, ConcentrationSite concentSite) {
-        Random rand = new Random();
-        this.MD = rand.nextInt(4) + 2; // change rng
+    oThief(int thiefID, AssaultParty[] arrayAP, ControlSite controlSite, ConcentrationSite concentSite, int MAX_D,
+            int MIN_D) {
+        this.thiefID = thiefID;
+        this.MD = (int) ((Math.random() * (MAX_D - MIN_D)) + MIN_D);
         this.Sit = 'W';
-        this.currentPosition = 99; // (?)
-        this.carryingCanvas = 0;
+        this.currentPosition = 0;
+        this.carryingCanvas = false;
         this.state = 0;
         this.arrayAP = arrayAP;
         this.controlSite = controlSite;
         this.concentSite = concentSite;
     }
 
-    public int getCurPos() { //thief distance to assigned room, may not be reasonable to directly assign
+    public int getCurrentPosition() { // thief distance to assigned room, may not be reasonable to directly assign
         return currentPosition;
     }
 
-    public int hasPainting() {
+    public void incrementPosition() {
+        currentPosition++;
+    }
+
+    public int getThiefID() {
+        return thiefID;
+    }
+
+    public void decrementPosition() {
+        currentPosition--;
+    }
+
+    public boolean hasPainting() {
         return carryingCanvas;
     }
 
@@ -52,6 +67,10 @@ public class oThief extends Thread {
 
     public int getMD() {
         return MD;
+    }
+
+    public void setState(int newState) {
+        state = newState;
     }
 
     @Override
@@ -66,13 +85,13 @@ public class oThief extends Thread {
                         break;
                     }
                     case (oStates.CRAWLING_INWARDS): {
-                        while (arrayAP[curAP].crawlIn())
-                            ;
+                        while (arrayAP[curAP].crawlIn());
                         // crawlIn is both a blocking method and a
                         // state transition method
                         break;
                     }
                     case (oStates.AT_A_ROOM): {
+                        while(arrayAP[curAP].crawlOut());
                         // call and block on rollACanvas
                         // reverseDirection is the state changing method
                         break;

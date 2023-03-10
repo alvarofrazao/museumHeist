@@ -1,18 +1,23 @@
 package sharedRegions;
 
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ControlSite { // this shared region houses both what is dubbed the Control Site
                            // as well as the Collection Site
 
     private ReentrantLock lock;
+    private Condition cond;
     //do these variables make sense? check later
     private AssaultParty[] aParties;
     private Museum museum;
     private GeneralRepos repos;
 
-    public ControlSite(ReentrantLock lock, AssaultParty[] aParties, GeneralRepos repos) {
-
+    public ControlSite(AssaultParty[] aParties, GeneralRepos repos) {
+        this.lock = new ReentrantLock();
+        this.cond = lock.newCondition();
+        this.aParties = aParties;
+        this.repos = repos;
     }
 
     public void takeARest() {

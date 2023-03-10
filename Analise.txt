@@ -146,3 +146,16 @@ change random number generation calculations for the needed variables
 check condition variable implementation - reference vs object corrections
 start implementing the configuration class
 possibly start working on code documentation and interaction diagram
+
+
+10/3:
+
+using a direction variable makes no sense:
+going to the museum: movement happens until position equals room distance
+going to the site:
+
+
+changelog
+crawlIn and crawlOut methods implemented
+MuseumRoom class removed and Museum classed changed
+random number generation fixed (untested)
