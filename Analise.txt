@@ -159,3 +159,8 @@ changelog
 crawlIn and crawlOut methods implemented
 MuseumRoom class removed and Museum classed changed
 random number generation fixed (untested)
+
+
+
+16/03--------------------------
+numero do grupo:6

@@ -73,6 +73,10 @@ public class oThief extends Thread {
         return MD;
     }
 
+    public void setAssaultParty(int apNum){
+        curAP = apNum;
+    }
+
     public void setState(int newState) {
         state = newState;
     }
@@ -83,9 +87,7 @@ public class oThief extends Thread {
             while (true) {
                 switch (state) {
                     case (oStates.CONCENTRATION_SITE): {
-                        while (concentSite.amINeeded()) {
-                            curAP = concentSite.prepareExcursion();
-                        }
+                        while (concentSite.amINeeded());
                         break;
                     }
                     case (oStates.CRAWLING_INWARDS): {
@@ -95,12 +97,12 @@ public class oThief extends Thread {
                         break;
                     }
                     case (oStates.AT_A_ROOM): {
-                        while(arrayAP[curAP].crawlOut());
                         // call and block on rollACanvas
                         // reverseDirection is the state changing method
                         break;
                     }
                     case (oStates.CRAWLING_OUTWARDS): {
+                        while(arrayAP[curAP].crawlOut());
                         break;
                     }
                     case (oStates.COLLECTION_SITE): {

@@ -37,8 +37,26 @@ public class AssaultParty {
             return false;
     }
 
+    public void depart()
+    {
+        for(oThief t: thieves){
+            t.setState(oStates.CRAWLING_INWARDS);
+        }
+    }
+
+    public void addThief(oThief t)
+    {
+        thieves[currentThiefNum] = t;
+        currentThiefNum++;
+        return;
+    }
+
     public int getRoomID() {
         return currentRoomID;
+    }
+
+    public void sortByDistance() {
+        // implement array sorting
     }
 
     public boolean crawlIn() {
@@ -163,9 +181,5 @@ public class AssaultParty {
             lock.unlock();
             return;
         }
-    }
-
-    public void sortByDistance() {
-        // implement array sorting
     }
 }
