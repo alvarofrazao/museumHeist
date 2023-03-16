@@ -53,8 +53,12 @@ public class oThief extends Thread {
         return thiefID;
     }
 
-    public void decrementPosition() {
-        currentPosition--;
+    public void moveIn(int nextPos) {
+        currentPosition += nextPos;
+    }
+
+    public void moveOut(int nextPos) {
+        currentPosition -= nextPos;
     }
 
     public boolean hasPainting() {

@@ -1,33 +1,29 @@
 package entities;
 
 import sharedRegions.AssaultParty;
+import sharedRegions.ControlSite;
 import entities.mStates;
 
 public class mThief extends Thread {
 
     protected int state;
 
-    protected AssaultParty ap;
+    protected AssaultParty[] assaultParties;
 
-    mThief() {
-        this.state = 0;
-    }
+    protected ControlSite controlSite;
 
-    public void changeCurState(int n) {
-        this.state = n;
+    mThief(AssaultParty[] assaultParties, ControlSite controlSite) {
+        this.state = mStates.PLANNING_THE_HEIST;
+        this.assaultParties = assaultParties;
+        this.controlSite = controlSite;
     }
 
     public int getCurState() {
         return state;
     }
 
-    public void setMState(int i)
-    {
+    public void setState(int i) {
         state = i;
-    }
-
-    public void setParty(AssaultParty party) {
-        ap = party;
     }
 
     @Override

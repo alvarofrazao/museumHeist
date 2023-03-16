@@ -1,5 +1,6 @@
 package sharedRegions;
 
+import java.util.Arrays;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -36,17 +37,14 @@ public class AssaultParty {
             return false;
     }
 
-    public int getRoomID()
-    {
+    public int getRoomID() {
         return currentRoomID;
     }
 
     public boolean crawlIn() {
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
-        int curThiefPPos = 0;
-        // to copy and paste into other methods requiring this action
-        // figuring out movement logic and algorithm
+        int curThiefPartyPos = 0;
 
         if (hasArrived == thiefMax) {
             for (int i = 0; i < currentThiefNum; i++) {
@@ -55,66 +53,119 @@ public class AssaultParty {
             lock.unlock();
             return false;
         } else {
-            for(;curThiefPPos < currentThiefNum;curThiefPPos++){
-                if(thieves[curThiefPPos].getThiefID() == curThread.getThiefID())
-                {
-                    curThiefPPos = curThread.getThiefID();
+            int nextMove = 1;
+            int nextPos;
+            boolean canMove = true;
+            for (; curThiefPartyPos < currentThiefNum; curThiefPartyPos++) {
+                if (thieves[curThiefPartyPos].getThiefID() == curThread.getThiefID()) {
+                    curThiefPartyPos = curThread.getThiefID();
                     break;
                 }
             }
-            if (thieves[curThiefPPos].getCurrentPosition() > museum.getRoomDistance(currentRoomID)) {
-                if (thieves[curThiefPPos].getCurrentPosition() < (thieves[curThiefPPos + 1].getCurrentPosition() + S)) {
-                    curThread.decrementPosition();
-                    lock.unlock();
-                } else {
-                    lock.unlock();
-                }
+            for (; nextMove <= curThread.getMD(); nextMove++) {
+                nextPos = curThread.getCurrentPosition() + nextMove;
 
+                if (nextPos < museum.getRoomDistance(currentRoomID)) {
+                    if (curThiefPartyPos != currentThiefNum) {
+                        if (nextPos > (thieves[curThiefPartyPos + 1].getCurrentPosition() + S)) {
+                            nextMove--;
+                            break;
+                        }
+                    }
+
+                    for (oThief thf : thieves) {
+                        if (thf.getCurrentPosition() == nextPos) {
+                            canMove = false;
+                        }
+                    }
+
+                } else {
+                    hasArrived++;
+                    nextMove--;
+                    break;
+                }
             }
+            if(!canMove)
+            {
+                curThread.moveIn(nextMove-1);
+            }else{
+                curThread.moveIn(nextMove);
+            }        
         }
+        lock.unlock();
         return true;
     }
 
     public boolean crawlOut() {
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
-        int curThiefPPos = 0;
+        int curThiefPartyPos = 0;
 
         if (hasArrived == thiefMax) {
             for (int i = 0; i < currentThiefNum; i++) {
-                thieves[i].setState(oStates.COLLECTION_SITE);
+                thieves[i].setState(oStates.AT_A_ROOM);
             }
+            lock.unlock();
             return false;
         } else {
-            for(;curThiefPPos < currentThiefNum;curThiefPPos++){
-                if(thieves[curThiefPPos].getThiefID() == curThread.getThiefID())
-                {
-                    curThiefPPos = curThread.getThiefID();
+            int nextMove = 1;
+            int nextPos;
+            boolean canMove = true;
+            for (; curThiefPartyPos < currentThiefNum; curThiefPartyPos++) {
+                if (thieves[curThiefPartyPos].getThiefID() == curThread.getThiefID()) {
+                    curThiefPartyPos = curThread.getThiefID();
                     break;
                 }
             }
-            if (thieves[curThiefPPos].getCurrentPosition() > 0) {
-                if (thieves[curThiefPPos].getCurrentPosition() < (thieves[curThiefPPos + 1].getCurrentPosition() + S)) {
-                    curThread.decrementPosition();
-                    lock.unlock();
+            for (; nextMove <= curThread.getMD(); nextMove++) {
+                nextPos = curThread.getCurrentPosition() + nextMove;
+
+                if (nextPos > 0) {
+                    if (curThiefPartyPos != currentThiefNum) {
+                        if (nextPos > (thieves[curThiefPartyPos + 1].getCurrentPosition() + S)) {
+                            nextMove--;
+                            break;
+                        }
+                    }
+
+                    for (oThief thf : thieves) {
+                        if (thf.getCurrentPosition() == nextPos) {
+                            canMove = false;
+                        }
+                    }
                 } else {
-                    lock.unlock();
+                    hasArrived++;
+                    nextMove--;
+                    break;
                 }
 
             }
-            return true;
+            if(!canMove)
+            {
+                curThread.moveOut(nextMove+1);
+            }else{
+                curThread.moveOut(nextMove);
+            }
         }
+        lock.unlock();
+        return true;
     }
 
     public void reverseDirection() {
         lock.lock();
         if (hasArrived < currentThiefNum) {
+            lock.unlock();
             return;
         } else {
             for (int i = 0; i < currentThiefNum; i++) {
                 thieves[i].setState(oStates.CRAWLING_OUTWARDS);
             }
+            lock.unlock();
             return;
         }
+    }
+
+    public void sortByDistance() {
+        // implement array sorting
     }
 }
