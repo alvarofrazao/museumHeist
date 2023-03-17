@@ -46,8 +46,10 @@ public class AssaultParty {
 
     public void addThief(oThief t)
     {
+        lock.lock();
         thieves[currentThiefNum] = t;
         currentThiefNum++;
+        lock.unlock();
         return;
     }
 
@@ -59,6 +61,8 @@ public class AssaultParty {
         // implement array sorting
     }
 
+
+    //rever o crawlIn e o crawlOut
     public boolean crawlIn() {
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
@@ -169,6 +173,7 @@ public class AssaultParty {
         return true;
     }
 
+    
     public void reverseDirection() {
         lock.lock();
         if (hasArrived < currentThiefNum) {
@@ -180,6 +185,15 @@ public class AssaultParty {
             }
             lock.unlock();
             return;
+        }
+    }
+
+    public void prepareExcursion() throws InterruptedException {
+        if(this.isFull()){
+            cond.signalAll();
+        }
+        else{
+            cond.await();
         }
     }
 }

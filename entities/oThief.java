@@ -28,7 +28,9 @@ public class oThief extends Thread {
 
     protected ConcentrationSite concentSite;
 
-    oThief(int thiefID, AssaultParty[] arrayAP, ControlSite controlSite, ConcentrationSite concentSite, int MAX_D,
+    protected Museum museum;
+
+    oThief(int thiefID, AssaultParty[] arrayAP, ControlSite controlSite, ConcentrationSite concentSite, Museum museum, int MAX_D,
             int MIN_D) {
         this.thiefID = thiefID;
         this.MD = (int) ((Math.random() * (MAX_D - MIN_D)) + MIN_D);
@@ -39,6 +41,7 @@ public class oThief extends Thread {
         this.arrayAP = arrayAP;
         this.controlSite = controlSite;
         this.concentSite = concentSite;
+        this.museum = museum;
     }
 
     public int getCurrentPosition() { // thief distance to assigned room, may not be reasonable to directly assign
@@ -82,35 +85,16 @@ public class oThief extends Thread {
     }
 
     @Override
-    public void run() {
+    public void run()  {
         try {
-            while (true) {
-                switch (state) {
-                    case (oStates.CONCENTRATION_SITE): {
-                        while (concentSite.amINeeded());
-                        break;
-                    }
-                    case (oStates.CRAWLING_INWARDS): {
-                        while (arrayAP[curAP].crawlIn());
-                        // crawlIn is both a blocking method and a
-                        // state transition method
-                        break;
-                    }
-                    case (oStates.AT_A_ROOM): {
-                        // call and block on rollACanvas
-                        // reverseDirection is the state changing method
-                        break;
-                    }
-                    case (oStates.CRAWLING_OUTWARDS): {
-                        while(arrayAP[curAP].crawlOut());
-                        break;
-                    }
-                    case (oStates.COLLECTION_SITE): {
-                        // call and block on handACanvas
-                        // amINeeded call changes state
-                        break;
-                    }
-                }
+            while (controlSite.checkEmptyRooms()) {
+                concentSite.amINeeded();
+                arrayAP[curAP].prepareExcursion();
+                arrayAP[curAP].crawlIn();
+                museum.rollACanvas(arrayAP[curAP].getRoomID());
+                arrayAP[curAP].reverseDirection();
+                arrayAP[curAP].crawlOut();
+                controlSite.handACanvas();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

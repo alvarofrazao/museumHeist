@@ -12,12 +12,19 @@ public class ControlSite { // this shared region houses both what is dubbed the 
     private AssaultParty[] aParties;
     private Museum museum;
     private GeneralRepos repos;
+    private int emptyRooms;
+
 
     public ControlSite(AssaultParty[] aParties, GeneralRepos repos) {
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
         this.aParties = aParties;
         this.repos = repos;
+        this.emptyRooms = 0;
+    }
+
+    public boolean checkEmptyRooms(){
+        return true;
     }
 
     public void takeARest() {

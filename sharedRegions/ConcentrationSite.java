@@ -15,6 +15,7 @@ public class ConcentrationSite {
     private int availableThieves;
     private int totalThieves;
 
+
     ConcentrationSite(AssaultParty[] aParties, int totalNum) {
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
@@ -27,36 +28,38 @@ public class ConcentrationSite {
         return availableThieves;
     }
 
-    public void prepareExcursion(int partyNum) { //????
-        aParties[partyNum].depart();
-    }
-
-    public boolean amINeeded() {
-        int i = 0;
+    public void amINeeded() throws InterruptedException {
         lock.lock();
+        int i = 0;
         oThief curThread = (oThief)Thread.currentThread();
-        //provavelmente tem que mudar o estado da thread?
-        boolean returnValue = true;
+        cond.signalAll();
         for (AssaultParty x : aParties) {
             if (!x.isFull()) {
                 x.addThief(curThread);
                 curThread.setAssaultParty(i);
                 availableThieves--;
-                returnValue = false;
+                lock.unlock();
+                x.prepareExcursion();
+                
                 break;
             }
             else{
                 i++;
-                returnValue = true;
             }
 
         }
-        return returnValue;
-
+        //lock.unlock();
     }
 
     public boolean wasILast(){
-        if()
+        if(totalThieves == availableThieves)
+        {
+            return true;
+        }
+        else{
+            
+            return false;
+        }
     }
 
     public void prepareAssaultParty() {
