@@ -44,16 +44,26 @@ public class oThief extends Thread {
         this.museum = museum;
     }
 
+    
+
     public int getCurrentPosition() { // thief distance to assigned room, may not be reasonable to directly assign
         return currentPosition;
     }
 
-    public void incrementPosition() {
-        currentPosition++;
-    }
-
     public int getThiefID() {
         return thiefID;
+    }
+
+    public int getMD() {
+        return MD;
+    }
+
+    public char getCurSit() {
+        return Sit;
+    }
+
+    public boolean hasPainting() {
+        return carryingCanvas;
     }
 
     public void moveIn(int nextPos) {
@@ -64,24 +74,16 @@ public class oThief extends Thread {
         currentPosition -= nextPos;
     }
 
-    public boolean hasPainting() {
-        return carryingCanvas;
-    }
-
-    public char getCurSit() {
-        return Sit;
-    }
-
-    public int getMD() {
-        return MD;
-    }
-
     public void setAssaultParty(int apNum){
         curAP = apNum;
     }
 
     public void setState(int newState) {
         state = newState;
+    }
+
+    public void setPos(int pos){
+        currentPosition = pos;
     }
 
     @Override
@@ -91,7 +93,7 @@ public class oThief extends Thread {
                 concentSite.amINeeded();
                 arrayAP[curAP].prepareExcursion();
                 arrayAP[curAP].crawlIn();
-                museum.rollACanvas(arrayAP[curAP].getRoomID());
+                museum.rollACanvas(arrayAP[curAP].getRoomID()); //possivelmente esperar que todos cheguem?
                 arrayAP[curAP].reverseDirection();
                 arrayAP[curAP].crawlOut();
                 controlSite.handACanvas();

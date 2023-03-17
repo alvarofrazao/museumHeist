@@ -28,25 +28,26 @@ public class ConcentrationSite {
         return availableThieves;
     }
 
-    public void amINeeded() throws InterruptedException {
+    //ver melhor esta logica: nao estou a perceber muito bem como e que os blocks vao funcionar
+    public void amINeeded() throws InterruptedException { 
         lock.lock();
-        int i = 0;
+        int i;
         oThief curThread = (oThief)Thread.currentThread();
         cond.signalAll();
-        for (AssaultParty x : aParties) {
-            if (!x.isFull()) {
-                x.addThief(curThread);
-                curThread.setAssaultParty(i);
-                availableThieves--;
-                lock.unlock();
-                x.prepareExcursion();
-                
-                break;
+        while(true){
+            i = 0;
+            for (AssaultParty x : aParties) {
+                if (!x.isFull()) {
+                    x.addThief(curThread);
+                    curThread.setAssaultParty(i);
+                    availableThieves--;
+                    lock.unlock();
+                    return;                
+                }
+                else{
+                    i++;
+                }
             }
-            else{
-                i++;
-            }
-
         }
         //lock.unlock();
     }
