@@ -22,10 +22,17 @@ public class Museum {
         }
     }
 
+    public int getRoomDistance(int roomID) {
+        return museumRoomsDistance[roomID];
+    }
+
+    public int getPaintsInRoom(int roomID) {
+        return museumRoomsPaintings[roomID];
+    }
+
     public boolean rollACanvas(int roomID) {
         lock.lock();
-        // oThief curThread = (oThief)Thread.currentThread();
-        if (museumRoomsPaintings[roomID] > 0) // tentative implementation, most likely incorrect
+        if (museumRoomsPaintings[roomID] > 0) 
         {
             museumRoomsPaintings[roomID] -= 1;
             lock.unlock();
@@ -36,11 +43,5 @@ public class Museum {
         }
     }
 
-    public int getRoomDistance(int roomID) {
-        return museumRoomsDistance[roomID];
-    }
 
-    public int getPaintsInRoom(int roomID) {
-        return museumRoomsPaintings[roomID];
-    }
 }

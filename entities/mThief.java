@@ -28,20 +28,24 @@ public class mThief extends Thread {
 
     @Override
     public void run() {
-        try {
-            while (controlSite.checkEmptyRooms()) {
-            /* startOperations
-             * prepareAssaultParty
-             * sendAssaultParty
-             * appraiseSit
-             * takeARest
-             * collectACanvas
-             * appraiseSit
-             */
+        controlSite.startOperations();
+        boolean heistRun = true;
+        while (heistRun){
+            switch(controlSite.appraiseSit()){
+                case 0:
+                    controlSite.prepareAssaultParty();
+                    controlSite.sendAssaultParty();
+                    break;
+                case 1:
+                    controlSite.takeARest();
+                    controlSite.collectACanvas();
+                    break;
+                case 2:
+                    heistRun = false;
+                    controlSite.sumUpResults();
+                    break;
             }
-            //sumUpResults
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+        join();
     }
 }

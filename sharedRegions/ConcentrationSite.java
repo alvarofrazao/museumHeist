@@ -41,7 +41,13 @@ public class ConcentrationSite {
                     x.addThief(curThread);
                     curThread.setAssaultParty(i);
                     availableThieves--;
-                    lock.unlock();
+                    if(aParties[i].wasILast()){
+                        cond.signalAll();
+                        lock.unlock();
+                    }
+                    else{
+                        lock.unlock();
+                    }
                     return;                
                 }
                 else{
@@ -50,24 +56,5 @@ public class ConcentrationSite {
             }
         }
         //lock.unlock();
-    }
-
-    public boolean wasILast(){
-        if(totalThieves == availableThieves)
-        {
-            return true;
-        }
-        else{
-            
-            return false;
-        }
-    }
-
-    public void prepareAssaultParty() {
-        mThief curThread = (mThief)Thread.currentThread();
-    }
-
-    public void sendAssaultParty() {
-        mThief curThread = (mThief)Thread.currentThread();
     }
 }

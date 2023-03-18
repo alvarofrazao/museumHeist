@@ -166,3 +166,10 @@ random number generation fixed (untested)
 numero do grupo:6
 
 alteraçao de switch case para lifecycle
+
+
+
+------------------------------------------------------
+
+18/03
+ver o prepareAssaultParty e o sendAssaultParty

@@ -2,7 +2,7 @@ package sharedRegions;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import genclass.GenericIO;
+import genclass.*;
 
 public class GeneralRepos {
     private ReentrantLock lock;

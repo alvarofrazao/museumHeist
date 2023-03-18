@@ -237,17 +237,10 @@ public class AssaultParty {
         }
     } 
 
-    public void reverseDirection() {
-        lock.lock();
-        if (hasArrived < currentThiefNum) {
-            lock.unlock();
-            return;
-        } else {
-            for (int i = 0; i < currentThiefNum; i++) {
-                thieves[i].setState(oStates.CRAWLING_OUTWARDS);
-            }
-            lock.unlock();
-            return;
+    public void reverseDirection() throws InterruptedException {
+        cond.signal();
+        if(hasArrived < currentThiefNum){
+            cond.await();
         }
     }
 
@@ -256,6 +249,17 @@ public class AssaultParty {
             cond.signalAll();
         } else {
             cond.await();
+        }
+    }
+
+    public boolean wasILast(){
+        if(currentThiefNum == thiefMax)
+        {
+            return true;
+        }
+        else{
+            
+            return false;
         }
     }
 }

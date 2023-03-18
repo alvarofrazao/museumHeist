@@ -3,6 +3,10 @@ package sharedRegions;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import entities.oThief;
+import entities.mStates;
+import entities.mThief;
+
 public class ControlSite { // this shared region houses both what is dubbed the Control Site
                            // as well as the Collection Site
 
@@ -12,15 +16,19 @@ public class ControlSite { // this shared region houses both what is dubbed the 
     private AssaultParty[] aParties;
     private Museum museum;
     private GeneralRepos repos;
-    private int emptyRooms;
+    private boolean[] emptyRooms;
+    private int totalPaintings;
+    private int availableThieves;
 
 
-    public ControlSite(AssaultParty[] aParties, GeneralRepos repos) {
+    public ControlSite(AssaultParty[] aParties, GeneralRepos repos, int roomNumber,int thiefMax) {
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
         this.aParties = aParties;
         this.repos = repos;
-        this.emptyRooms = 0;
+        this.emptyRooms = new boolean[roomNumber];
+        this.totalPaintings = 0;
+        this.availableThieves = thiefMax;
     }
 
     public boolean checkEmptyRooms(){
@@ -40,20 +48,30 @@ public class ControlSite { // this shared region houses both what is dubbed the 
     }
 
     public void handACanvas() {
-        // oThief curThread = (oThief)Thread.currentThread();
-        // to copy and paste into other methods requiring this action
+        lock.lock();
+        oThief curThread = (oThief)Thread.currentThread();
+        if(curThread.hasPainting()){
+            totalPaintings++;
+        }
+        else{
+            emptyRooms[aParties[curThread.getCurAP()].getRoomID()] = true;
+        }
+        lock.unlock();
+        cond.signalAll();
     }
 
-    public void appraiseSit() {
+    public int appraiseSit() {
+        lock.lock();
         // mThief curThread = (mThief)Thread.currentThread();
         // to copy and paste into other methods requiring this action
 
     }
 
     public void startOperations() {
-        // mThief curThread = (mThief)Thread.currentThread();
-        // to copy and paste into other methods requiring this action
-
+        lock.lock();
+        mThief curThread = (mThief)Thread.currentThread();
+        curThread.setState(mStates.DECIDING_WHAT_TO_DO);
+        return;
     }
 
     public void sumUpResults() {
@@ -61,5 +79,17 @@ public class ControlSite { // this shared region houses both what is dubbed the 
         // to copy and paste into other methods requiring this action
 
     }
+
+    public void prepareAssaultParty() throws InterruptedException {
+        mThief curThread = (mThief)Thread.currentThread();
+        cond.signalAll();
+        cond.await();
+    }
+
+    public void sendAssaultParty() {
+        
+        lock.lock();
+    }
+}
 
 }

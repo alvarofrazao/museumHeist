@@ -54,6 +54,10 @@ public class oThief extends Thread {
         return thiefID;
     }
 
+    public int getCurAP(){
+        return curAP;
+    }
+
     public int getMD() {
         return MD;
     }
