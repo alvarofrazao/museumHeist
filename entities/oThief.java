@@ -70,6 +70,10 @@ public class oThief extends Thread {
         return carryingCanvas;
     }
 
+    public void setCanvas(){
+        carryingCanvas = false;
+    }
+
     public void moveIn(int nextPos) {
         currentPosition += nextPos;
     }
@@ -93,11 +97,10 @@ public class oThief extends Thread {
     @Override
     public void run()  {
         try {
-            while (controlSite.checkEmptyRooms()) {
-                concentSite.amINeeded();
+            while(concentSite.amINeeded()){
                 arrayAP[curAP].prepareExcursion();
                 arrayAP[curAP].crawlIn();
-                museum.rollACanvas(arrayAP[curAP].getRoomID()); //possivelmente esperar que todos cheguem?
+                carryingCanvas = museum.rollACanvas(arrayAP[curAP].getRoomID()); //possivelmente esperar que todos cheguem?
                 arrayAP[curAP].reverseDirection();
                 arrayAP[curAP].crawlOut();
                 controlSite.handACanvas();

@@ -173,3 +173,77 @@ alteraçao de switch case para lifecycle
 
 18/03
 ver o prepareAssaultParty e o sendAssaultParty
+
+----------------------------
+
+crawlIn e crawlOut acabados
+
+
+
+
+-----------------
+
+if(exitsPaintings){
+    while(availableThieves < 3){
+        cond.await();
+    }
+    return 0;
+}else{
+    for(AssaultParty x: aParties){
+        if(x.getStatus()){
+            return 1;
+        }
+    }
+}
+
+cond.signalAll()
+while(!isFull()){
+    cond.await();
+}
+change state
+return
+
+
+
+-----------------------------
+ConcentrationSite
+amINeeded
+    -esta funçao so ve se as salas ja estao todas vazias e quantos ladroes ha disponiveis
+sendAssaultParty
+    - mete a flag the Ready da party a true e da signal as threads da party
+prepareAssaultParty
+    -muda o estado
+    -acorda o ordinary thief preso no amINeeded, 
+    -decidir a sala destino
+    -decidir a party que se vai formar (ou 1 ou 0)
+
+ControlSite
+handACanvas 
+    -entrega o quadro, signal MT, resetar o thief,   
+collectACanvas
+    - processa o quadro e sinaliza o thief que o entregou (supostamente)
+appraiseSit
+    -ve o estado das salas vazias e dos ladroes disponiveis
+    -decide se cria um grupo, se espera por um grupo, ou se acaba a simulaçao
+takeARest
+    - sleep() durante tempo aletatorio, change state, wait() for handACanvas()
+sumUpResults
+
+
+AssaultParty
+prepareExcursion
+    -ladroes entram na party que esta a ser trabalhada, dao signal quando entram no metodo, so saem se 
+    a party tiver sido declarada como ready no sendAssaultParty
+crawlIn
+    -
+crawlOut
+    -
+reverseDirection
+
+
+Museum
+rollACanvas
+
+GeneralRepos
+funçoes de print
+

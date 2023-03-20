@@ -20,6 +20,8 @@ public class AssaultParty {
     private int hasArrived;
     private Condition cond;
     private int S;
+    private boolean isRunning;  
+    private boolean isReady;
 
     public AssaultParty(int partySize, int thiefMax, int S) {
         this.lock = new ReentrantLock();
@@ -29,6 +31,8 @@ public class AssaultParty {
         this.thiefMax = thiefMax;
         this.hasArrived = 0;
         this.S = S;
+        this.isRunning = false;
+        this.isReady = false;
     }
 
     Comparator<oThief> crawlInComparator=new Comparator<oThief>(){
@@ -50,12 +54,20 @@ public class AssaultParty {
             return false;
     }
 
+    public int getPartySize(){
+        return thiefMax;
+    }
+
     public void addThief(oThief t) {
         lock.lock();
         thieves[currentThiefNum] = t;
         currentThiefNum++;
         lock.unlock();
         return;
+    }
+
+    public boolean getStatus(){
+        return isRunning;
     }
 
     public int getRoomID() {
@@ -71,11 +83,12 @@ public class AssaultParty {
         int nextPos;
         boolean canMove = true;
         boolean canIncrement = true;
+
         while(canMove){
             /*incrementa o que poder mas bloqueia se estiver numa situaçao em que nao poderia incrementar se proseguisse */
             if(!canIncrement){
                 curThread.moveIn(nextMove);
-                lock.unlock();
+                cond.signalAll();
                 cond.await();
                 lock.lock();
                 canIncrement = true;
@@ -187,6 +200,7 @@ public class AssaultParty {
         int nextPos;
         boolean canMove = true;
         boolean canIncrement = true;
+
         while(canMove){
             /*incrementa o que poder mas bloqueia se estiver numa situaçao em que nao poderia incrementar se proseguisse */
             if(!canIncrement){
@@ -244,12 +258,14 @@ public class AssaultParty {
         }
     }
 
+    public void setReady(){
+        isReady = true;
+    }
+
     public void prepareExcursion() throws InterruptedException {
-        if (this.isFull()) {
-            cond.signalAll();
-        } else {
-            cond.await();
-        }
+        
+        //change state
+        //print state
     }
 
     public boolean wasILast(){
@@ -261,5 +277,19 @@ public class AssaultParty {
             
             return false;
         }
+    }
+
+    public void setupParty(int roomID){
+        lock.lock();
+        currentThiefNum = 0;
+        currentRoomID = roomID;       
+        lock.unlock();
+    }
+
+    public void signalThieves(){
+        lock.lock();
+        cond.signalAll();
+        lock.unlock();
+        return;
     }
 }

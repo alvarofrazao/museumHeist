@@ -1,6 +1,7 @@
 package entities;
 
 import sharedRegions.AssaultParty;
+import sharedRegions.ConcentrationSite;
 import sharedRegions.ControlSite;
 import entities.mStates;
 
@@ -12,10 +13,13 @@ public class mThief extends Thread {
 
     protected ControlSite controlSite;
 
-    mThief(AssaultParty[] assaultParties, ControlSite controlSite) {
+    protected ConcentrationSite concentrationSite;
+
+    mThief(AssaultParty[] assaultParties, ControlSite controlSite, ConcentrationSite concentrationSite) {
         this.state = mStates.PLANNING_THE_HEIST;
         this.assaultParties = assaultParties;
         this.controlSite = controlSite;
+        this.concentrationSite = concentrationSite;
     }
 
     public int getCurState() {
@@ -30,10 +34,10 @@ public class mThief extends Thread {
     public void run() {
         controlSite.startOperations();
         boolean heistRun = true;
-        while (heistRun){
+        while (controlSite.getHeistStatus()){
             switch(controlSite.appraiseSit()){
                 case 0:
-                    controlSite.prepareAssaultParty();
+                    con.prepareAssaultParty();
                     controlSite.sendAssaultParty();
                     break;
                 case 1:
@@ -41,7 +45,6 @@ public class mThief extends Thread {
                     controlSite.collectACanvas();
                     break;
                 case 2:
-                    heistRun = false;
                     controlSite.sumUpResults();
                     break;
             }

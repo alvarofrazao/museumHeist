@@ -1,5 +1,6 @@
 package sharedRegions;
 
+import java.util.ResourceBundle.Control;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -11,22 +12,18 @@ public class ConcentrationSite {
     private ReentrantLock lock;
     private Condition cond;
     private AssaultParty[] aParties;
+    private ControlSite controlSite;
     private GeneralRepos repos;
-    private int availableThieves;
-    private int totalThieves;
+    private int nextParty;
 
 
     ConcentrationSite(AssaultParty[] aParties, int totalNum) {
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
         this.aParties = aParties;
-        this.totalThieves = totalNum;
-        this.availableThieves = totalNum; 
+        this.nextParty = 0;
     }
 
-    public int getAvailableThieves(){
-        return availableThieves;
-    }
 
     //ver melhor esta logica: nao estou a perceber muito bem como e que os blocks vao funcionar
     public void amINeeded() throws InterruptedException { 
@@ -40,7 +37,6 @@ public class ConcentrationSite {
                 if (!x.isFull()) {
                     x.addThief(curThread);
                     curThread.setAssaultParty(i);
-                    availableThieves--;
                     if(aParties[i].wasILast()){
                         cond.signalAll();
                         lock.unlock();
@@ -56,5 +52,41 @@ public class ConcentrationSite {
             }
         }
         //lock.unlock();
+    }
+
+
+    public boolean amINeeded(){
+        lock.lock();
+        if(controlSite.getNextRoom() != -1){
+            cond.signalAll();
+            lock.unlock();
+            return true;
+        }
+        else{
+            lock.unlock();
+            return false;
+        }
+    }
+
+    public void sendAssaultParty() {
+        lock.lock();
+        aParties[nextParty].setReady();
+        aParties[nextParty].signalThieves();
+        nextParty++;
+        lock.unlock();
+        //log state
+    }
+
+    public void prepareAssaultParty() throws InterruptedException {
+        lock.lock();
+        mThief curThread = (mThief)Thread.currentThread();
+        int nextRoom = controlSite.getNextRoom();
+        if(nextRoom != -1){
+            if(nextParty > 1){
+                aParties[nextParty].setupParty(nextRoom);                
+            }
+        }
+        cond.signalAll();
+        cond.await();
     }
 }
