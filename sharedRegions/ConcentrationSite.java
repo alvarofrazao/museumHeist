@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import entities.mThief;
 import entities.oThief;
+import infrastructure.MemException;
 
 public class ConcentrationSite {
 
@@ -25,36 +26,6 @@ public class ConcentrationSite {
     }
 
 
-    //ver melhor esta logica: nao estou a perceber muito bem como e que os blocks vao funcionar
-    public void amINeeded() throws InterruptedException { 
-        lock.lock();
-        int i;
-        oThief curThread = (oThief)Thread.currentThread();
-        cond.signalAll();
-        while(true){
-            i = 0;
-            for (AssaultParty x : aParties) {
-                if (!x.isFull()) {
-                    x.addThief(curThread);
-                    curThread.setAssaultParty(i);
-                    if(aParties[i].wasILast()){
-                        cond.signalAll();
-                        lock.unlock();
-                    }
-                    else{
-                        lock.unlock();
-                    }
-                    return;                
-                }
-                else{
-                    i++;
-                }
-            }
-        }
-        //lock.unlock();
-    }
-
-
     public boolean amINeeded(){
         lock.lock();
         if(controlSite.getNextRoom() != -1){
@@ -68,8 +39,12 @@ public class ConcentrationSite {
         }
     }
 
-    public void sendAssaultParty() {
+    public void sendAssaultParty() throws InterruptedException {
         lock.lock();
+        while(!aParties[nextParty].isFull()){
+            cond.await();
+            lock.lock();
+        }
         aParties[nextParty].setReady();
         aParties[nextParty].signalThieves();
         nextParty++;
@@ -79,14 +54,33 @@ public class ConcentrationSite {
 
     public void prepareAssaultParty() throws InterruptedException {
         lock.lock();
-        mThief curThread = (mThief)Thread.currentThread();
         int nextRoom = controlSite.getNextRoom();
         if(nextRoom != -1){
-            if(nextParty > 1){
+            if(nextParty <= 1){
                 aParties[nextParty].setupParty(nextRoom);                
             }
         }
-        cond.signalAll();
+        for(int i = 0; i < 3; i++){
+            cond.signal();
+        }
+        //log state
         cond.await();
+    }
+
+    public void prepareExcursion() throws InterruptedException, MemException {
+        lock.lock();
+        oThief curThread = (oThief) Thread.currentThread();
+        aParties[nextParty].addThief(curThread);
+        curThread.setAssaultParty(nextParty);
+        if(aParties[nextParty].isFull()){
+            cond.signal();
+            lock.unlock();
+            aParties[nextParty].waitForSend();
+            return;
+        }else{
+            lock.unlock();
+            aParties[nextParty].waitForSend();
+            return;
+        }
     }
 }

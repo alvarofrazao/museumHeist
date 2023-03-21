@@ -2,6 +2,7 @@ package entities;
 
 import java.util.Random;
 import entities.oStates;
+import infrastructure.MemException;
 import sharedRegions.*;
 
 import java.lang.Math;
@@ -98,14 +99,17 @@ public class oThief extends Thread {
     public void run()  {
         try {
             while(concentSite.amINeeded()){
-                arrayAP[curAP].prepareExcursion();
-                arrayAP[curAP].crawlIn();
+                concentSite.prepareExcursion();
+                //arrayAP[curAP].crawlIn();
                 carryingCanvas = museum.rollACanvas(arrayAP[curAP].getRoomID()); //possivelmente esperar que todos cheguem?
                 arrayAP[curAP].reverseDirection();
-                arrayAP[curAP].crawlOut();
+                //arrayAP[curAP].crawlOut();
                 controlSite.handACanvas();
             }
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (MemException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

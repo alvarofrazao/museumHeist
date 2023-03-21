@@ -6,13 +6,15 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import entities.oThief;
+import infrastructure.MemException;
+import infrastructure.MemFIFO;
 import entities.oStates;
 
 public class AssaultParty {
 
     private int currentRoomID;
     private Museum museum;
-    private oThief[] thieves;
+    private MemFIFO thieves;
     private int currentThiefNum;
     private int thiefMax;
     private ReentrantLock lock;
@@ -23,10 +25,10 @@ public class AssaultParty {
     private boolean isRunning;  
     private boolean isReady;
 
-    public AssaultParty(int partySize, int thiefMax, int S) {
+    public AssaultParty(int id,int partySize, int thiefMax, int S) throws MemException {
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
-        this.thieves = new oThief[partySize];
+        this.thieves = new MemFIFO(partySize);
         this.currentThiefNum = 0;
         this.thiefMax = thiefMax;
         this.hasArrived = 0;
@@ -58,14 +60,6 @@ public class AssaultParty {
         return thiefMax;
     }
 
-    public void addThief(oThief t) {
-        lock.lock();
-        thieves[currentThiefNum] = t;
-        currentThiefNum++;
-        lock.unlock();
-        return;
-    }
-
     public boolean getStatus(){
         return isRunning;
     }
@@ -74,7 +68,18 @@ public class AssaultParty {
         return currentRoomID;
     }
 
-    // rever o crawlIn e o crawlOut
+    public void setReady(){
+        isReady = true;
+    }
+
+    public void addThief(oThief t) throws MemException {
+        lock.lock();
+        thieves.write(t);
+        currentThiefNum++;
+        lock.unlock();
+        return;
+    }
+/* 
     public void crawlIn() throws InterruptedException {
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
@@ -85,8 +90,7 @@ public class AssaultParty {
         boolean canIncrement = true;
 
         while(canMove){
-            /*incrementa o que poder mas bloqueia se estiver numa situaçao em que nao poderia incrementar se proseguisse */
-            if(!canIncrement){
+           if(!canIncrement){
                 curThread.moveIn(nextMove);
                 cond.signalAll();
                 cond.await();
@@ -97,7 +101,6 @@ public class AssaultParty {
                 curThread = (oThief) Thread.currentThread();
             }
 
-            //organizar o array por distancia ao objetivo
             Arrays.sort(thieves,crawlInComparator);
             for (; curThiefPartyPos < currentThiefNum; curThiefPartyPos++) {
                 if (thieves[curThiefPartyPos].getThiefID() == curThread.getThiefID()){
@@ -134,63 +137,7 @@ public class AssaultParty {
             }       
         }
     }   
-    // crawlIn original
-    /*
-     * public boolean crawlIn() {
-     * lock.lock();
-     * oThief curThread = (oThief) Thread.currentThread();
-     * int curThiefPartyPos = 0;
-     * 
-     * if (hasArrived == thiefMax) {
-     * for (int i = 0; i < currentThiefNum; i++) {
-     * thieves[i].setState(oStates.AT_A_ROOM);
-     * }
-     * lock.unlock();
-     * return false;
-     * } else {
-     * int nextMove = 1;
-     * int nextPos;
-     * boolean canMove = true;
-     * for (; curThiefPartyPos < currentThiefNum; curThiefPartyPos++) {
-     * if (thieves[curThiefPartyPos].getThiefID() == curThread.getThiefID()) {
-     * curThiefPartyPos = curThread.getThiefID();
-     * break;
-     * }
-     * }
-     * for (; nextMove <= curThread.getMD(); nextMove++) {
-     * nextPos = curThread.getCurrentPosition() + nextMove;
-     * 
-     * if (nextPos < museum.getRoomDistance(currentRoomID)) {
-     * if (curThiefPartyPos != currentThiefNum) {
-     * if (nextPos > (thieves[curThiefPartyPos + 1].getCurrentPosition() + S)) {
-     * nextMove--;
-     * break;
-     * }
-     * }
-     * 
-     * for (oThief thf : thieves) {
-     * if (thf.getCurrentPosition() == nextPos) {
-     * canMove = false;
-     * }
-     * }
-     * 
-     * } else {
-     * hasArrived++;
-     * nextMove--;
-     * break;
-     * }
-     * }
-     * if(!canMove)
-     * {
-     * curThread.moveIn(nextMove-1);
-     * }else{
-     * curThread.moveIn(nextMove);
-     * }
-     * }
-     * lock.unlock();
-     * return true;
-     * }
-     */
+
 
    public void crawlOut() throws InterruptedException {
         lock.lock();
@@ -202,7 +149,6 @@ public class AssaultParty {
         boolean canIncrement = true;
 
         while(canMove){
-            /*incrementa o que poder mas bloqueia se estiver numa situaçao em que nao poderia incrementar se proseguisse */
             if(!canIncrement){
                 curThread.moveOut(nextMove);
                 lock.unlock();
@@ -213,7 +159,6 @@ public class AssaultParty {
                 nextMove = 1;
                 curThiefPartyPos = 0;
             }
-            //organizar o array por distancia ao destino
             Arrays.sort(thieves,crawlOutComparator);
             for (; curThiefPartyPos < currentThiefNum; curThiefPartyPos++) {
                 if (thieves[curThiefPartyPos].getThiefID() == curThread.getThiefID()){
@@ -250,22 +195,14 @@ public class AssaultParty {
             }      
         }
     } 
+*/
+    
 
     public void reverseDirection() throws InterruptedException {
         cond.signal();
         if(hasArrived < currentThiefNum){
             cond.await();
         }
-    }
-
-    public void setReady(){
-        isReady = true;
-    }
-
-    public void prepareExcursion() throws InterruptedException {
-        
-        //change state
-        //print state
     }
 
     public boolean wasILast(){
@@ -290,6 +227,15 @@ public class AssaultParty {
         lock.lock();
         cond.signalAll();
         lock.unlock();
+        return;
+    }
+
+    public void waitForSend() throws InterruptedException{
+        lock.lock();
+        while(!isReady){
+            lock.lock();
+            cond.wait();
+        }
         return;
     }
 }
