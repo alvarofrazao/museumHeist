@@ -69,7 +69,7 @@ public class ControlCollectionSite {
                     totalPaintings++;
                 }
                 else{
-                    emptyRooms[aParties[lastThief.getCurAP()].getRoomID()] = true;
+                    emptyRooms[lastThief.getCurRoom()] = true;
                 }
                 collect = false;
                 waitingQueueSize--;

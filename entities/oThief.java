@@ -9,30 +9,31 @@ import java.lang.Math;
 
 public class oThief extends Thread {
 
-    protected char Sit;// either waiting to join AP ('W') or in party ('P')
+    private char Sit;// either waiting to join AP ('W') or in party ('P')
 
-    protected int thiefID;
+    private int thiefID;
 
-    protected int MD; // thief's maximum displacement
+    private int MD; // thief's maximum displacement
 
-    protected int currentPosition;
+    private int currentPosition;
 
-    protected boolean carryingCanvas;
+    private boolean carryingCanvas;
 
-    protected int curAP;
+    private int curAP;
 
-    protected int state;
+    private int currentRoomID;
 
-    protected AssaultParty[] arrayAP;
+    private int state;
 
-    protected ControlCollectionSite controlSite;
+    private AssaultParty[] arrayAP;
 
-    protected ConcentrationSite concentSite;
+    private ControlCollectionSite controlSite;
 
-    protected Museum museum;
+    private ConcentrationSite concentSite;
 
-    oThief(int thiefID, AssaultParty[] arrayAP, ControlCollectionSite controlSite, ConcentrationSite concentSite, Museum museum, int MAX_D,
-            int MIN_D) {
+    private Museum museum;
+
+    oThief(int thiefID, AssaultParty[] arrayAP, ControlCollectionSite controlSite, ConcentrationSite concentSite, Museum museum, int MAX_D, int MIN_D) {
         this.thiefID = thiefID;
         this.MD = (int) ((Math.random() * (MAX_D - MIN_D)) + MIN_D);
         this.Sit = 'W';
@@ -59,6 +60,10 @@ public class oThief extends Thread {
         return curAP;
     }
 
+    public int getCurRoom(){
+        return currentRoomID;
+    }
+
     public int getMD() {
         return MD;
     }
@@ -83,16 +88,17 @@ public class oThief extends Thread {
         currentPosition -= nextPos;
     }
 
-    public void setAssaultParty(int apNum){
-        curAP = apNum;
-    }
-
     public void setState(int newState) {
         state = newState;
     }
 
     public void setPos(int pos){
         currentPosition = pos;
+    }
+
+    public void setInfo(int curParty,int roomID){
+        currentRoomID = roomID;
+        curAP = curParty;
     }
 
     @Override

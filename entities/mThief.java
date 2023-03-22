@@ -7,13 +7,13 @@ import entities.mStates;
 
 public class mThief extends Thread {
 
-    protected int state;
+    private int state;
 
-    protected AssaultParty[] assaultParties;
+    private AssaultParty[] assaultParties;
 
-    protected ControlCollectionSite controlSite;
+    private ControlCollectionSite controlSite;
 
-    protected ConcentrationSite concentrationSite;
+    private ConcentrationSite concentrationSite;
 
     mThief(AssaultParty[] assaultParties, ControlCollectionSite controlSite, ConcentrationSite concentrationSite) {
         this.state = mStates.PLANNING_THE_HEIST;

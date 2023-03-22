@@ -71,7 +71,7 @@ public class ConcentrationSite {
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
         aParties[nextParty].addThief(curThread);
-        curThread.setAssaultParty(nextParty);
+        curThread.setInfo(nextParty,aParties[nextParty].getRoomID());
         if(aParties[nextParty].isFull()){
             cond.signal();
             lock.unlock();

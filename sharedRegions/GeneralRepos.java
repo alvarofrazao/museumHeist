@@ -9,11 +9,12 @@ import genclass.*;
 public class GeneralRepos {
     private ReentrantLock lock;
     private Condition cond;
-    // private String path;
+    private String path;
 
-    GeneralRepos() {
+    GeneralRepos(String logPath) {
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
+        this.path = logPath;
     }
 
     public void printOThiefState(){
