@@ -46,7 +46,6 @@ public class ConcentrationSite {
             lock.lock();
         }
         aParties[nextParty].setReady();
-        aParties[nextParty].signalThieves();
         nextParty++;
         lock.unlock();
         //log state

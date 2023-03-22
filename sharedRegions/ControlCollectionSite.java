@@ -20,7 +20,7 @@ public class ControlCollectionSite { // this shared region houses both what is d
     private boolean[] emptyRooms;
     private int totalPaintings;
     private int availableThieves;
-    private MemFIFO waitingQueue;
+    private MemFIFO<oThief> waitingQueue;
 
 
     public ControlCollectionSite(AssaultParty[] aParties, GeneralRepos repos, int roomNumber,int thiefMax) throws MemException {
@@ -31,7 +31,7 @@ public class ControlCollectionSite { // this shared region houses both what is d
         this.emptyRooms = new boolean[roomNumber];
         this.totalPaintings = 0;
         this.availableThieves = thiefMax;
-        this.waitingQueue = new MemFIFO(thiefMax);
+        this.waitingQueue = new MemFIFO<oThief>(new oThief[thiefMax]);
     }
 
     public boolean checkEmptyRooms(){
@@ -44,9 +44,9 @@ public class ControlCollectionSite { // this shared region houses both what is d
 
     }
 
-    public void collectACanvas() {
-        // mThief curThread = (mThief)Thread.currentThread();
-        // to copy and paste into other methods requiring this action
+    public void collectACanvas() throws MemException {
+        lock.lock();
+        oThief lastThief = waitingQueue.read();
 
     }
 
@@ -105,10 +105,6 @@ public class ControlCollectionSite { // this shared region houses both what is d
         // mThief curThread = (mThief)Thread.currentThread();
         // to copy and paste into other methods requiring this action
 
-    }
-
-    public void sendAssaultParty() {
-        lock.lock();
     }
 }
 

@@ -1,4 +1,5 @@
 package infrastructure;
+
 /**
  *    Memory exception.
  *    Definition of an exception for access to a stack or a FIFO in the following conditions:
@@ -7,30 +8,29 @@ package infrastructure;
  *       read operation on an empty memory.
  */
 
- public class MemException extends Exception
+public class MemException extends Exception
 
- {
-   /**
-    *   Conventional exception instantiation.
-    *
-    *    @param errorMessage pertaining error message
-    */
- 
-    public MemException (String errorMessage)
-    {
-      super (errorMessage);
-    }
- 
-   /**
-    *   Exception instantiation with associated raising cause.
-    *
-    *    @param errorMessage pertaining error message
-    *    @param cause underlying exception that generated it
-    */
- 
-    public MemException (String errorMessage, Throwable cause)
-    {
-      super (errorMessage,  cause);
-    }
- }
- 
+{
+  /**
+   *   Conventional exception instantiation.
+   *
+   *    @param errorMessage pertaining error message
+   */
+
+   public MemException (String errorMessage)
+   {
+     super (errorMessage);
+   }
+
+  /**
+   *   Exception instantiation with associated raising cause.
+   *
+   *    @param errorMessage pertaining error message
+   *    @param cause underlying exception that generated it
+   */
+
+   public MemException (String errorMessage, Throwable cause)
+   {
+     super (errorMessage,  cause);
+   }
+}

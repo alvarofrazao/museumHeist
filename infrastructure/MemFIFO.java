@@ -1,5 +1,13 @@
 package infrastructure;
-public class MemFIFO extends MemObject
+
+/**
+ *    Parametric FIFO derived from a parametric memory.
+ *    Errors are reported.
+ *
+ *    @param <R> data type of stored objects
+ */
+
+public class MemFIFO<R> extends MemObject<R>
 {
   /**
    *   Pointer to the first empty location.
@@ -21,31 +29,31 @@ public class MemFIFO extends MemObject
 
   /**
    *   FIFO instantiation.
-   *   The instantiation only takes place if the FIFO size is meaningful (greater than zero).
+   *   The instantiation only takes place if the memory exists.
    *   Otherwise, an error is reported.
    *
-   *     @param nElem FIFO size
-   *     @throws MemException when an illegal size is passed
+   *     @param storage memory to be used
+   *     @throws MemException when the memory does not exist
    */
 
-   public MemFIFO (int nElem) throws MemException
+   public MemFIFO (R [] storage) throws MemException
    {
-     super (nElem);
+     super (storage);
      inPnt = outPnt = 0;
      empty = true;
    }
 
   /**
    *   FIFO insertion.
-   *   A generic object is written into it.
+   *   A parametric object is written into it.
    *   If the FIFO is full, an error is reported.
    *
-   *    @param val generic object to be written
+   *    @param val parametric object to be written
    *    @throws MemException when the FIFO is full
    */
 
    @Override
-   public void write (Object val) throws MemException
+   public void write (R val) throws MemException
    {
      if ((inPnt != outPnt) || empty)
         { mem[inPnt] = val;
@@ -57,17 +65,17 @@ public class MemFIFO extends MemObject
 
   /**
    *   FIFO retrieval.
-   *   A generic object is read from it.
+   *   A parametric object is read from it.
    *   If the FIFO is empty, an error is reported.
    *
-   *    @return first generic object that was written
+   *    @return first parametric object that was written
    *    @throws MemException when the FIFO is empty
    */
 
    @Override
-   public Object read () throws MemException
+   public R read () throws MemException
    {
-     Object val;                                           // temporary value
+     R val;
 
      if (!empty)
         { val = mem[outPnt];
