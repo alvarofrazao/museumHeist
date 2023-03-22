@@ -9,8 +9,7 @@ import entities.mThief;
 
 import infrastructure.*;
 
-public class ControlCollectionSite { // this shared region houses both what is dubbed the Control Site
-                           // as well as the Collection Site
+public class ControlCollectionSite { 
 
     private ReentrantLock lock;
     private Condition cond;
@@ -21,6 +20,8 @@ public class ControlCollectionSite { // this shared region houses both what is d
     private int totalPaintings;
     private int availableThieves;
     private MemFIFO<oThief> waitingQueue;
+    private int waitingQueueSize;
+    private boolean heistRun;
 
 
     public ControlCollectionSite(AssaultParty[] aParties, GeneralRepos repos, int roomNumber,int thiefMax) throws MemException {
@@ -32,46 +33,75 @@ public class ControlCollectionSite { // this shared region houses both what is d
         this.totalPaintings = 0;
         this.availableThieves = thiefMax;
         this.waitingQueue = new MemFIFO<oThief>(new oThief[thiefMax]);
+        this.waitingQueueSize = 0;
+        this.heistRun = true;
     }
 
-    public boolean checkEmptyRooms(){
-        return true;
+    public int getNextRoom(){
+        for(int i = 0; i < emptyRooms.length;i++){
+            if(!emptyRooms[i]){
+                return i;
+            }
+        }
+        return -1;
     }
 
-    public void takeARest() {
-        // mThief curThread = (mThief)Thread.currentThread();
-        // to copy and paste into other methods requiring this action
-
+    public boolean getHeistStatus(){
+        return heistRun;
     }
 
-    public void collectACanvas() throws MemException {
+    public void takeARest() throws InterruptedException {
         lock.lock();
-        oThief lastThief = waitingQueue.read();
+        Thread.sleep(100);
+        //log state
+        lock.unlock();
+        return;
+    }
 
+    public void collectACanvas() throws InterruptedException{
+        lock.lock();
+        oThief lastThief;
+        boolean collect = true;
+        while(collect){
+            try {
+                lastThief = waitingQueue.read();
+                if(lastThief.hasPainting()){
+                    totalPaintings++;
+                }
+                else{
+                    emptyRooms[aParties[lastThief.getCurAP()].getRoomID()] = true;
+                }
+                collect = false;
+                waitingQueueSize--;
+                break;
+            } catch (MemException e) {
+                cond.await();
+                lock.lock();
+            }
+        }
+        //log state
+        cond.signal();
+        lock.unlock();
     }
 
     public void handACanvas() throws MemException, InterruptedException {
         lock.lock();
         oThief curThread = (oThief)Thread.currentThread();
         waitingQueue.write(curThread);
+        waitingQueueSize++;
         cond.signal();
         cond.await();
-
-        /*if(curThread.hasPainting()){
-            totalPaintings++;
-        }
-        else{
-            emptyRooms[aParties[curThread.getCurAP()].getRoomID()] = true;
-        }
-        cond.signalAll();
-        lock.unlock();*/
+        lock.lock();
+        availableThieves++;
+        lock.unlock();
     }
 
-    public int appraiseSit() {
+    public int appraiseSit() throws InterruptedException {
         lock.lock();
-        mThief curThread = (mThief)Thread.currentThread();
+        //log state
         int emptyCounter = 0;
         int returnValue = 1;
+        int runCounter = 0;
         for(int i = 0; i < emptyRooms.length;i++){
             if(emptyRooms[i])
             {
@@ -81,16 +111,36 @@ public class ControlCollectionSite { // this shared region houses both what is d
 
         if(emptyCounter == emptyRooms.length)
         {
-            returnValue = 2;
+            while(availableThieves < 6){
+                cond.await();
+                lock.lock();
+            }
+            lock.unlock();
+            return 2;
         }
 
-        if(availableThieves >= 3){
-            returnValue = 0;
+        for(AssaultParty a: aParties){
+            if(a.getStatus()){
+                runCounter++;
+            }
         }
 
+        if(runCounter >= 1)
+        {
+            if(waitingQueueSize > 0){
+                lock.unlock();
+                return 1;
+            } 
+        }
+
+        while(availableThieves < 3)
+        {
+            cond.await();
+            lock.lock();
+        }
+        returnValue = 0;
         lock.unlock();
         return returnValue;
-
     }
 
     public void startOperations() {
@@ -102,7 +152,12 @@ public class ControlCollectionSite { // this shared region houses both what is d
     }
 
     public void sumUpResults() {
-        // mThief curThread = (mThief)Thread.currentThread();
+        lock.lock();
+        //log state
+        mThief curThread = (mThief)Thread.currentThread();
+        //print heist results
+        cond.signalAll();
+        lock.unlock();
         // to copy and paste into other methods requiring this action
 
     }

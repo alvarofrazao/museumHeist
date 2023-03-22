@@ -13,7 +13,7 @@ public class ConcentrationSite {
     private ReentrantLock lock;
     private Condition cond;
     private AssaultParty[] aParties;
-    private ControlSite controlSite;
+    private ControlCollectionSite controlSite;
     private GeneralRepos repos;
     private int nextParty;
 
@@ -28,7 +28,8 @@ public class ConcentrationSite {
 
     public boolean amINeeded(){
         lock.lock();
-        if(controlSite.getNextRoom() != -1){
+        cond.signal();
+        if(!controlSite.getHeistStatus()){
             cond.signalAll();
             lock.unlock();
             return true;

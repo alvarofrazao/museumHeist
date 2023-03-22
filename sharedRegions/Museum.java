@@ -3,6 +3,8 @@ package sharedRegions;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import entities.oThief;
+
 public class Museum {
     private int[] museumRoomsDistance;
     private int[] museumRoomsPaintings;
@@ -32,12 +34,15 @@ public class Museum {
 
     public boolean rollACanvas(int roomID) {
         lock.lock();
+        oThief curThread = (oThief) Thread.currentThread();
         if (museumRoomsPaintings[roomID] > 0) 
         {
             museumRoomsPaintings[roomID] -= 1;
+            curThread.setCanvas(true);
             lock.unlock();
             return true;
         } else {
+            curThread.setCanvas(false);
             lock.unlock();
             return false;
         }

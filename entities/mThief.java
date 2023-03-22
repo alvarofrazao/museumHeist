@@ -2,7 +2,7 @@ package entities;
 
 import sharedRegions.AssaultParty;
 import sharedRegions.ConcentrationSite;
-import sharedRegions.ControlSite;
+import sharedRegions.ControlCollectionSite;
 import entities.mStates;
 
 public class mThief extends Thread {
@@ -11,11 +11,11 @@ public class mThief extends Thread {
 
     protected AssaultParty[] assaultParties;
 
-    protected ControlSite controlSite;
+    protected ControlCollectionSite controlSite;
 
     protected ConcentrationSite concentrationSite;
 
-    mThief(AssaultParty[] assaultParties, ControlSite controlSite, ConcentrationSite concentrationSite) {
+    mThief(AssaultParty[] assaultParties, ControlCollectionSite controlSite, ConcentrationSite concentrationSite) {
         this.state = mStates.PLANNING_THE_HEIST;
         this.assaultParties = assaultParties;
         this.controlSite = controlSite;
@@ -34,21 +34,30 @@ public class mThief extends Thread {
     public void run() {
         controlSite.startOperations();
         boolean heistRun = true;
-        while (controlSite.getHeistStatus()){
-            switch(controlSite.appraiseSit()){
-                case 0:
-                    con.prepareAssaultParty();
-                    controlSite.sendAssaultParty();
-                    break;
-                case 1:
-                    controlSite.takeARest();
-                    controlSite.collectACanvas();
-                    break;
-                case 2:
-                    controlSite.sumUpResults();
-                    break;
+        while (heistRun){
+            try {
+                switch(controlSite.appraiseSit()){
+                    case 0:
+                        concentrationSite.prepareAssaultParty();
+                        concentrationSite.sendAssaultParty();
+                        break;
+                    case 1:
+                        controlSite.takeARest();
+                        controlSite.collectACanvas();
+                        break;
+                    case 2:
+                        controlSite.sumUpResults();
+                        heistRun = false;
+                        break;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        join();
+        try {
+            join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

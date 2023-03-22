@@ -1,0 +1,114 @@
+Master Thief:
+
+startOperations
+
+faz o set state inicial do master e prossegue para o appraiseSit
+
+appraiseSit
+
+da lock do controlSite
+ve o estado do assalto em geral: numero de salas vazias, ladroes disponiveis e estado de atividade das parties
+da unlock e retorna um valor
+
+prepareAssaultParty
+
+da lock do concentration site
+ve qual e a proxima sala para o qual vai mandar uma equipa e ve qual e a proxima party que vai mandar
+da signal a 3 ladroes
+da await e espera pelo sinal vindo do prepareExcursion
+
+sendAssaultParty
+da lock do concentration site
+ve se a party a mandar esta cheia
+da o sinal para a party ser enviada (em vez de dar signalAll, da so signal uma vez????)
+incrementa a variavel da proxima party
+da unlock do concentration site
+
+
+takeARest
+
+da lock do control site (provavelmente nao e necessario sendo que ela nao afeta nada no control site)
+a thread adormece uma quantidade aleatoria de tempo
+da unlock e prossegue para o collectACanvas
+
+collectACanvas
+
+da lock do control site
+fica a espera que algum ladrao chegue (verifica se a queue esta vazia ou nao e adormece se estiver)
+le a FIFO da queue dos ladroes que chegaram processando um ladrao apenas
+verifica se a sala de onde esse ladrao veio esta cheia ou nao e altera o estado da sala adequadamente
+
+sumUpResults
+
+da lock do control site
+da o assalto como terminado alterando a logica necessaria para impedir os ladroes de repetirem o life cycle 
+atraves do amINeeded
+da print dos resultados do assalto e da join
+
+
+Ordinary Thief
+
+amINeeded
+
+da lock do control site
+verifica se ainda ha alguma sala vazia (ou rege-se por uma flag alterada pelo master, sendo esta ultima a abordagem provavelmente mais correta)
+se sim, sinaliza toda a gente no controlSite, se nao da unlock do control site, retorna e o life cycle do ladrao para
+(isto provavelmente esta mal, ele deveria esperar pelo signal do master antes de sair deste metodo e prosseguir com o life cycle)
+
+
+prepareExcursion
+
+da lock do concentratio site
+adiciona o ladrao a party que se estiver a tentar formar e, se o ladrao for o ultimo a entrar, sinaliza o concentration site
+da unlock do concentration site e fica em await na condiçao da party que lhe foi atribuida a espera do signal do master
+quando for sinalizado, sai do metodo e prossegue para o crawlIn
+
+
+crawlIn
+(ainda nao foi implementado)
+
+da lock a party
+da sort do array de ladroes tendo em conta a sua distancia a sala do museu
+altera a posiçao do ladrao ate este nao conseguir mais avançar 
+nessa altura, sinaliza a party e da await, esperando pelo movimento de outro ladrao
+assim sucessivamente ate chegarem todos a sala
+
+rollACanvas
+
+dar lock ao museu
+ver se a sala tem quadros
+se sim, variavel da thread fica a true, se nao fica a false
+dar unlock
+
+reverseDirection
+
+dar lock a party
+ver se todos os ladroes estao prontos a partir
+ultimo a chegar da signal uma vez para iniciar o processo de crawlOut e fica em await (logica inversa a do crawlIn)
+
+handACanvas
+
+da lock ao control site
+ladrao insere-se na waiting queue (literalmente ja que esta queue e de objects do tipo oThief)
+depois disso, fica em await
+
+
+
+--------------------
+
+
+startOperations feito
+appraiseSit feito
+prepareAssaultParty ???
+sendAssaultParty feito
+takeARest feito
+collectACanvas feito
+sumUpResults ??
+
+amINeeded feito
+prepareExcursion feito
+crawlIn nao
+rollACanvas feito
+reverseDirection feito
+crawlOut nao
+handACanvas feito

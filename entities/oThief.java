@@ -25,13 +25,13 @@ public class oThief extends Thread {
 
     protected AssaultParty[] arrayAP;
 
-    protected ControlSite controlSite;
+    protected ControlCollectionSite controlSite;
 
     protected ConcentrationSite concentSite;
 
     protected Museum museum;
 
-    oThief(int thiefID, AssaultParty[] arrayAP, ControlSite controlSite, ConcentrationSite concentSite, Museum museum, int MAX_D,
+    oThief(int thiefID, AssaultParty[] arrayAP, ControlCollectionSite controlSite, ConcentrationSite concentSite, Museum museum, int MAX_D,
             int MIN_D) {
         this.thiefID = thiefID;
         this.MD = (int) ((Math.random() * (MAX_D - MIN_D)) + MIN_D);
@@ -71,8 +71,8 @@ public class oThief extends Thread {
         return carryingCanvas;
     }
 
-    public void setCanvas(){
-        carryingCanvas = false;
+    public void setCanvas(boolean canvas){
+        carryingCanvas = canvas;
     }
 
     public void moveIn(int nextPos) {

@@ -6,15 +6,14 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import entities.oThief;
-import infrastructure.MemException;
-import infrastructure.MemFIFO;
+
 import entities.oStates;
 
 public class AssaultParty {
 
     private int currentRoomID;
     private Museum museum;
-    private MemFIFO thieves;
+    private oThief[] thieves;
     private int currentThiefNum;
     private int thiefMax;
     private ReentrantLock lock;
@@ -23,18 +22,16 @@ public class AssaultParty {
     private Condition cond;
     private int S;
     private boolean isRunning;
-    private boolean isReady;
 
-    public AssaultParty(int id, int partySize, int thiefMax, int S) throws MemException {
+    public AssaultParty(int id, int partySize, int thiefMax, int S){
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
-        this.thieves = new MemFIFO(partySize);
+        this.thieves = new oThief[partySize];
         this.currentThiefNum = 0;
         this.thiefMax = thiefMax;
         this.hasArrived = 0;
         this.S = S;
         this.isRunning = false;
-        this.isReady = false;
     }
 
     Comparator<oThief> crawlInComparator = new Comparator<oThief>() {
@@ -70,17 +67,23 @@ public class AssaultParty {
         return currentRoomID;
     }
 
+    public void modifyArrival(){
+        lock.lock();
+        hasArrived--;
+        lock.unlock();
+    }
+
     public void setReady() {
         lock.lock();
-        isReady = true;
-        cond.signalAll();
+        isRunning = true;
+        cond.signal();
         lock.unlock();
         return;
     }
 
-    public void addThief(oThief t) throws MemException {
+    public void addThief(oThief t){
         lock.lock();
-        thieves.write(t);
+        thieves[currentThiefNum] = t;
         currentThiefNum++;
         lock.unlock();
         return;
@@ -204,9 +207,18 @@ public class AssaultParty {
      */
 
     public void reverseDirection() throws InterruptedException {
-        cond.signal();
-        if (hasArrived < currentThiefNum) {
+        lock.lock();
+        hasArrived--;
+        if (hasArrived >= 0) {
             cond.await();
+            //logstate
+            return;
+        }
+        else{
+            cond.signal();
+            cond.await();
+            //logstate
+            return;
         }
     }
 
@@ -222,16 +234,14 @@ public class AssaultParty {
     public void setupParty(int roomID) {
         lock.lock();
         currentThiefNum = 0;
+        isRunning = false;
         currentRoomID = roomID;
         lock.unlock();
     }
 
     public void waitForSend() throws InterruptedException {
         lock.lock();
-        while (!isReady) {
-            cond.await();
-            lock.lock();
-        }
+        cond.await();
         return;
     }
 }
