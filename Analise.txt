@@ -247,3 +247,7 @@ rollACanvas
 GeneralRepos
 funçoes de print
 
+
+mandar em 7z e com as disponibilidades
+
+meter o prepareAssaultParty e o amINeeded no controlSite

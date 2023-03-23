@@ -1,4 +1,4 @@
-package infrastructure;
+package src.infrastructure;
 
 /**
  *    Parametric FIFO derived from a parametric memory.

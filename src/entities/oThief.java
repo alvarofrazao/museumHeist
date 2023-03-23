@@ -1,9 +1,10 @@
-package entities;
+package src.entities;
 
 import java.util.Random;
-import entities.oStates;
-import infrastructure.MemException;
-import sharedRegions.*;
+
+import src.entities.oStates;
+import src.infrastructure.MemException;
+import src.sharedRegions.*;
 
 import java.lang.Math;
 
@@ -33,7 +34,7 @@ public class oThief extends Thread {
 
     private Museum museum;
 
-    oThief(int thiefID, AssaultParty[] arrayAP, ControlCollectionSite controlSite, ConcentrationSite concentSite, Museum museum, int MAX_D, int MIN_D) {
+    public oThief(int thiefID, AssaultParty[] arrayAP, ControlCollectionSite controlSite, ConcentrationSite concentSite, Museum museum, int MAX_D, int MIN_D) {
         this.thiefID = thiefID;
         this.MD = (int) ((Math.random() * (MAX_D - MIN_D)) + MIN_D);
         this.Sit = 'W';
@@ -96,18 +97,14 @@ public class oThief extends Thread {
         currentPosition = pos;
     }
 
-    public void setInfo(int curParty,int roomID){
-        currentRoomID = roomID;
-        curAP = curParty;
-    }
-
     @Override
     public void run()  {
         try {
-            while(concentSite.amINeeded()){
-                concentSite.prepareExcursion();
+            while(controlSite.amINeeded()){
+                curAP = concentSite.prepareExcursion();
+                currentRoomID = arrayAP[curAP].addThief();
                 //arrayAP[curAP].crawlIn();
-                carryingCanvas = museum.rollACanvas(arrayAP[curAP].getRoomID()); //possivelmente esperar que todos cheguem?
+                carryingCanvas = museum.rollACanvas(currentRoomID); //possivelmente esperar que todos cheguem?
                 arrayAP[curAP].reverseDirection();
                 //arrayAP[curAP].crawlOut();
                 controlSite.handACanvas();
@@ -115,7 +112,6 @@ public class oThief extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (MemException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

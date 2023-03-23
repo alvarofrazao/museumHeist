@@ -1,4 +1,4 @@
-package entities;
+package src.entities;
 
 public class mStates {
     public static final int PLANNING_THE_HEIST = 0;

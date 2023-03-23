@@ -1,4 +1,4 @@
-package entities;
+package src.entities;
 
 public class oStates {
     public static final int COLLECTION_SITE = 0;

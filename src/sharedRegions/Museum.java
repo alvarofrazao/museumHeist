@@ -1,9 +1,9 @@
-package sharedRegions;
+package src.sharedRegions;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import entities.oThief;
+import src.entities.oThief;
 
 public class Museum {
     private int[] museumRoomsDistance;
