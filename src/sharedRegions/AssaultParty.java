@@ -23,11 +23,13 @@ public class AssaultParty {
     private int S;
     private boolean isRunning;
 
-    public AssaultParty(int id, int partySize, int thiefMax, int S) {
+    public AssaultParty(int id, int partySize, int thiefMax, int S, Museum museum, GeneralRepos repos) {
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
         this.reverseCond = lock.newCondition();
         this.thieves = new oThief[partySize];
+        this.museum = museum;
+        this.repos = repos;
         this.currentThiefNum = 0;
         this.thiefMax = thiefMax;
         this.hasArrived = 0;
@@ -81,8 +83,8 @@ public class AssaultParty {
 
     public void crawlIn() throws InterruptedException {
         lock.lock();
-        System.out.println("crawlIn");
         oThief curThread = (oThief) Thread.currentThread();
+        System.out.println("crawlIn" + curThread.getThiefID());
         //log state crawling inwards
         int move = 1;
         int partyPos = 0;
@@ -92,11 +94,11 @@ public class AssaultParty {
 
         for (; move <= roomDist; move++) {
             if(!canMove){
-                curThread.setPos(move-1);
+                curThread.moveIn(move-1);
+                System.out.println(+ curThread.getThiefID() + " " + move + " " + curThread.getCurrentPosition());
                 cond.signal();
                 cond.await();
                 lock.lock();
-                System.out.println("crawlIn");
                 canMove = true;
                 curThread = (oThief) Thread.currentThread();
                 move = 0;
