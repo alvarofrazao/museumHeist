@@ -82,8 +82,10 @@ public class ControlCollectionSite {
         // log state concentration site
         readyCond.signal();
         prepAssaultCond.await();
-        signalCond.signal();
-        thiefSlots--;
+        if(thiefSlots <= 0){
+            signalCond.signal();
+            thiefSlots--;
+        }
         lock.unlock();
         System.out.println("leaving amINeeded " + curThread.getId());
         if (heistRun) {
