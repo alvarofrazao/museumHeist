@@ -17,7 +17,7 @@ public class Main {
             Museum museum = new Museum(5,30,15,16,8);
             GeneralRepos repos = new GeneralRepos("logfile.txt");
             for(int i = 0; i< 2; i++){
-                aParties[i] = new AssaultParty(i, 3, 3, 3)
+                aParties[i] = new AssaultParty(i, 3, 3, 3);
             }
     
             ControlCollectionSite controlSite = new ControlCollectionSite(aParties, repos, 5, 6);

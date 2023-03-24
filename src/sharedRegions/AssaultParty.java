@@ -68,14 +68,6 @@ public class AssaultParty {
         return currentRoomID;
     }
 
-    public void setReady() {
-        lock.lock();
-        isRunning = true;
-        cond.signal();
-        lock.unlock();
-        return;
-    }
-
     public int addThief() throws InterruptedException {
         lock.lock();
         System.out.println("addthief");
@@ -85,6 +77,7 @@ public class AssaultParty {
         cond.await();
         return currentRoomID;
     }
+
 
     public void crawlIn() throws InterruptedException {
         lock.lock();
@@ -209,6 +202,7 @@ public class AssaultParty {
 
     public void setupParty(int roomID) {
         lock.lock();
+        System.out.println("setupParty");
         currentThiefNum = 0;
         isRunning = false;
         currentRoomID = roomID;
@@ -217,6 +211,7 @@ public class AssaultParty {
 
     public void signalDeparture() throws InterruptedException {
         lock.lock();
+        System.out.println("signalDep");
         cond.signal();
         lock.unlock();
         return;

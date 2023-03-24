@@ -42,6 +42,7 @@ public class mThief extends Thread {
                         party = controlSite.prepareAssaultParty();
                         assaultParties[party].setupParty(controlSite.getNextRoom());
                         concentrationSite.sendAssaultParty();
+                        assaultParties[party].signalDeparture();
                         break;
                     case 1:
                         controlSite.takeARest();

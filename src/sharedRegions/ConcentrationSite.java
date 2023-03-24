@@ -35,21 +35,21 @@ public class ConcentrationSite {
     public void sendAssaultParty() throws InterruptedException { // se calhar faria mais sentido este metodo ser da party em si???
         lock.lock();
         System.out.println("sendparty");
+        mThief curThread = (mThief) Thread.currentThread();
         //log state
-        if(thiefCount < 3){
+        while(thiefCount < 3){
+            System.out.println("waiting rdy cond" + thiefCount  + " " + curThread.getId());
             partyRdyCond.await();
+            lock.lock();
         }
-        
         if(nextParty > 1){
             nextParty = 0;
-            nextParty++;
         }
         else{
             nextParty++;
         }
         thiefCount = 0;
         lock.unlock();
-        aParties[nextParty].setReady();
     }
 
     
@@ -58,8 +58,8 @@ public class ConcentrationSite {
         lock.lock();
         System.out.println("prepexcursion");
         thiefCount++;
+        partyRdyCond.signal();
         if(thiefCount >= 3){
-            partyRdyCond.signal();
             lock.unlock();
             return nextParty;
         }else{

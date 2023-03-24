@@ -16,6 +16,7 @@ public class ControlCollectionSite {
     private Condition prepAssaultCond;
     private Condition readyCond;
     private Condition canvasRecvCond;
+    private Condition signalCond;
 
     private AssaultParty[] aParties;
     private Museum museum;
@@ -30,6 +31,8 @@ public class ControlCollectionSite {
     private int lastRoom;
     private int availableThieves;
     private int waitingQueueSize;
+    private int signalNum;
+    private int thiefSlots;
     private boolean heistRun;
 
 
@@ -42,11 +45,13 @@ public class ControlCollectionSite {
         this.prepAssaultCond = lock.newCondition();
         this.readyCond = lock.newCondition();
         this.canvasRecvCond = lock.newCondition();
+        this.signalCond = lock.newCondition();
 
         this.aParties = aParties;
         this.repos = repos;
         this.emptyRooms = new boolean[roomNumber];
         this.totalPaintings = 0;
+        this.thiefSlots = 3;
         this.availableThieves = 0;
         try {
             this.waitingQueue = new MemFIFO<oThief>(new oThief[thiefMax]);            
@@ -56,6 +61,7 @@ public class ControlCollectionSite {
         this.heistRun = true;
         this.nextParty = 0;
         this.lastRoom = -1;
+        this.signalNum = 0;
     }
 
     public int getNextRoom() {
@@ -71,11 +77,15 @@ public class ControlCollectionSite {
     public boolean amINeeded() throws InterruptedException {
         lock.lock();
         availableThieves++;
-        System.out.println("amINeeded");
+        oThief curThread = (oThief) Thread.currentThread();
+        System.out.println("amINeeded " + curThread.getId());
         // log state concentration site
         readyCond.signal();
         prepAssaultCond.await();
-
+        signalCond.signal();
+        thiefSlots--;
+        lock.unlock();
+        System.out.println("leaving amINeeded " + curThread.getId());
         if (heistRun) {
             return true;
         } else {
@@ -87,11 +97,16 @@ public class ControlCollectionSite {
         lock.lock();
         System.out.println("prepareAssaultParty");
         nextRoom = this.getNextRoom();
-        if (nextRoom != -1) {
+        if (nextRoom == -1) {
             return -1;
         }
         for (int i = 0; i < 3; i++) {
+            System.out.println("prep signal done");
             prepAssaultCond.signal();
+            if(thiefSlots <= 0){
+                signalCond.await();
+                lock.lock();
+            }
         }
         //log state
         lock.unlock();
@@ -177,6 +192,7 @@ public class ControlCollectionSite {
         }
 
         while (availableThieves < 3) {
+            System.out.println("mt waiting in  appraise");
             readyCond.await();
             lock.lock();
         }
