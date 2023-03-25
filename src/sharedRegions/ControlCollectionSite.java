@@ -75,7 +75,7 @@ public class ControlCollectionSite {
         this.signalNum = 0;
     }
 
-    public int getNextRoom() {
+    public int computeNextRoom() {
         for (int i = 0; i < emptyRooms.length; i++) {
             if (!emptyRooms[i] && (i != lastRoom)) {
                 lastRoom = i;
@@ -83,6 +83,10 @@ public class ControlCollectionSite {
             }
         }
         return -1;
+    }
+
+    public int getNextRoom(){
+        return nextRoom;
     }
 
     public boolean amINeeded() throws InterruptedException {
@@ -98,6 +102,12 @@ public class ControlCollectionSite {
             thiefSlots--;
             availableThieves--;
         }
+        /* else{
+            prepAssaultCond.await();
+            signalCond.signal();
+            thiefSlots--;
+            availableThieves--;            
+        } */
         //System.out.println("leaving amINeeded " + curThread.getThiefID());
         lock.unlock();
         if (heistRun) {
@@ -110,7 +120,7 @@ public class ControlCollectionSite {
     public int prepareAssaultParty() throws InterruptedException {
         lock.lock();
         //System.out.println("prepareAssaultParty");
-        nextRoom = this.getNextRoom();
+        nextRoom = this.computeNextRoom();
         thiefSlots = 3;
         if (nextRoom == -1) {
             return -1;
@@ -172,18 +182,21 @@ public class ControlCollectionSite {
             }
         }
         // log state
+        
         canvasCond.signal();
+        // System.out.println("collectACanvas final signal");
         lock.unlock();
     }
 
     public void handACanvas() throws MemException, InterruptedException {
         lock.lock();
+        oThief curThread = (oThief) Thread.currentThread();
         while(!handIn){
+            System.out.println("waiting in hac " +curThread.getCurAP() + " " + curThread.getThiefID());
             canvasRecvCond.signal();
             canvasCond.await();
             lock.lock();
-        }
-        oThief curThread = (oThief) Thread.currentThread();
+        } 
         handIn = false;
         System.out.println("handACanvas " + curThread.getCurAP() + " " + curThread.getThiefID());
         roomHandInQueue.write(curThread.getCurRoom());

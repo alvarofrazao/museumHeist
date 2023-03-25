@@ -33,13 +33,12 @@ public class AssaultParty {
         this.cond = lock.newCondition();
         this.reverseCond = lock.newCondition();
         this.setupCond = lock.newCondition();
-        //this.thieves = new oThief[partySize];
         this.thiefDist = new int[partySize];
         this.museum = museum;
         this.repos = repos;
         this.currentThiefNum = 0;
         this.thiefMax = thiefMax;
-        this.hasArrived = 0;
+        this.hasArrived = 2;
         this.S = S;
         this.isRunning = false;
     }
@@ -152,7 +151,7 @@ public class AssaultParty {
         return;
     }
 
-    public void crawlOut() throws InterruptedException{
+    /*public void crawlOut() throws InterruptedException{
         lock.lock();
         System.out.println("crawlOut");
         oThief curThread = (oThief) Thread.currentThread();
@@ -200,16 +199,22 @@ public class AssaultParty {
         }
         return;
     }
-
+    */
+    
     public void reverseDirection() throws InterruptedException {
         lock.lock();
-        //System.out.println("revdir");
+        
         hasArrived--;
+        //System.out.println(id + hasArrived);
         if (hasArrived >= 0) {
+            oThief curThread = (oThief) Thread.currentThread();
+            System.out.println("revdir wait " + curThread.getCurAP() + " " + curThread.getThiefID() );
             reverseCond.await();
             return;
         } else {
             reverseCond.signal();
+            oThief curThread = (oThief) Thread.currentThread();
+            System.out.println("revdir signal then wait " + curThread.getCurAP() + " " + curThread.getThiefID() );
             reverseCond.await();
             return;
         }
@@ -226,14 +231,15 @@ public class AssaultParty {
 
     public void signalPrevious(){
         lock.lock();
-        //System.out.println("sigprev");
+        // System.out.println("sigprev");
         cond.signal();
         lock.unlock();
     }    
 
     public void revSignalPrevious(){
         lock.lock();
-        //System.out.println("sigrev");
+        oThief curThread = (oThief) Thread.currentThread();
+        System.out.println("sigrev " + curThread.getCurAP() + " " + curThread.getThiefID());
         reverseCond.signal();
         lock.unlock();
     }    
