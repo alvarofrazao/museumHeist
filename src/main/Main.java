@@ -14,8 +14,8 @@ public class Main {
     {
         try {
             AssaultParty[] aParties = new AssaultParty[2];
-            Museum museum = new Museum(5,30,15,16,8);
             GeneralRepos repos = new GeneralRepos("logfile.txt");
+            Museum museum = new Museum(5,30,15,16,8, repos);
             for(int i = 0; i< 2; i++){
                 aParties[i] = new AssaultParty(i, 3, 3, 3,museum,repos);
             }
@@ -24,14 +24,15 @@ public class Main {
             ConcentrationSite concentSite = new ConcentrationSite(aParties);
     
             mThief master = new mThief(aParties,controlSite,concentSite);
-            oThief[] thieves = new oThief[3];
+            oThief[] thieves = new oThief[6];
     
-            for(int i = 0; i < 3; i++){
+            for(int i = 0; i < 6; i++){
                 thieves[i] = new oThief(i, aParties, controlSite, concentSite, museum, 6, 2);
+                repos.setOrdinaryThiefMD(i, thieves[i].getMD());
             }
     
             master.start();
-            for(int i = 0; i < 3; i++){
+            for(int i = 0; i < 6; i++){
                 thieves[i].start();
             }
         } catch (Exception e) {

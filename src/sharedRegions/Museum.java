@@ -8,19 +8,23 @@ import src.entities.oThief;
 public class Museum {
     private int[] museumRoomsDistance;
     private int[] museumRoomsPaintings;
-    private GeneralRepos repos;
+    private final GeneralRepos repos;
     private ReentrantLock lock;
     private Condition cond;
 
-    public Museum(int numberOfRooms, int MAX_D, int MIN_D, int MAX_P, int MIN_P) {
+    public Museum(int numberOfRooms, int MAX_D, int MIN_D, int MAX_P, int MIN_P, GeneralRepos repos) {
         this.museumRoomsDistance = new int[numberOfRooms];
         this.museumRoomsPaintings = new int[numberOfRooms];
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
+        this.repos = repos;
 
         for (int i = 0; i < numberOfRooms; i++) {
             museumRoomsDistance[i] = (int) ((Math.random() * (MAX_D - MIN_D)) + MIN_D);
             museumRoomsPaintings[i] = (int) ((Math.random() * (MAX_P - MIN_P)) + MIN_P);
+            lock.lock();
+            repos.setRoomDistanceAndPaintings(i, museumRoomsDistance[i],  museumRoomsPaintings[i]);
+            lock.unlock();
         }
     }
 
@@ -40,10 +44,12 @@ public class Museum {
             System.out.println("Got Canvas" + curThread.getCurAP() + " " + curThread.getThiefID());
             museumRoomsPaintings[roomID] -= 1;
             curThread.setCanvas(true);
+            repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
+            repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1);
             lock.unlock();
             return true;
         } else {
-            System.out.println("didnt got Canvas" + curThread.getThiefID());
+            System.out.println("didnt get Canvas" + curThread.getThiefID());
             curThread.setCanvas(false);
             lock.unlock();
             return false;
