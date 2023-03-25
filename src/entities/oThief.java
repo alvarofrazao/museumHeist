@@ -13,7 +13,8 @@ public class oThief extends Thread {
 
     private int MD; // thief's maximum displacement
 
-    private int currentPosition;
+    //private int currentPosition;
+    private int partyPos;
 
     private boolean carryingCanvas;
 
@@ -35,7 +36,8 @@ public class oThief extends Thread {
         this.thiefID = thiefID;
         this.MD = (int) ((Math.random() * (MAX_D - MIN_D)) + MIN_D);
         this.Sit = 'W';
-        this.currentPosition = 0;
+        //this.currentPosition = 0;
+        this.partyPos = -1;
         this.carryingCanvas = false;
         this.state = 0;
         this.arrayAP = arrayAP;
@@ -46,8 +48,12 @@ public class oThief extends Thread {
 
     
 
-    public int getCurrentPosition() { // thief distance to assigned room, may not be reasonable to directly assign
+    /* public int getCurrentPosition() { // thief distance to assigned room, may not be reasonable to directly assign
         return currentPosition;
+    } */
+
+    public int getPartyPos(){
+        return partyPos;
     }
 
     public int getThiefID() {
@@ -78,14 +84,14 @@ public class oThief extends Thread {
         carryingCanvas = canvas;
     }
 
-    public void moveIn(int nextPos) {
+    /* public void moveIn(int nextPos) {
         currentPosition += nextPos;
     }
 
     public void moveOut(int nextPos) {
         currentPosition -= nextPos;
     }
-
+ */
     public void setState(int newState) {
         state = newState;
     }
@@ -94,8 +100,8 @@ public class oThief extends Thread {
         return state;
     }
 
-    public void setPos(int pos){
-        currentPosition = pos;
+    public void setPartyPos(int pos){
+        partyPos = pos;
     }
 
     @Override
@@ -103,11 +109,13 @@ public class oThief extends Thread {
         try {
             while(controlSite.amINeeded()){
                 curAP = concentSite.prepareExcursion();
-                System.out.println(curAP+" "+thiefID);
+                //System.out.println(curAP+" "+thiefID);
                 currentRoomID = arrayAP[curAP].addThief();
-                arrayAP[curAP].crawlIn();
+                //arrayAP[curAP].crawlIn();
+                arrayAP[curAP].signalPrevious();
                 carryingCanvas = museum.rollACanvas(currentRoomID); //possivelmente esperar que todos cheguem?
                 arrayAP[curAP].reverseDirection();
+                arrayAP[curAP].revSignalPrevious();
                 //arrayAP[curAP].crawlOut();
                 controlSite.handACanvas();
             }

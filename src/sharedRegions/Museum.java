@@ -37,15 +37,16 @@ public class Museum {
     }
 
     public boolean rollACanvas(int roomID) {
+
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
+        System.out.println("rollACanvas " + curThread.getCurAP() + " " +  curThread.getThiefID() + " " + curThread.getCurRoom());
         if (museumRoomsPaintings[roomID] > 0) 
         {
-            System.out.println("Got Canvas" + curThread.getCurAP() + " " + curThread.getThiefID());
             museumRoomsPaintings[roomID] -= 1;
             curThread.setCanvas(true);
-            repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
-            repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1);
+            //repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
+            //repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1);
             lock.unlock();
             return true;
         } else {
