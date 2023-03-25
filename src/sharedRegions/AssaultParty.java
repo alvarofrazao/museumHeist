@@ -13,9 +13,12 @@ public class AssaultParty {
     private ReentrantLock lock;
     private Condition cond;
     private Condition reverseCond;
+    private Condition setupCond;
+
     private int currentRoomID;
     private Museum museum;
-    private oThief[] thieves;
+    //private oThief[] thieves;
+    private int[] thiefDist;
     private int currentThiefNum;
     private int thiefMax;
     private GeneralRepos repos;
@@ -29,7 +32,9 @@ public class AssaultParty {
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
         this.reverseCond = lock.newCondition();
-        this.thieves = new oThief[partySize];
+        this.setupCond = lock.newCondition();
+        //this.thieves = new oThief[partySize];
+        this.thiefDist = new int[partySize];
         this.museum = museum;
         this.repos = repos;
         this.currentThiefNum = 0;
@@ -38,23 +43,6 @@ public class AssaultParty {
         this.S = S;
         this.isRunning = false;
     }
-
-    Comparator<oThief> crawlInComparator = new Comparator<oThief>() {
-        @Override
-        public int compare(oThief t1, oThief t2) {
-            if (t1 == null || t2 == null) {
-                throw new NullPointerException("One or both oThief objects are null");
-            }
-            return Integer.compare(t2.getCurrentPosition(), t1.getCurrentPosition());
-        }
-    };
-
-    Comparator<oThief> crawlOutComparator = new Comparator<oThief>() {
-        @Override
-        public int compare(oThief t1, oThief t2) {
-            return Integer.compare(t1.getCurrentPosition(), t2.getCurrentPosition());
-        }
-    };
 
     public boolean isFull() {
         if (currentThiefNum >= thiefMax) {
@@ -75,12 +63,29 @@ public class AssaultParty {
         return currentRoomID;
     }
 
+    public void setupParty(int roomID) {
+        lock.lock();
+        //System.out.println("setupParty");
+        currentThiefNum = 0;
+        isRunning = false;
+        currentRoomID = roomID;
+        while(currentThiefNum < 3){
+            setupCond.signalAll();
+            lock.unlock();
+            lock.lock();
+        }
+        lock.unlock();
+    }
+
     public int addThief() throws InterruptedException {
         lock.lock();
+        setupCond.await();
+        lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
-        System.out.println("addthief " + curThread.getThiefID());
-        thieves[currentThiefNum] = curThread;
-        currentThiefNum++;
+        //System.out.println("addthief " + curThread.getThiefID()+" currentThiefNum = " +currentThiefNum );
+        //thieves[currentThiefNum] = curThread;
+        curThread.setPartyPos(currentThiefNum);
+        thiefDist[currentThiefNum++] = 0;
         cond.await();
         return currentRoomID;
     }
@@ -89,47 +94,59 @@ public class AssaultParty {
     public void crawlIn() throws InterruptedException {
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
-        System.out.println("crawlIn " + curThread.getCurAP() + " " + curThread.getThiefID());
         //log state crawling inwards
         int move = 1;
-        int partyPos = 0;
+        int curIdx = curThread.getPartyPos();
+        int behindDist;
         int nextPos = 0;
         int roomDist = museum.getRoomDistance(curThread.getCurRoom());
+        System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
         boolean canMove = true;
 
         for (; move <= roomDist; move++) {
+            behindDist = -1;
+
             if(!canMove){
-                curThread.moveIn(move-1);
-                System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID());
+                move--;
+                thiefDist[curIdx] += move;
+                System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 cond.signal();
                 cond.await();
                 lock.lock();
                 canMove = true;
                 curThread = (oThief) Thread.currentThread();
-                move = 0;
+                curIdx = curThread.getPartyPos();
+                behindDist = thiefDist[curIdx];
+                move = 1;
             }
 
-            nextPos = move + curThread.getCurrentPosition();
+            nextPos = move + thiefDist[curIdx];
 
             if (nextPos >= roomDist) {
-                curThread.setPos(roomDist);
+                //curThread.setPos(roomDist);
+                thiefDist[curIdx] = roomDist;
                 //log state at a room
                 cond.signal();
                 lock.unlock();
                 break;
             }
 
-            Arrays.sort(thieves, crawlInComparator);
+            for(int i = 0;i < 3; i++){
+                if(thiefDist[i] < thiefDist[curIdx]){
+                    if(thiefDist[i] > behindDist){
+                        behindDist = thiefDist[i];
+                    }
+                }
+            }
 
-            for (; partyPos < currentThiefNum; partyPos++) {
-                if (thieves[partyPos].getThiefID() == curThread.getThiefID()) {
+            for(int i = 0; i < 3; i++){
+                if(nextPos == thiefDist[i]){
                     break;
                 }
             }
-            if(partyPos != (thieves.length-1)){
-                if(nextPos > (thieves[partyPos+1].getCurrentPosition()+S)){
-                    canMove = false;
-                }
+
+            if(nextPos > (behindDist + S)){
+                canMove = false;
             }
         }
         return;
@@ -186,7 +203,7 @@ public class AssaultParty {
 
     public void reverseDirection() throws InterruptedException {
         lock.lock();
-        System.out.println("revdir");
+        //System.out.println("revdir");
         hasArrived--;
         if (hasArrived >= 0) {
             reverseCond.await();
@@ -207,14 +224,19 @@ public class AssaultParty {
         }
     }
 
-    public void setupParty(int roomID) {
+    public void signalPrevious(){
         lock.lock();
-        System.out.println("setupParty");
-        currentThiefNum = 0;
-        isRunning = false;
-        currentRoomID = roomID;
+        //System.out.println("sigprev");
+        cond.signal();
         lock.unlock();
-    }
+    }    
+
+    public void revSignalPrevious(){
+        lock.lock();
+        //System.out.println("sigrev");
+        reverseCond.signal();
+        lock.unlock();
+    }    
 
     public void signalDeparture() throws InterruptedException {
         lock.lock();

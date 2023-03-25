@@ -25,6 +25,8 @@ public class ControlCollectionSite {
     private MemFIFO<oThief> waitingQueue;
     private boolean[] emptyRooms;
     private boolean[] partyRunStatus;
+    private MemFIFO<Boolean> canvasHandInQueue;
+    private MemFIFO<Integer> roomHandInQueue;
 
     private int totalPaintings;
     private int nextParty;
@@ -34,6 +36,7 @@ public class ControlCollectionSite {
     private int waitingQueueSize;
     private int signalNum;
     private int thiefSlots;
+    private boolean handIn;
     private boolean heistRun;
 
 
@@ -54,11 +57,14 @@ public class ControlCollectionSite {
         this.partyRunStatus = new boolean[aParties.length];
 
         try {
-            this.waitingQueue = new MemFIFO<oThief>(new oThief[thiefMax]);            
+            //this.waitingQueue = new MemFIFO<oThief>(new oThief[thiefMax]);
+            this.canvasHandInQueue = new MemFIFO<Boolean>(new Boolean[thiefMax]);
+            this.roomHandInQueue = new MemFIFO<Integer>(new Integer[thiefMax]);      
         } catch (MemException e) {
         }
 
         this.heistRun = true;
+        this.handIn = true;
 
         this.totalPaintings = 0;
         this.thiefSlots = 3;
@@ -92,7 +98,7 @@ public class ControlCollectionSite {
             thiefSlots--;
             availableThieves--;
         }
-        System.out.println("leaving amINeeded " + curThread.getThiefID());
+        //System.out.println("leaving amINeeded " + curThread.getThiefID());
         lock.unlock();
         if (heistRun) {
             return true;
@@ -103,13 +109,14 @@ public class ControlCollectionSite {
 
     public int prepareAssaultParty() throws InterruptedException {
         lock.lock();
-        System.out.println("prepareAssaultParty");
+        //System.out.println("prepareAssaultParty");
         nextRoom = this.getNextRoom();
+        thiefSlots = 3;
         if (nextRoom == -1) {
             return -1;
         }
         for (int i = 0; i < 3; i++) {
-            System.out.println("prep signal done");
+          //  System.out.println("prep signal done");
             prepAssaultCond.signal();
             if(thiefSlots >= 0){
                 signalCond.await();
@@ -127,32 +134,39 @@ public class ControlCollectionSite {
     }
 
     public void takeARest() throws InterruptedException {
-        lock.lock();
+        //lock.lock();
         System.out.println("takeARest");
         Thread.sleep(100);
         // log state
-        lock.unlock();
+        //lock.unlock();
         return;
     }
 
     public void collectACanvas() throws InterruptedException {
         lock.lock();
         System.out.println("collectACanvas");
-        oThief lastThief;
+        int roomRead;
+        boolean canvasRead;
         //outra opçao e fazer varias fifos para as varias informaçoes que tem que se armazenar (fifo para sala e fifo para bools)
         boolean collect = true;
         while (collect) {
             try {
-                lastThief = waitingQueue.read();
-                if (lastThief.hasPainting()) {
+                //lastThief = waitingQueue.read();
+                roomRead = roomHandInQueue.read();
+                canvasRead = canvasHandInQueue.read();
+                System.out.println("non emtpy Q");
+                if (canvasRead) {
                     totalPaintings++;
                 } else {
-                    emptyRooms[lastThief.getCurRoom()] = true;
+                    emptyRooms[roomRead] = true;
                 }
                 collect = false;
+                handIn = true;
                 waitingQueueSize--;
                 break;
             } catch (MemException e) {
+                System.out.println("empty Q");
+                canvasCond.signal();
                 canvasRecvCond.await();
                 lock.lock();
             }
@@ -164,11 +178,19 @@ public class ControlCollectionSite {
 
     public void handACanvas() throws MemException, InterruptedException {
         lock.lock();
-        System.out.println("handACanvas");
+        while(!handIn){
+            canvasRecvCond.signal();
+            canvasCond.await();
+            lock.lock();
+        }
         oThief curThread = (oThief) Thread.currentThread();
-        waitingQueue.write(curThread);
-        waitingQueueSize++;
+        handIn = false;
+        System.out.println("handACanvas " + curThread.getCurAP() + " " + curThread.getThiefID());
+        roomHandInQueue.write(curThread.getCurRoom());
+        canvasHandInQueue.write(curThread.hasPainting());
         canvasRecvCond.signal();
+        //waitingQueue.write(curThread);
+        //waitingQueueSize++;
         canvasCond.await();
     }
 
@@ -193,6 +215,11 @@ public class ControlCollectionSite {
             this.heistRun = false;
             lock.unlock();
             return 2;
+        }
+
+        if(availableThieves >= 3){
+            lock.unlock();
+            return 0;
         }
 
         for(int i = 0; i < aParties.length;i++){

@@ -1,6 +1,5 @@
 package src.sharedRegions;
 
-import java.util.ResourceBundle.Control;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -34,11 +33,11 @@ public class ConcentrationSite {
 
     public void sendAssaultParty() throws InterruptedException { // se calhar faria mais sentido este metodo ser da party em si???
         lock.lock();
-        System.out.println("sendparty");
+        //System.out.println("sendparty");
         mThief curThread = (mThief) Thread.currentThread();
         //log state
         while(thiefCount < 3){
-            System.out.println("waiting rdy cond" + thiefCount  + " " + curThread.getId());
+            //System.out.println("waiting rdy cond" + thiefCount  + " " + curThread.getId());
             partyRdyCond.await();
             lock.lock();
         }
@@ -59,12 +58,7 @@ public class ConcentrationSite {
         System.out.println("prepexcursion");
         thiefCount++;
         partyRdyCond.signal();
-        if(thiefCount >= 3){
-            lock.unlock();
-            return nextParty;
-        }else{
-            lock.unlock();
-            return nextParty;
-        }
+        lock.unlock();
+        return nextParty;
     }
 }
