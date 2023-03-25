@@ -21,9 +21,11 @@ public class AssaultParty {
     private GeneralRepos repos;
     private int hasArrived;
     private int S;
+    private int id;
     private boolean isRunning;
 
     public AssaultParty(int id, int partySize, int thiefMax, int S, Museum museum, GeneralRepos repos) {
+        this.id = id;
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
         this.reverseCond = lock.newCondition();
@@ -40,6 +42,9 @@ public class AssaultParty {
     Comparator<oThief> crawlInComparator = new Comparator<oThief>() {
         @Override
         public int compare(oThief t1, oThief t2) {
+            if (t1 == null || t2 == null) {
+                throw new NullPointerException("One or both oThief objects are null");
+            }
             return Integer.compare(t2.getCurrentPosition(), t1.getCurrentPosition());
         }
     };
@@ -72,8 +77,8 @@ public class AssaultParty {
 
     public int addThief() throws InterruptedException {
         lock.lock();
-        System.out.println("addthief");
         oThief curThread = (oThief) Thread.currentThread();
+        System.out.println("addthief " + curThread.getThiefID());
         thieves[currentThiefNum] = curThread;
         currentThiefNum++;
         cond.await();
@@ -84,7 +89,7 @@ public class AssaultParty {
     public void crawlIn() throws InterruptedException {
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
-        System.out.println("crawlIn" + curThread.getThiefID());
+        System.out.println("crawlIn " + curThread.getCurAP() + " " + curThread.getThiefID());
         //log state crawling inwards
         int move = 1;
         int partyPos = 0;
@@ -95,7 +100,7 @@ public class AssaultParty {
         for (; move <= roomDist; move++) {
             if(!canMove){
                 curThread.moveIn(move-1);
-                System.out.println(+ curThread.getThiefID() + " " + move + " " + curThread.getCurrentPosition());
+                System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID());
                 cond.signal();
                 cond.await();
                 lock.lock();

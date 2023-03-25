@@ -24,6 +24,7 @@ public class ControlCollectionSite {
 
     private MemFIFO<oThief> waitingQueue;
     private boolean[] emptyRooms;
+    private boolean[] partyRunStatus;
 
     private int totalPaintings;
     private int nextParty;
@@ -50,15 +51,19 @@ public class ControlCollectionSite {
         this.aParties = aParties;
         this.repos = repos;
         this.emptyRooms = new boolean[roomNumber];
-        this.totalPaintings = 0;
-        this.thiefSlots = 3;
-        this.availableThieves = 0;
+        this.partyRunStatus = new boolean[aParties.length];
+
         try {
             this.waitingQueue = new MemFIFO<oThief>(new oThief[thiefMax]);            
         } catch (MemException e) {
         }
-        this.waitingQueueSize = 0;
+
         this.heistRun = true;
+
+        this.totalPaintings = 0;
+        this.thiefSlots = 3;
+        this.availableThieves = 0;
+        this.waitingQueueSize = 0;
         this.nextParty = 0;
         this.lastRoom = -1;
         this.signalNum = 0;
@@ -78,16 +83,17 @@ public class ControlCollectionSite {
         lock.lock();
         availableThieves++;
         oThief curThread = (oThief) Thread.currentThread();
-        System.out.println("amINeeded " + curThread.getId());
+        System.out.println("amINeeded " + curThread.getThiefID());
         // log state concentration site
         readyCond.signal();
         prepAssaultCond.await();
-        if(thiefSlots <= 0){
+        if(thiefSlots >= 0){
             signalCond.signal();
             thiefSlots--;
+            availableThieves--;
         }
+        System.out.println("leaving amINeeded " + curThread.getThiefID());
         lock.unlock();
-        System.out.println("leaving amINeeded " + curThread.getId());
         if (heistRun) {
             return true;
         } else {
@@ -105,14 +111,15 @@ public class ControlCollectionSite {
         for (int i = 0; i < 3; i++) {
             System.out.println("prep signal done");
             prepAssaultCond.signal();
-            if(thiefSlots <= 0){
+            if(thiefSlots >= 0){
                 signalCond.await();
                 lock.lock();
             }
         }
         //log state
+        partyRunStatus[nextParty] = true;
         lock.unlock();
-        return nextParty;
+        return nextParty++;
     }
 
     public boolean getHeistStatus() {
@@ -188,16 +195,24 @@ public class ControlCollectionSite {
             return 2;
         }
 
-        if (waitingQueueSize > 0) {
+        for(int i = 0; i < aParties.length;i++){
+            if(partyRunStatus[i]){
+                lock.unlock();
+                return 1;
+            }
+        }
+
+        /* if (waitingQueueSize > 0) {
             lock.unlock();
             return 1;
-        }
+        } */
 
         while (availableThieves < 3) {
             System.out.println("mt waiting in  appraise");
             readyCond.await();
             lock.lock();
         }
+        System.out.println("leaving appraiseSit");
         returnValue = 0;
         lock.unlock();
         return returnValue;

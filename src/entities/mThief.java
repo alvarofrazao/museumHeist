@@ -39,16 +39,19 @@ public class mThief extends Thread {
             try {
                 switch(controlSite.appraiseSit()){
                     case 0:
+                        System.out.println("case 0 - assembling a group ");
                         party = controlSite.prepareAssaultParty();
                         assaultParties[party].setupParty(controlSite.getNextRoom());
                         concentrationSite.sendAssaultParty();
                         assaultParties[party].signalDeparture();
                         break;
                     case 1:
+                        System.out.println("case 1 - waiting for arrival ");
                         controlSite.takeARest();
                         controlSite.collectACanvas();
                         break;
                     case 2:
+                        System.out.println("case 2 - sumresults ");
                         controlSite.sumUpResults();
                         heistRun = false;
                         break;

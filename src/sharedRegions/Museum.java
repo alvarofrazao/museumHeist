@@ -37,7 +37,7 @@ public class Museum {
         oThief curThread = (oThief) Thread.currentThread();
         if (museumRoomsPaintings[roomID] > 0) 
         {
-            System.out.println("Got Canvas" + curThread.getThiefID());
+            System.out.println("Got Canvas" + curThread.getCurAP() + " " + curThread.getThiefID());
             museumRoomsPaintings[roomID] -= 1;
             curThread.setCanvas(true);
             lock.unlock();
