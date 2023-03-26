@@ -180,7 +180,7 @@ public class ControlCollectionSite {
                 System.out.println("empty Q");
                 canvasCond.signalAll();
                 canvasRecvCond.await();
-                lock.lock();
+                // lock.lock();
             }
         }
         repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
@@ -197,7 +197,7 @@ public class ControlCollectionSite {
             System.out.println("waiting in hac " +curThread.getCurAP() + " " + curThread.getThiefID());
             canvasRecvCond.signal();
             canvasCond.await();
-            lock.lock();
+            // lock.lock();
         } 
         handIn = false;
         System.out.println("handACanvas " + curThread.getCurAP() + " " + curThread.getThiefID());
@@ -208,6 +208,7 @@ public class ControlCollectionSite {
         //waitingQueueSize++;
         canvasCond.await();
         repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
+        lock.unlock();
     }
 
     public int appraiseSit() throws InterruptedException {
@@ -226,7 +227,7 @@ public class ControlCollectionSite {
         if (emptyCounter == emptyRooms.length) {
             while (availableThieves < 6) {
                 readyCond.await();
-                lock.lock();
+                // lock.lock();
             }
             this.heistRun = false;
             lock.unlock();
@@ -253,7 +254,7 @@ public class ControlCollectionSite {
         while (availableThieves < 3) {
             System.out.println("mt waiting in  appraise");
             readyCond.await();
-            lock.lock();
+            // lock.lock();
         }
         System.out.println("leaving appraiseSit");
         returnValue = 0;

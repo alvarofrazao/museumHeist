@@ -38,7 +38,7 @@ public class ConcentrationSite {
         while(thiefCount < 3){
             //System.out.println("waiting rdy cond" + thiefCount  + " " + curThread.getId());
             partyRdyCond.await();
-            lock.lock();
+            // lock.lock();
         }
         if(nextParty > 1){
             nextParty = 0;
@@ -47,7 +47,7 @@ public class ConcentrationSite {
             nextParty++;
         }
         thiefCount = 0;
-        repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
+        //repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
         lock.unlock();
     }
 

@@ -79,13 +79,14 @@ public class AssaultParty {
     public int addThief() throws InterruptedException {
         lock.lock();
         setupCond.await();
-        lock.lock();
+        // lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
         //System.out.println("addthief " + curThread.getThiefID()+" currentThiefNum = " +currentThiefNum );
         //thieves[currentThiefNum] = curThread;
         curThread.setPartyPos(currentThiefNum);
         thiefDist[currentThiefNum++] = 0;
         cond.await();
+        lock.unlock();
         return currentRoomID;
     }
 
@@ -111,7 +112,7 @@ public class AssaultParty {
                 System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 cond.signal();
                 cond.await();
-                lock.lock();
+                // lock.lock();
                 canMove = true;
                 curThread = (oThief) Thread.currentThread();
                 curIdx = curThread.getPartyPos();
@@ -125,7 +126,7 @@ public class AssaultParty {
                 //curThread.setPos(roomDist);
                 thiefDist[curIdx] = roomDist;
                 hasArrived += 1;
-                // System.out.println("hasarrived crawlIn = " + hasArrived);
+                // System.out.println("hasarrgived crawlIn = " + hasArrived);
                 //log state at a room
                 cond.signal();
                 lock.unlock();
@@ -170,11 +171,11 @@ public class AssaultParty {
 
             if(!canMove){
                 move--;
-                thiefDist[curIdx] += move;
+                thiefDist[curIdx] -= move;
                 System.out.println("crawlOut "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 reverseCond.signal();
                 reverseCond.await();
-                lock.lock();
+                // lock.lock();
                 canMove = true;
                 curThread = (oThief) Thread.currentThread();
                 curIdx = curThread.getPartyPos();
@@ -182,7 +183,7 @@ public class AssaultParty {
                 move = 1;
             }
 
-            nextPos = move + thiefDist[curIdx];
+            nextPos = move - thiefDist[curIdx];
 
             if (nextPos <= 0) {
                 //curThread.setPos(roomDist);
@@ -218,15 +219,19 @@ public class AssaultParty {
 
     public void reverseDirection() throws InterruptedException {
         lock.lock();
-        if(hasArrived != 3){
+        hasArrived--;
+        if(hasArrived > 0){
             System.out.println("no signal in revdir");
             reverseCond.await();
             System.out.println("proceeded");
+            lock.unlock();
             return;
         }else{
             System.out.println("signal in revdir");
             reverseCond.signal();
             reverseCond.await();
+            System.out.println("lastThread in revdir");
+            lock.unlock();
             return;
         }
         
