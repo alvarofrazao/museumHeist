@@ -3,7 +3,7 @@ package src.sharedRegions;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import src.entities.mStates;
+import src.entities.oThief;
 import src.infrastructure.MemException;
 
 public class ConcentrationSite {
@@ -14,17 +14,17 @@ public class ConcentrationSite {
     private Condition partyRdyCond;
     //private AssaultParty[] aParties;
     //private ControlCollectionSite controlSite;
-    private GeneralRepos repos;
+    private final GeneralRepos repos;
     private int nextParty;
     private int thiefCount;
 
 
-    public ConcentrationSite(AssaultParty[] aParties) {
+    public ConcentrationSite(AssaultParty[] aParties, GeneralRepos repos) {
         this.lock = new ReentrantLock();
         //this.siteCond = lock.newCondition();
         //this.orgCond = lock.newCondition();
         this.partyRdyCond = lock.newCondition();
-
+        this.repos = repos;
         //this.aParties = aParties;
         this.nextParty = 0;
         this.thiefCount = 0;
@@ -56,6 +56,7 @@ public class ConcentrationSite {
         lock.lock();
         System.out.println("prepexcursion");
         thiefCount++;
+        repos.setOrdinaryThiefPartyState(((oThief) Thread.currentThread()).getThiefID(), 'P');
         partyRdyCond.signal();
         lock.unlock();
         return nextParty;

@@ -5,6 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import src.entities.mStates;
 import src.entities.mThief;
+import src.entities.oStates;
 import src.entities.oThief;
 import src.infrastructure.*;
 
@@ -109,6 +110,12 @@ public class ControlCollectionSite {
         lock.lock();
         availableThieves++;
         oThief curThread = (oThief) Thread.currentThread();
+        if (!curThread.isFirstCycle()){
+            repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CONCENTRATION_SITE);
+            repos.setOrdinaryThiefPartyState(curThread.getThiefID(), 'W');
+            //repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
+            curThread.setFirstCycle(false);
+        }
         System.out.println("amINeeded " + curThread.getThiefID());
         // log state concentration site
         readyCond.signal();
@@ -138,6 +145,7 @@ public class ControlCollectionSite {
         if (nextRoom == -1) {
             return -1;
         }
+        repos.setAssaultPartyRoom(nextParty, nextRoom+1);
         for (int i = 0; i < 3; i++) {
             prepAssaultCond.signal();
             if(thiefSlots >= 0){
@@ -211,9 +219,10 @@ public class ControlCollectionSite {
         System.out.println("handACanvas " + curThread.getCurAP() + " " + curThread.getThiefID());
         roomHandInQueue.write(curThread.getCurRoom());
         canvasHandInQueue.write(curThread.hasPainting());
+        repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
         canvasRecvCond.signal();
         canvasCond.await();
-        //repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
+        repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
         lock.unlock();
     }
 

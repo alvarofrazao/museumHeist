@@ -18,6 +18,8 @@ public class oThief extends Thread {
 
     private boolean carryingCanvas;
 
+    private boolean firstCycle;
+
     private int curAP;
 
     private int currentRoomID;
@@ -44,6 +46,7 @@ public class oThief extends Thread {
         this.controlSite = controlSite;
         this.concentSite = concentSite;
         this.museum = museum;
+        this.firstCycle = true;
     }
 
     
@@ -103,6 +106,15 @@ public class oThief extends Thread {
     public void setPartyPos(int pos){
         partyPos = pos;
     }
+
+    public boolean isFirstCycle() {
+        return firstCycle;
+    }
+
+    public void setFirstCycle(boolean firstCycle) {
+        this.firstCycle = firstCycle;
+    }
+
 
     @Override
     public void run()  {

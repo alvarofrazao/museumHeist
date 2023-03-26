@@ -45,8 +45,8 @@ public class Museum {
         {
             museumRoomsPaintings[roomID] -= 1;
             curThread.setCanvas(true);
-            //repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
-            //repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1);
+            repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
+            repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1);
             lock.unlock();
             return true;
         } else {
