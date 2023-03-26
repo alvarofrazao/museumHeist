@@ -54,6 +54,8 @@ public class AssaultParty {
     }
 
     public boolean getStatus() {
+        lock.lock();
+        lock.unlock();
         return isRunning;
     }
 
@@ -159,7 +161,6 @@ public class AssaultParty {
     public void crawlOut() throws InterruptedException{
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
-        //log state crawling inwards
         int move = 1;
         int curIdx = curThread.getPartyPos();
         int behindDist;
@@ -182,7 +183,7 @@ public class AssaultParty {
                 canMove = true;
                 curThread = (oThief) Thread.currentThread();
                 curIdx = curThread.getPartyPos();
-                behindDist = thiefDist[curIdx];
+                behindDist = roomDist;
                 move = 1;
             }
 
@@ -194,6 +195,10 @@ public class AssaultParty {
                 /* repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
                 repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.COLLECTION_SITE); */
                 hasArrived++;
+                System.out.println("hasArrived crawlout "+ id + " " +hasArrived);
+                if(hasArrived == 3){
+                    isRunning = false;
+                }
                 //log state at a room
                 reverseCond.signal();
                 lock.unlock();

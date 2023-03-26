@@ -52,14 +52,16 @@ public class mThief extends Thread {
                         assaultParties[party].signalDeparture();
                         break;
                     case 1:
-                        System.out.println("case 1 - waiting for arrival ");
+                        //System.out.println("case 1 - waiting for arrival ");
                         controlSite.takeARest();
                         controlSite.collectACanvas();
                         break;
                     case 2:
-                        System.out.println("case 2 - sumresults ");
+                        //System.out.println("case 2 - sumresults ");
                         controlSite.sumUpResults();
                         heistRun = false;
+                        break;
+                    default:
                         break;
                 }
             } catch (InterruptedException e) {
