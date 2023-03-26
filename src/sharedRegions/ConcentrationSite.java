@@ -5,6 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import src.entities.oThief;
 import src.infrastructure.MemException;
+import src.entities.mStates;
 
 public class ConcentrationSite {
 
@@ -46,7 +47,7 @@ public class ConcentrationSite {
         }
 
         thiefCount = 0;
-        //repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
+        repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
         lock.unlock();
     }
 
@@ -56,7 +57,7 @@ public class ConcentrationSite {
         lock.lock();
         //System.out.println("prepexcursion");
         thiefCount++;
-        //repos.setOrdinaryThiefPartyState(((oThief) Thread.currentThread()).getThiefID(), 'P');
+        repos.setOrdinaryThiefPartyState(((oThief) Thread.currentThread()).getThiefID(), 'P');
         partyRdyCond.signal();
         lock.unlock();
         return nextParty;

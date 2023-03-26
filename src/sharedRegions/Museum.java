@@ -1,6 +1,5 @@
 package src.sharedRegions;
 
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import src.entities.oThief;
@@ -10,13 +9,11 @@ public class Museum {
     private int[] museumRoomsPaintings;
     private final GeneralRepos repos;
     private ReentrantLock lock;
-    private Condition cond;
 
     public Museum(int numberOfRooms, int MAX_D, int MIN_D, int MAX_P, int MIN_P, GeneralRepos repos) {
         this.museumRoomsDistance = new int[numberOfRooms];
         this.museumRoomsPaintings = new int[numberOfRooms];
         this.lock = new ReentrantLock();
-        this.cond = lock.newCondition();
         this.repos = repos;
 
         for (int i = 0; i < numberOfRooms; i++) {
@@ -45,8 +42,8 @@ public class Museum {
         {
             museumRoomsPaintings[roomID] -= 1;
             curThread.setCanvas(true);
-            /* repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
-            repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1); */
+            repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
+            repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1);
             lock.unlock();
             return true;
         } else {

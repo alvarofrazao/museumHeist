@@ -1,13 +1,9 @@
 package src.sharedRegions;
 
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import genclass.GenericIO;
 import genclass.TextFile;
-import src.entities.*;
-import src.main.*;
-import src.infrastructure.*;
 
 /**
  *  General Repository.
@@ -243,6 +239,7 @@ public class GeneralRepos {
         }
         GenericIO.writelnString(String.format("The operation of updating thief %d of assault party %d position went wrong! Couldnt find thief in assault party", thief, ap));
         // System.exit (1);
+        lock.unlock();
     }
 
     /**
@@ -320,8 +317,10 @@ public class GeneralRepos {
 
         lineStatus += String.format("My friends, tonight's effort produced %2d priceless paintings!", total_paintings);
 
+        lock.lock();
         log.writelnString(lineStatus);
-
+        lock.unlock();
+        
         if (!log.close ()){
             GenericIO.writelnString ("The operation of closing the file " + logFileName + " failed!");
             System.exit (1);

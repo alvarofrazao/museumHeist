@@ -88,7 +88,7 @@ public class AssaultParty {
         repos.addThiefToAssaultParty(curThread.getThiefID(), this.id, currentThiefNum);
         thiefDist[currentThiefNum++] = 0;
         cond.await();
-        //repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
+        repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
         lock.unlock();
         return currentRoomID;
     }
@@ -112,7 +112,6 @@ public class AssaultParty {
             if(!canMove){
                 move--;
                 thiefDist[curIdx] += move;
-                System.out.println("ganza crawlin");
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
                 System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 cond.signal();
@@ -128,7 +127,6 @@ public class AssaultParty {
             if (nextPos >= roomDist) {
                 //curThread.setPos(roomDist);
                 thiefDist[curIdx] = roomDist;
-                System.out.println("ganza chegou ao room");
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
                 repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.AT_A_ROOM);
                 hasArrived += 1;
@@ -177,7 +175,6 @@ public class AssaultParty {
             if(!canMove){
                 move--;
                 thiefDist[curIdx] -= move;
-                System.out.println("ganza crawlout");
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
                 System.out.println("crawlOut "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 reverseCond.signal();
@@ -195,7 +192,6 @@ public class AssaultParty {
             if (nextPos <= 0) {
                 //curThread.setPos(roomDist);
                 thiefDist[curIdx] = 0;
-                System.out.println(curThread.getThiefID()+" ganza chegou ao control");
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
                 repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.COLLECTION_SITE);
                 hasArrived++;
@@ -238,7 +234,7 @@ public class AssaultParty {
         if(hasArrived > 0){
             //System.out.println("no signal in revdir");
             reverseCond.await();
-            //repos.setOrdinaryThiefState(((oThief) Thread.currentThread()).getThiefID(), oStates.CRAWLING_OUTWARDS);
+            repos.setOrdinaryThiefState(((oThief) Thread.currentThread()).getThiefID(), oStates.CRAWLING_OUTWARDS);
             //System.out.println("proceeded");
             lock.unlock();
             return;
@@ -246,7 +242,7 @@ public class AssaultParty {
             //System.out.println("signal in revdir");
             reverseCond.signal();
             reverseCond.await();
-            //repos.setOrdinaryThiefState(((oThief) Thread.currentThread()).getThiefID(), oStates.CRAWLING_OUTWARDS);
+            repos.setOrdinaryThiefState(((oThief) Thread.currentThread()).getThiefID(), oStates.CRAWLING_OUTWARDS);
             //System.out.println("lastThread in revdir");
             lock.unlock();
             return;
