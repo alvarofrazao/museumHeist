@@ -80,13 +80,13 @@ public class AssaultParty {
         lock.lock();
         setupCond.await();
         oThief curThread = (oThief) Thread.currentThread();
-        System.out.println("addthief " + curThread.getThiefID()+" currentThiefNum = " +currentThiefNum );
+        //System.out.println("addthief " + curThread.getThiefID()+" currentThiefNum = " +currentThiefNum );
         //thieves[currentThiefNum] = curThread;
         curThread.setPartyPos(currentThiefNum);
-        repos.addThiefToAssaultParty(curThread.getThiefID(), this.id);
+        //repos.addThiefToAssaultParty(curThread.getThiefID(), this.id);
         thiefDist[currentThiefNum++] = 0;
         cond.await();
-        repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
+        //repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
         lock.unlock();
         return currentRoomID;
     }
@@ -101,7 +101,7 @@ public class AssaultParty {
         int behindDist;
         int nextPos = 0;
         int roomDist = museum.getRoomDistance(curThread.getCurRoom());
-        System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
+        //System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
         boolean canMove = true;
 
         for (; move <= roomDist; move++) {
@@ -110,13 +110,11 @@ public class AssaultParty {
             if(!canMove){
                 move--;
                 thiefDist[curIdx] += move;
-                repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
+                //repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
                 System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 cond.signal();
                 cond.await();
-                // lock.lock();
                 canMove = true;
-                curThread = (oThief) Thread.currentThread();
                 curIdx = curThread.getPartyPos();
                 behindDist = thiefDist[curIdx];
                 move = 1;
@@ -127,8 +125,8 @@ public class AssaultParty {
             if (nextPos >= roomDist) {
                 //curThread.setPos(roomDist);
                 thiefDist[curIdx] = roomDist;
-                repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
-                repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.AT_A_ROOM);
+                /* repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
+                repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.AT_A_ROOM); */
                 hasArrived += 1;
                 // System.out.println("hasarrgived crawlIn = " + hasArrived);
                 //log state at a room
@@ -167,7 +165,7 @@ public class AssaultParty {
         int behindDist;
         int nextPos = 0;
         int roomDist = museum.getRoomDistance(curThread.getCurRoom());
-        System.out.println("crawlOut "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
+        //System.out.println("crawlOut "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
         boolean canMove = true;
 
         for (; move <= roomDist; move++) {
@@ -176,7 +174,7 @@ public class AssaultParty {
             if(!canMove){
                 move--;
                 thiefDist[curIdx] -= move;
-                repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
+                //repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
                 System.out.println("crawlOut "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 reverseCond.signal();
                 reverseCond.await();
@@ -193,8 +191,8 @@ public class AssaultParty {
             if (nextPos <= 0) {
                 //curThread.setPos(roomDist);
                 thiefDist[curIdx] = 0;
-                repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
-                repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.COLLECTION_SITE);
+                /* repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
+                repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.COLLECTION_SITE); */
                 hasArrived++;
                 //log state at a room
                 reverseCond.signal();
@@ -229,35 +227,21 @@ public class AssaultParty {
         lock.lock();
         hasArrived--;
         if(hasArrived > 0){
-            System.out.println("no signal in revdir");
+            //System.out.println("no signal in revdir");
             reverseCond.await();
-            repos.setOrdinaryThiefState(((oThief) Thread.currentThread()).getThiefID(), oStates.CRAWLING_OUTWARDS);
-            System.out.println("proceeded");
+            //repos.setOrdinaryThiefState(((oThief) Thread.currentThread()).getThiefID(), oStates.CRAWLING_OUTWARDS);
+            //System.out.println("proceeded");
             lock.unlock();
             return;
         }else{
-            System.out.println("signal in revdir");
+            //System.out.println("signal in revdir");
             reverseCond.signal();
             reverseCond.await();
-            repos.setOrdinaryThiefState(((oThief) Thread.currentThread()).getThiefID(), oStates.CRAWLING_OUTWARDS);
-            System.out.println("lastThread in revdir");
+            //repos.setOrdinaryThiefState(((oThief) Thread.currentThread()).getThiefID(), oStates.CRAWLING_OUTWARDS);
+            //System.out.println("lastThread in revdir");
             lock.unlock();
             return;
         }
-        
-        /* System.out.println("hasarrived = " + hasArrived);
-        if(hasArrived >= 0){
-            System.out.println("condition true");
-            reverseCond.await();
-            lock.lock();
-            reverseCond.signal();
-            lock.unlock();
-            return;
-        }else{
-            System.out.println("skipped if check");
-            reverseCond.signal();
-            reverseCond.await();
-        } */
     }
 
     public boolean wasILast() {
@@ -269,26 +253,12 @@ public class AssaultParty {
         }
     }
 
-    public void signalPrevious(){
-        lock.lock();
-        // System.out.println("sigprev");
-        cond.signal();
-        lock.unlock();
-    }    
-
-    public void revSignalPrevious(){
-        lock.lock();
-        oThief curThread = (oThief) Thread.currentThread();
-        System.out.println("sigrev " + curThread.getCurAP() + " " + curThread.getThiefID());
-        reverseCond.signalAll();
-        lock.unlock();
-        return;
-    }   
 
 
     public void signalDeparture() throws InterruptedException {
         lock.lock();
-        System.out.println("signalDep");
+        isRunning = true;
+        //System.out.println("signalDep");
         cond.signal();
         lock.unlock();
         return;

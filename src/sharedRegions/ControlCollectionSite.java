@@ -33,8 +33,6 @@ public class ControlCollectionSite {
     private int nextRoom;
     private int lastRoom;
     private int availableThieves;
-    private int waitingQueueSize;
-    private int signalNum;
     private int thiefSlots;
     private boolean handIn;
     private boolean heistRun;
@@ -69,37 +67,51 @@ public class ControlCollectionSite {
         this.totalPaintings = 0;
         this.thiefSlots = 3;
         this.availableThieves = 0;
-        this.waitingQueueSize = 0;
         this.nextParty = -1;
         this.lastRoom = -1;
-        this.signalNum = 0;
+        this.nextRoom = -1;
     }
 
-    public int computeNextRoom() {
+    /* public int computeNextRoom() {
         lock.lock();
         int emptyCounter = 0;
         for (int i = 0; i < emptyRooms.length; i++) {
             if (!emptyRooms[i] && (i != lastRoom)) {
                 lastRoom = i;
-                System.out.println(emptyCounter);
                 lock.unlock();
                 return i;
             }
             else{
                 emptyCounter++;
             }
-           /*  if((emptyCounter == (emptyRooms.length-1)) && (lastRoom == emptyRooms.length-1)){
-
-            } */
+            if(emptyCounter == emptyRooms.length - 1){
+                lock.unlock();
+                return emptyRooms.length-1;
+            }
         }
         lock.unlock();
         return -1;
-    }
+    } */
 
+
+    public int computeNextRoom(){
+        lock.lock();
+        for(int i = 0;i < emptyRooms.length; i++){
+            if(!emptyRooms[i]){
+                if(i != lastRoom){
+                    lastRoom = i;
+                    break;
+                }   
+            }
+        }
+        return lastRoom;
+    }
     public void printRoomStatus(){
         for(boolean x: emptyRooms){
             System.out.println("Room status " + x);
         }
+        System.out.println("TotPaints " +totalPaintings);
+        System.out.println("availThieves " + availableThieves);
     }
 
     public int getNextRoom(){
@@ -108,16 +120,15 @@ public class ControlCollectionSite {
 
     public boolean amINeeded() throws InterruptedException {
         lock.lock();
+        System.out.println("needed");
         availableThieves++;
         oThief curThread = (oThief) Thread.currentThread();
         if (!curThread.isFirstCycle()){
-            repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CONCENTRATION_SITE);
-            repos.setOrdinaryThiefPartyState(curThread.getThiefID(), 'W');
+            //repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CONCENTRATION_SITE);
+            //repos.setOrdinaryThiefPartyState(curThread.getThiefID(), 'W');
             //repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
             curThread.setFirstCycle(false);
         }
-        System.out.println("amINeeded " + curThread.getThiefID());
-        // log state concentration site
         readyCond.signal();
         prepAssaultCond.await();
         if(thiefSlots >= 0){
@@ -135,17 +146,18 @@ public class ControlCollectionSite {
 
     public int prepareAssaultParty() throws InterruptedException {
         lock.lock();
+        System.out.println("prep");
         nextParty++;
         if(nextParty > 1){
             nextParty = 0;
         }
-        repos.setMasterThiefState(mStates.ASSEMBLING_A_GROUP);
+        //repos.setMasterThiefState(mStates.ASSEMBLING_A_GROUP);
         nextRoom = this.computeNextRoom();
         thiefSlots = 3;
         if (nextRoom == -1) {
             return -1;
         }
-        repos.setAssaultPartyRoom(nextParty, nextRoom+1);
+        //repos.setAssaultPartyRoom(nextParty, nextRoom+1);
         for (int i = 0; i < 3; i++) {
             prepAssaultCond.signal();
             if(thiefSlots >= 0){
@@ -155,7 +167,6 @@ public class ControlCollectionSite {
         }
         //log state
 
-        System.out.println("nextParty ccl " + nextParty);
         partyRunStatus[nextParty] = true;
         lock.unlock();
         return nextParty;
@@ -166,42 +177,39 @@ public class ControlCollectionSite {
     }
 
     public void takeARest() throws InterruptedException {
-        //lock.lock();
-        repos.setMasterThiefState(mStates.WAITING_FOR_GROUP_ARRIVAL);
-        System.out.println("takeARest");
+        lock.lock();
+        System.out.println("TakeAREst");
+        //repos.setMasterThiefState(mStates.WAITING_FOR_GROUP_ARRIVAL);
         Thread.sleep(100);
-        // log state
-        //lock.unlock();
+        lock.unlock();
         return;
     }
 
     public void collectACanvas() throws InterruptedException {
         lock.lock();
-        System.out.println("collectACanvas");
         int roomRead;
+        System.out.println("collectacanvas");
         boolean canvasRead;
         boolean collect = true;
         while (collect) {
             try {
                 roomRead = roomHandInQueue.read();
                 canvasRead = canvasHandInQueue.read();
-                System.out.println("non emtpy Q");
                 if (canvasRead) {
                     totalPaintings++;
+                    
                 } else {
                     emptyRooms[roomRead] = true;
                 }
                 collect = false;
                 handIn = true;
-                waitingQueueSize--;
                 break;
             } catch (MemException e) {
-                System.out.println("empty Q");
                 canvasCond.signalAll();
                 canvasRecvCond.await();
             }
         }
-        repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
+        //repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
         
         canvasCond.signalAll();
         lock.unlock();
@@ -210,41 +218,42 @@ public class ControlCollectionSite {
     public void handACanvas() throws MemException, InterruptedException {
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
+        System.out.println("handacanvas");
         while(!handIn){
-            System.out.println("waiting in hac " +curThread.getCurAP() + " " + curThread.getThiefID());
             canvasRecvCond.signal();
             canvasCond.await();
         } 
         handIn = false;
-        System.out.println("handACanvas " + curThread.getCurAP() + " " + curThread.getThiefID());
         roomHandInQueue.write(curThread.getCurRoom());
         canvasHandInQueue.write(curThread.hasPainting());
-        repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
+        //repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
         canvasRecvCond.signal();
         canvasCond.await();
-        repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
+        //repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
         lock.unlock();
     }
 
     public int appraiseSit() throws InterruptedException {
         lock.lock();
         System.out.println("appraiseSit");
+        this.printRoomStatus();
         // log state
-        int emptyCounter = 0;
+        int emptyCounterSit = 0;
         int returnValue;
 
         for (int i = 0; i < emptyRooms.length; i++) {
             if (emptyRooms[i]) {
-                emptyCounter++;
+                emptyCounterSit++;
             }
         }
 
-        if (emptyCounter == emptyRooms.length) {
+        if (emptyCounterSit == emptyRooms.length) {
             while (availableThieves < 6) {
                 readyCond.await();
             }
             this.heistRun = false;
             lock.unlock();
+            System.out.println("chose 2");
             return 2;
         }
 
@@ -256,16 +265,21 @@ public class ControlCollectionSite {
         for(int i = 0; i < aParties.length;i++){
             if(partyRunStatus[i]){
                 lock.unlock();
+                System.out.println("chose 1");
                 return 1;
             }
         }
-
-    
+        if(availableThieves >= 3){
+            System.out.println("chose 1");
+            lock.unlock();
+            return 0;
+        }
 
         while (availableThieves < 3) {
             System.out.println("mt waiting in  appraise");
             readyCond.await();
         }
+
         System.out.println("leaving appraiseSit");
         returnValue = 0;
         lock.unlock();
@@ -277,7 +291,7 @@ public class ControlCollectionSite {
         System.out.println("startOperations");
         mThief curThread = (mThief) Thread.currentThread();
         curThread.setState(mStates.DECIDING_WHAT_TO_DO);
-        repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
+        //repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
         lock.unlock();
         return;
     }
@@ -285,8 +299,8 @@ public class ControlCollectionSite {
     public void sumUpResults() {
         lock.lock();
         System.out.println("sumResults");
-        repos.setMasterThiefState(mStates.PRESENTING_THE_REPORT);
-        repos.finalResult(this.totalPaintings);
+        //repos.setMasterThiefState(mStates.PRESENTING_THE_REPORT);
+        //repos.finalResult(this.totalPaintings);
 
         cond.signalAll();
         lock.unlock();

@@ -40,17 +40,17 @@ public class Museum {
 
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
-        System.out.println("rollACanvas " + curThread.getCurAP() + " " +  curThread.getThiefID() + " " + curThread.getCurRoom());
+        //System.out.println("rollACanvas " + curThread.getCurAP() + " " +  curThread.getThiefID() + " " + curThread.getCurRoom());
         if (museumRoomsPaintings[roomID] > 0) 
         {
             museumRoomsPaintings[roomID] -= 1;
             curThread.setCanvas(true);
-            repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
-            repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1);
+            /* repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
+            repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1); */
             lock.unlock();
             return true;
         } else {
-            System.out.println("didnt get Canvas" + curThread.getThiefID());
+            //System.out.println("didnt get Canvas" + curThread.getThiefID());
             curThread.setCanvas(false);
             lock.unlock();
             return false;
