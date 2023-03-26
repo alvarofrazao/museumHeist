@@ -53,7 +53,6 @@ public class ControlCollectionSite {
         this.partyRunStatus = new boolean[aParties.length];
 
         try {
-            //this.waitingQueue = new MemFIFO<oThief>(new oThief[thiefMax]);
             this.canvasHandInQueue = new MemFIFO<Boolean>(new Boolean[thiefMax]);
             this.roomHandInQueue = new MemFIFO<Integer>(new Integer[thiefMax]);      
         } catch (MemException e) {
@@ -71,28 +70,6 @@ public class ControlCollectionSite {
         this.queueSize = 0;
     }
 
-    /* public int computeNextRoom() {
-        lock.lock();
-        int emptyCounter = 0;
-        for (int i = 0; i < emptyRooms.length; i++) {
-            if (!emptyRooms[i] && (i != lastRoom)) {
-                lastRoom = i;
-                lock.unlock();
-                return i;
-            }
-            else{
-                emptyCounter++;
-            }
-            if(emptyCounter == emptyRooms.length - 1){
-                lock.unlock();
-                return emptyRooms.length-1;
-            }
-        }
-        lock.unlock();
-        return -1;
-    } */
-
-
     public int computeNextRoom(){
         lock.lock();
         for(int i = 0;i < emptyRooms.length; i++){
@@ -105,6 +82,7 @@ public class ControlCollectionSite {
         }
         return lastRoom;
     }
+    
     public void printRoomStatus(){
         for(boolean x: emptyRooms){
             System.out.println("Room status " + x);
@@ -162,8 +140,6 @@ public class ControlCollectionSite {
                 lock.lock();
             }
         }
-        //log state
-
         partyRunStatus[nextParty] = true;
         lock.unlock();
         return nextParty;
@@ -231,8 +207,7 @@ public class ControlCollectionSite {
 
     public int appraiseSit() throws InterruptedException {
         lock.lock();
-        System.out.println("appraiseSit");
-        // log state
+
         int emptyCounterSit = 0;
         int returnValue;
 
@@ -243,7 +218,6 @@ public class ControlCollectionSite {
         }
 
         if (emptyCounterSit == emptyRooms.length) {
-            //System.out.println("im in emptyCounter ==");
             if(queueSize != 0 ){
                 lock.unlock();
                 return 1;
@@ -258,14 +232,12 @@ public class ControlCollectionSite {
         }
 
         if(availableThieves >= 3){
-            //System.out.println("enoughthieves");
             lock.unlock();
             return 0;
         }
 
         for(int i = 0; i < aParties.length;i++){
             if(partyRunStatus[i]){
-                //System.out.println("im in partyrun");
                 lock.unlock();
                 return 1;
             }
@@ -276,11 +248,9 @@ public class ControlCollectionSite {
         }
 
         while (availableThieves < 3) {
-            //System.out.println("mt waiting in  appraise");
             readyCond.await();
         }
 
-        //System.out.println("leaving appraiseSit");
         returnValue = 0;
         lock.unlock();
         return returnValue;
