@@ -21,7 +21,7 @@ public class Main {
             }
     
             ControlCollectionSite controlSite = new ControlCollectionSite(aParties, repos, 5, 6);
-            ConcentrationSite concentSite = new ConcentrationSite(aParties);
+            ConcentrationSite concentSite = new ConcentrationSite(aParties, repos);
     
             mThief master = new mThief(aParties,controlSite,concentSite);
             oThief[] thieves = new oThief[3];

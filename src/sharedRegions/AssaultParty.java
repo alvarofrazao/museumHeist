@@ -20,7 +20,7 @@ public class AssaultParty {
     private int[] thiefDist;
     private int currentThiefNum;
     private int thiefMax;
-    private GeneralRepos repos;
+    private final GeneralRepos repos;
     private int hasArrived;
     private int S;
     private int id;
@@ -79,13 +79,15 @@ public class AssaultParty {
     public int addThief() throws InterruptedException {
         lock.lock();
         setupCond.await();
-        lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
         //System.out.println("addthief " + curThread.getThiefID()+" currentThiefNum = " +currentThiefNum );
         //thieves[currentThiefNum] = curThread;
         curThread.setPartyPos(currentThiefNum);
+        repos.addThiefToAssaultParty(curThread.getThiefID(), this.id);
         thiefDist[currentThiefNum++] = 0;
         cond.await();
+        repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
+        lock.unlock();
         return currentRoomID;
     }
 
@@ -108,6 +110,7 @@ public class AssaultParty {
             if(!canMove){
                 move--;
                 thiefDist[curIdx] += move;
+                repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
                 System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 cond.signal();
                 cond.await();
@@ -124,6 +127,8 @@ public class AssaultParty {
             if (nextPos >= roomDist) {
                 //curThread.setPos(roomDist);
                 thiefDist[curIdx] = roomDist;
+                repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
+                repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.AT_A_ROOM);
                 hasArrived += 1;
                 // System.out.println("hasarrived crawlIn = " + hasArrived);
                 //log state at a room
@@ -171,6 +176,7 @@ public class AssaultParty {
             if(!canMove){
                 move--;
                 thiefDist[curIdx] += move;
+                repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
                 System.out.println("crawlOut "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 reverseCond.signal();
                 reverseCond.await();
@@ -187,6 +193,7 @@ public class AssaultParty {
             if (nextPos <= 0) {
                 //curThread.setPos(roomDist);
                 thiefDist[curIdx] = 0;
+                repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
                 //log state at a room
                 reverseCond.signal();
                 lock.unlock();

@@ -5,6 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import src.entities.mStates;
 import src.entities.mThief;
+import src.entities.oStates;
 import src.entities.oThief;
 import src.infrastructure.*;
 
@@ -93,6 +94,9 @@ public class ControlCollectionSite {
         lock.lock();
         availableThieves++;
         oThief curThread = (oThief) Thread.currentThread();
+        repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CONCENTRATION_SITE);
+        repos.setOrdinaryThiefPartyState(curThread.getThiefID(), 'W');
+        repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
         System.out.println("amINeeded " + curThread.getThiefID());
         // log state concentration site
         readyCond.signal();
@@ -126,6 +130,7 @@ public class ControlCollectionSite {
         if (nextRoom == -1) {
             return -1;
         }
+        repos.setAssaultPartyRoom(nextParty, nextRoom+1);
         for (int i = 0; i < 3; i++) {
           //  System.out.println("prep signal done");
             prepAssaultCond.signal();
@@ -203,11 +208,12 @@ public class ControlCollectionSite {
         System.out.println("handACanvas " + curThread.getCurAP() + " " + curThread.getThiefID());
         roomHandInQueue.write(curThread.getCurRoom());
         canvasHandInQueue.write(curThread.hasPainting());
+        repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
         canvasRecvCond.signal();
         //waitingQueue.write(curThread);
         //waitingQueueSize++;
         canvasCond.await();
-        repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
+        lock.unlock();
     }
 
     public int appraiseSit() throws InterruptedException {
