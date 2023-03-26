@@ -121,10 +121,9 @@ public class oThief extends Thread {
         try {
             while(controlSite.amINeeded()){
                 curAP = concentSite.prepareExcursion();
-                System.out.println("thief curAP " + curAP+" "+thiefID);
+                // System.out.println("thief curAP " + curAP+" "+thiefID);
                 currentRoomID = arrayAP[curAP].addThief();
                 arrayAP[curAP].crawlIn();
-                //arrayAP[curAP].signalPrevious();
                 carryingCanvas = museum.rollACanvas(currentRoomID); //possivelmente esperar que todos cheguem?
                 arrayAP[curAP].reverseDirection();
                 arrayAP[curAP].crawlOut();

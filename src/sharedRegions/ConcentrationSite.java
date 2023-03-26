@@ -54,9 +54,9 @@ public class ConcentrationSite {
 
     public int prepareExcursion() throws InterruptedException, MemException {
         lock.lock();
-        System.out.println("prepexcursion");
+        //System.out.println("prepexcursion");
         thiefCount++;
-        repos.setOrdinaryThiefPartyState(((oThief) Thread.currentThread()).getThiefID(), 'P');
+        //repos.setOrdinaryThiefPartyState(((oThief) Thread.currentThread()).getThiefID(), 'P');
         partyRdyCond.signal();
         lock.unlock();
         return nextParty;
