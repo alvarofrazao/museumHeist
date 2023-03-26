@@ -194,13 +194,14 @@ public class GeneralRepos {
         lock.lock();
         for(int i=0; i<3; i++){
             if (this.apDetails[ap][i][0]==0){
-                this.apDetails[ap][i][0]=thief;
+                this.apDetails[ap][i][0]=thief+1;
                 placedThief=true;
+                GenericIO.writelnString("------------------------------------------------------------------");
                 break;
             }
         }
         if(!placedThief){
-            GenericIO.writelnString("The operation of associating thief to party has failed! Check that thieves are being removed correctly or that party had empty space");
+            GenericIO.writelnString(String.format("The operation of associating thief %d to party %d has failed, thieves %d,%d,%d are in party! Check that thieves are being removed correctly or that party had empty space", thief, ap, this.apDetails[ap][0][0]-1, this.apDetails[ap][1][0]-1, this.apDetails[ap][2][0]-1));
             // System.exit (1);
         }
         logState();
@@ -216,7 +217,7 @@ public class GeneralRepos {
         boolean removedThief = false;
         lock.lock();
         for(int i=0; i<3; i++){
-            if (this.apDetails[ap][i][0]==thief){
+            if (this.apDetails[ap][i][0]==(thief+1)){
                 this.apDetails[ap][i][0] = 0;
                 removedThief = true;
                 break;
@@ -240,7 +241,7 @@ public class GeneralRepos {
     public void setThiefPosition(int ap, int thief, int pos){
         lock.lock();
         for(int i=0; i<3; i++){
-            if (this.apDetails[ap][i][0]==thief){
+            if (this.apDetails[ap][i][0]==thief+1){
                 this.apDetails[ap][i][1] = pos;
                 logState();
                 lock.unlock();
@@ -260,7 +261,7 @@ public class GeneralRepos {
     public void setThiefCanvas(int ap, int thief, int canvas){
         lock.lock();
         for(int i=0; i<3; i++){
-            if (this.apDetails[ap][i][0]==thief){
+            if (this.apDetails[ap][i][0]==thief+1){
                 this.apDetails[ap][i][2] = canvas;
                 logState();
                 lock.unlock();

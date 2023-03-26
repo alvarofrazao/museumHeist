@@ -71,7 +71,7 @@ public class ControlCollectionSite {
         this.thiefSlots = 3;
         this.availableThieves = 0;
         this.waitingQueueSize = 0;
-        this.nextParty = 0;
+        this.nextParty = -1;
         this.lastRoom = -1;
         this.signalNum = 0;
     }
@@ -86,6 +86,12 @@ public class ControlCollectionSite {
         return -1;
     }
 
+    public void printRoomStatus(){
+        for(boolean x: emptyRooms){
+            System.out.println("Room status " + x);
+        }
+    }
+
     public int getNextRoom(){
         return nextRoom;
     }
@@ -94,9 +100,12 @@ public class ControlCollectionSite {
         lock.lock();
         availableThieves++;
         oThief curThread = (oThief) Thread.currentThread();
-        repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CONCENTRATION_SITE);
-        repos.setOrdinaryThiefPartyState(curThread.getThiefID(), 'W');
-        repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
+        if (!curThread.isFirstCycle()){
+            repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CONCENTRATION_SITE);
+            repos.setOrdinaryThiefPartyState(curThread.getThiefID(), 'W');
+            //repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
+            curThread.setFirstCycle(false);
+        }
         System.out.println("amINeeded " + curThread.getThiefID());
         // log state concentration site
         readyCond.signal();
@@ -123,6 +132,10 @@ public class ControlCollectionSite {
 
     public int prepareAssaultParty() throws InterruptedException {
         lock.lock();
+        nextParty++;
+        if(nextParty > 1){
+            nextParty = 0;
+        }
         //System.out.println("prepareAssaultParty");
         repos.setMasterThiefState(mStates.ASSEMBLING_A_GROUP);
         nextRoom = this.computeNextRoom();
@@ -140,9 +153,11 @@ public class ControlCollectionSite {
             }
         }
         //log state
+
+        System.out.println("nextParty ccl " + nextParty);
         partyRunStatus[nextParty] = true;
         lock.unlock();
-        return nextParty++;
+        return nextParty;
     }
 
     public boolean getHeistStatus() {
@@ -185,7 +200,7 @@ public class ControlCollectionSite {
                 System.out.println("empty Q");
                 canvasCond.signalAll();
                 canvasRecvCond.await();
-                lock.lock();
+                // lock.lock();
             }
         }
         repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
@@ -202,7 +217,7 @@ public class ControlCollectionSite {
             System.out.println("waiting in hac " +curThread.getCurAP() + " " + curThread.getThiefID());
             canvasRecvCond.signal();
             canvasCond.await();
-            lock.lock();
+            // lock.lock();
         } 
         handIn = false;
         System.out.println("handACanvas " + curThread.getCurAP() + " " + curThread.getThiefID());
@@ -213,6 +228,7 @@ public class ControlCollectionSite {
         //waitingQueue.write(curThread);
         //waitingQueueSize++;
         canvasCond.await();
+        repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
         lock.unlock();
     }
 
@@ -232,7 +248,7 @@ public class ControlCollectionSite {
         if (emptyCounter == emptyRooms.length) {
             while (availableThieves < 6) {
                 readyCond.await();
-                lock.lock();
+                // lock.lock();
             }
             this.heistRun = false;
             lock.unlock();
@@ -259,7 +275,7 @@ public class ControlCollectionSite {
         while (availableThieves < 3) {
             System.out.println("mt waiting in  appraise");
             readyCond.await();
-            lock.lock();
+            // lock.lock();
         }
         System.out.println("leaving appraiseSit");
         returnValue = 0;

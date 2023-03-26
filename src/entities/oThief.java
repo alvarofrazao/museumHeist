@@ -18,6 +18,8 @@ public class oThief extends Thread {
 
     private boolean carryingCanvas;
 
+    private boolean firstCycle;
+
     private int curAP;
 
     private int currentRoomID;
@@ -44,6 +46,7 @@ public class oThief extends Thread {
         this.controlSite = controlSite;
         this.concentSite = concentSite;
         this.museum = museum;
+        this.firstCycle = true;
     }
 
     
@@ -104,12 +107,21 @@ public class oThief extends Thread {
         partyPos = pos;
     }
 
+    public boolean isFirstCycle() {
+        return firstCycle;
+    }
+
+    public void setFirstCycle(boolean firstCycle) {
+        this.firstCycle = firstCycle;
+    }
+
+
     @Override
     public void run()  {
         try {
             while(controlSite.amINeeded()){
                 curAP = concentSite.prepareExcursion();
-                //System.out.println(curAP+" "+thiefID);
+                System.out.println("thief curAP " + curAP+" "+thiefID);
                 currentRoomID = arrayAP[curAP].addThief();
                 arrayAP[curAP].crawlIn();
                 //arrayAP[curAP].signalPrevious();

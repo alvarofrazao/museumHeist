@@ -41,6 +41,11 @@ public class mThief extends Thread {
                     case 0:
                         System.out.println("case 0 - assembling a group ");
                         party = controlSite.prepareAssaultParty();
+                        System.out.println("party chosen " + party + " heist status " + controlSite.getHeistStatus());
+                        if(party == -1){
+                            controlSite.printRoomStatus();
+                            break;
+                        }
                         assaultParties[party].setupParty(controlSite.getNextRoom());
                         concentrationSite.sendAssaultParty();
                         assaultParties[party].signalDeparture();
