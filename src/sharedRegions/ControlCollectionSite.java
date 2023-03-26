@@ -20,7 +20,7 @@ public class ControlCollectionSite {
 
     private AssaultParty[] aParties;
     private Museum museum;
-    private GeneralRepos repos;
+    private final GeneralRepos repos;
 
     private MemFIFO<oThief> waitingQueue;
     private boolean[] emptyRooms;
@@ -120,6 +120,7 @@ public class ControlCollectionSite {
     public int prepareAssaultParty() throws InterruptedException {
         lock.lock();
         //System.out.println("prepareAssaultParty");
+        repos.setMasterThiefState(mStates.ASSEMBLING_A_GROUP);
         nextRoom = this.computeNextRoom();
         thiefSlots = 3;
         if (nextRoom == -1) {
@@ -145,6 +146,7 @@ public class ControlCollectionSite {
 
     public void takeARest() throws InterruptedException {
         //lock.lock();
+        repos.setMasterThiefState(mStates.WAITING_FOR_GROUP_ARRIVAL);
         System.out.println("takeARest");
         Thread.sleep(100);
         // log state
@@ -181,7 +183,7 @@ public class ControlCollectionSite {
                 lock.lock();
             }
         }
-        // log state
+        repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
         
         canvasCond.signalAll();
         // System.out.println("collectACanvas final signal");
@@ -205,6 +207,7 @@ public class ControlCollectionSite {
         //waitingQueue.write(curThread);
         //waitingQueueSize++;
         canvasCond.await();
+        repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
     }
 
     public int appraiseSit() throws InterruptedException {
@@ -263,6 +266,7 @@ public class ControlCollectionSite {
         System.out.println("startOperations");
         mThief curThread = (mThief) Thread.currentThread();
         curThread.setState(mStates.DECIDING_WHAT_TO_DO);
+        repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
         lock.unlock();
         return;
     }
@@ -270,9 +274,9 @@ public class ControlCollectionSite {
     public void sumUpResults() {
         lock.lock();
         System.out.println("sumResults");
-        // log state
-        mThief curThread = (mThief) Thread.currentThread();
-        // print heist results
+        repos.setMasterThiefState(mStates.PRESENTING_THE_REPORT);
+        repos.finalResult(this.totalPaintings);
+
         cond.signalAll();
         lock.unlock();
         // to copy and paste into other methods requiring this action

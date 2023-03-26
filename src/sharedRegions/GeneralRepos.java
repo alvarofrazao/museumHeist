@@ -162,7 +162,6 @@ public class GeneralRepos {
     }
 
     /** Set master thief state
-     * @param id id of master thief 
      * @param state new state of master thief
      */
     public void setMasterThiefState (int state){
@@ -308,6 +307,31 @@ public class GeneralRepos {
         this.museumDetails[room][1] = distance;
         logState();
         lock.unlock();
+    }
+
+    /**
+     * Appends to log file the total number of stolen paitings
+     * @param total_paintings   number of stolen paitings
+     */
+    public void finalResult(int total_paintings){
+        TextFile log = new TextFile ();                      // instantiation of a text file handler
+
+        String lineStatus = "";                              // state line to be printed
+
+        if (!log.openForAppending (".", logFileName)){ 
+            GenericIO.writelnString ("The operation of opening for appending the file " + logFileName + " failed!");
+            System.exit (1);
+        }
+
+        lineStatus += String.format("My friends, tonight's effort produced %2d priceless paintings!", total_paintings);
+
+        log.writelnString(lineStatus);
+
+        if (!log.close ()){
+            GenericIO.writelnString ("The operation of closing the file " + logFileName + " failed!");
+            System.exit (1);
+        }
+
     }
 
 
