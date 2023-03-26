@@ -176,14 +176,14 @@ public class ControlCollectionSite {
                 break;
             } catch (MemException e) {
                 System.out.println("empty Q");
-                canvasCond.signal();
+                canvasCond.signalAll();
                 canvasRecvCond.await();
                 lock.lock();
             }
         }
         // log state
         
-        canvasCond.signal();
+        canvasCond.signalAll();
         // System.out.println("collectACanvas final signal");
         lock.unlock();
     }

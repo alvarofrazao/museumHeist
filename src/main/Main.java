@@ -24,15 +24,15 @@ public class Main {
             ConcentrationSite concentSite = new ConcentrationSite(aParties);
     
             mThief master = new mThief(aParties,controlSite,concentSite);
-            oThief[] thieves = new oThief[6];
+            oThief[] thieves = new oThief[3];
     
-            for(int i = 0; i < 6; i++){
+            for(int i = 0; i < 3; i++){
                 thieves[i] = new oThief(i, aParties, controlSite, concentSite, museum, 6, 2);
                 repos.setOrdinaryThiefMD(i, thieves[i].getMD());
             }
     
             master.start();
-            for(int i = 0; i < 6; i++){
+            for(int i = 0; i < 3; i++){
                 thieves[i].start();
             }
         } catch (Exception e) {
