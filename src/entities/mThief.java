@@ -38,16 +38,19 @@ public class mThief extends Thread {
             try {
                 switch(controlSite.appraiseSit()){
                     case 0:
+                        System.out.println("whereiM-0");
                         party = controlSite.prepareAssaultParty();         
                         assaultParties[party].setupParty(controlSite.getNextRoom());
                         concentrationSite.sendAssaultParty();
                         assaultParties[party].signalDeparture();
                         break;
                     case 1:
-                        controlSite.takeARest();
+                    System.out.println("whereiM-1");
+                    controlSite.takeARest();
                         controlSite.collectACanvas();
                         break;
                     case 2:
+                    System.out.println("whereiM-2");
                         controlSite.sumUpResults();
                         heistRun = false;
                         break;

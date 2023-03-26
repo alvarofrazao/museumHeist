@@ -151,7 +151,7 @@ public class ControlCollectionSite {
 
     public void takeARest() throws InterruptedException {
         lock.lock();
-        repos.setMasterThiefState(mStates.WAITING_FOR_GROUP_ARRIVAL);
+        //repos.setMasterThiefState(mStates.WAITING_FOR_GROUP_ARRIVAL);
         Thread.sleep(100);
         lock.unlock();
         return;
