@@ -39,11 +39,11 @@ public class mThief extends Thread {
             try {
                 switch(controlSite.appraiseSit()){
                     case 0:
-                        System.out.println("case 0 - assembling a group ");
+                        //System.out.println("case 0 - assembling a group ");
                         party = controlSite.prepareAssaultParty();
-                        System.out.println("party chosen " + party + " heist status " + controlSite.getHeistStatus());
+                        //System.out.println("party chosen " + party + " heist status " + controlSite.getHeistStatus());
                         if(party == -1){
-                            controlSite.printRoomStatus();
+                            //controlSite.printRoomStatus();
                             break;
                         }
                         assaultParties[party].setupParty(controlSite.getNextRoom());

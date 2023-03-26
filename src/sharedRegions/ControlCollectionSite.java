@@ -22,7 +22,6 @@ public class ControlCollectionSite {
     private Museum museum;
     private final GeneralRepos repos;
 
-    private MemFIFO<oThief> waitingQueue;
     private boolean[] emptyRooms;
     private boolean[] partyRunStatus;
     private MemFIFO<Boolean> canvasHandInQueue;
@@ -76,12 +75,23 @@ public class ControlCollectionSite {
     }
 
     public int computeNextRoom() {
+        lock.lock();
+        int emptyCounter = 0;
         for (int i = 0; i < emptyRooms.length; i++) {
             if (!emptyRooms[i] && (i != lastRoom)) {
                 lastRoom = i;
+                System.out.println(emptyCounter);
+                lock.unlock();
                 return i;
             }
+            else{
+                emptyCounter++;
+            }
+           /*  if((emptyCounter == (emptyRooms.length-1)) && (lastRoom == emptyRooms.length-1)){
+
+            } */
         }
+        lock.unlock();
         return -1;
     }
 
@@ -108,13 +118,6 @@ public class ControlCollectionSite {
             thiefSlots--;
             availableThieves--;
         }
-        /* else{
-            prepAssaultCond.await();
-            signalCond.signal();
-            thiefSlots--;
-            availableThieves--;            
-        } */
-        //System.out.println("leaving amINeeded " + curThread.getThiefID());
         lock.unlock();
         if (heistRun) {
             return true;
@@ -129,7 +132,6 @@ public class ControlCollectionSite {
         if(nextParty > 1){
             nextParty = 0;
         }
-        //System.out.println("prepareAssaultParty");
         repos.setMasterThiefState(mStates.ASSEMBLING_A_GROUP);
         nextRoom = this.computeNextRoom();
         thiefSlots = 3;
@@ -137,7 +139,6 @@ public class ControlCollectionSite {
             return -1;
         }
         for (int i = 0; i < 3; i++) {
-          //  System.out.println("prep signal done");
             prepAssaultCond.signal();
             if(thiefSlots >= 0){
                 signalCond.await();
@@ -171,11 +172,9 @@ public class ControlCollectionSite {
         System.out.println("collectACanvas");
         int roomRead;
         boolean canvasRead;
-        //outra opçao e fazer varias fifos para as varias informaçoes que tem que se armazenar (fifo para sala e fifo para bools)
         boolean collect = true;
         while (collect) {
             try {
-                //lastThief = waitingQueue.read();
                 roomRead = roomHandInQueue.read();
                 canvasRead = canvasHandInQueue.read();
                 System.out.println("non emtpy Q");
@@ -192,13 +191,11 @@ public class ControlCollectionSite {
                 System.out.println("empty Q");
                 canvasCond.signalAll();
                 canvasRecvCond.await();
-                // lock.lock();
             }
         }
         repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
         
         canvasCond.signalAll();
-        // System.out.println("collectACanvas final signal");
         lock.unlock();
     }
 
@@ -209,15 +206,12 @@ public class ControlCollectionSite {
             System.out.println("waiting in hac " +curThread.getCurAP() + " " + curThread.getThiefID());
             canvasRecvCond.signal();
             canvasCond.await();
-            // lock.lock();
         } 
         handIn = false;
         System.out.println("handACanvas " + curThread.getCurAP() + " " + curThread.getThiefID());
         roomHandInQueue.write(curThread.getCurRoom());
         canvasHandInQueue.write(curThread.hasPainting());
         canvasRecvCond.signal();
-        //waitingQueue.write(curThread);
-        //waitingQueueSize++;
         canvasCond.await();
         //repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
         lock.unlock();
@@ -239,7 +233,6 @@ public class ControlCollectionSite {
         if (emptyCounter == emptyRooms.length) {
             while (availableThieves < 6) {
                 readyCond.await();
-                // lock.lock();
             }
             this.heistRun = false;
             lock.unlock();
@@ -258,15 +251,11 @@ public class ControlCollectionSite {
             }
         }
 
-        /* if (waitingQueueSize > 0) {
-            lock.unlock();
-            return 1;
-        } */
+    
 
         while (availableThieves < 3) {
             System.out.println("mt waiting in  appraise");
             readyCond.await();
-            // lock.lock();
         }
         System.out.println("leaving appraiseSit");
         returnValue = 0;
@@ -292,7 +281,5 @@ public class ControlCollectionSite {
 
         cond.signalAll();
         lock.unlock();
-        // to copy and paste into other methods requiring this action
-
     }
 }
