@@ -42,7 +42,12 @@ public class ConcentrationSite {
         lock.unlock();
     }
 
-    
+    /***
+     * 
+     * @return
+     * @throws InterruptedException
+     * @throws MemException
+     */
 
     public int prepareExcursion() throws InterruptedException, MemException {
         lock.lock();

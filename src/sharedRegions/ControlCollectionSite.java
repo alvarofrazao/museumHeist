@@ -80,6 +80,7 @@ public class ControlCollectionSite {
                 }   
             }
         }
+        lock.unlock();
         return lastRoom;
     }
     
@@ -92,6 +93,11 @@ public class ControlCollectionSite {
     public int getNextRoom(){
         return nextRoom;
     }
+
+    public boolean getHeistStatus() {
+        return heistRun;
+    }
+
 
     public boolean amINeeded() throws InterruptedException {
         lock.lock();
@@ -137,7 +143,6 @@ public class ControlCollectionSite {
             prepAssaultCond.signal();
             if(thiefSlots >= 0){
                 signalCond.await();
-                lock.lock();
             }
         }
         partyRunStatus[nextParty] = true;
@@ -145,13 +150,9 @@ public class ControlCollectionSite {
         return nextParty;
     }
 
-    public boolean getHeistStatus() {
-        return heistRun;
-    }
-
     public void takeARest() throws InterruptedException {
         lock.lock();
-        //repos.setMasterThiefState(mStates.WAITING_FOR_GROUP_ARRIVAL);
+        repos.setMasterThiefState(mStates.WAITING_FOR_GROUP_ARRIVAL);
         Thread.sleep(100);
         lock.unlock();
         return;
@@ -271,7 +272,16 @@ public class ControlCollectionSite {
         System.out.println("sumResults");
         repos.setMasterThiefState(mStates.PRESENTING_THE_REPORT);
         repos.finalResult(this.totalPaintings);
-        prepAssaultCond.signal();
+        prepAssaultCond.signalAll();
         lock.unlock();
     }
+
+ /*    public void finalSignal(){
+
+        prepAssaultCond.signalAll();
+
+        lock.unlock();
+    } */
 }
+
+    

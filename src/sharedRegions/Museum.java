@@ -5,6 +5,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import src.entities.oThief;
 
 public class Museum {
+
+    
     private int[] museumRoomsDistance;
     private int[] museumRoomsPaintings;
     private final GeneralRepos repos;

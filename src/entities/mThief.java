@@ -38,21 +38,19 @@ public class mThief extends Thread {
             try {
                 switch(controlSite.appraiseSit()){
                     case 0:
-                        System.out.println("whereiM-0");
                         party = controlSite.prepareAssaultParty();         
                         assaultParties[party].setupParty(controlSite.getNextRoom());
                         concentrationSite.sendAssaultParty();
                         assaultParties[party].signalDeparture();
                         break;
                     case 1:
-                    System.out.println("whereiM-1");
-                    controlSite.takeARest();
+                        controlSite.takeARest();
                         controlSite.collectACanvas();
                         break;
                     case 2:
-                    System.out.println("whereiM-2");
                         controlSite.sumUpResults();
                         heistRun = false;
+                        //controlSite.finalSignal();
                         break;
                     default:
                         break;
@@ -60,11 +58,6 @@ public class mThief extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-        try {
-            join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 }

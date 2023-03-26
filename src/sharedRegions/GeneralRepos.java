@@ -213,7 +213,7 @@ public class GeneralRepos {
             }
         }
         if(!removedThief){
-            GenericIO.writelnString("The operation of removing thief "+ thief +" from party "+ ap+" has failed! Check that thieves are being added correctly or that thief is in this party. Maybe it was replaced?");
+            //GenericIO.writelnString("The operation of removing thief "+ thief +" from party "+ ap+" has failed! Check that thieves are being added correctly or that thief is in this party. Maybe it was replaced?");
             // System.exit (1);
         }
         logState();
@@ -237,7 +237,7 @@ public class GeneralRepos {
                 return;
             }
         }
-        GenericIO.writelnString(String.format("The operation of updating thief %d of assault party %d position went wrong! Couldnt find thief in assault party", thief, ap));
+        //GenericIO.writelnString(String.format("The operation of updating thief %d of assault party %d position went wrong! Couldnt find thief in assault party", thief, ap));
         // System.exit (1);
         lock.unlock();
     }
@@ -258,7 +258,7 @@ public class GeneralRepos {
                 return;
             }
         }
-        GenericIO.writelnString(String.format("The operation of updating thief's canvas went wrong! Couldnt find thief %d in assault party %d, maybe it was replaced?", thief, ap));
+        //GenericIO.writelnString(String.format("The operation of updating thief's canvas went wrong! Couldnt find thief %d in assault party %d, maybe it was replaced?", thief, ap));
         lock.unlock();
         // System.exit (1);
     }
