@@ -1,6 +1,5 @@
 package src.entities;
 
-import src.entities.mStates;
 import src.sharedRegions.AssaultParty;
 import src.sharedRegions.ConcentrationSite;
 import src.sharedRegions.ControlCollectionSite;
