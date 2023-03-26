@@ -193,7 +193,7 @@ public class GeneralRepos {
     public void addThiefToAssaultParty(int thief, int ap, int pos){
         lock.lock();
         if (this.apDetails[ap][pos][0]!=0){
-            GenericIO.writelnString(String.format("---------------------------------replaced thief %d in assault party %d by thief %d---------------------------------", this.apDetails[ap][pos][0]-1, ap, thief));
+            //GenericIO.writelnString(String.format("---------------------------------replaced thief %d in assault party %d by thief %d---------------------------------", this.apDetails[ap][pos][0]-1, ap, thief));
             this.apDetails[ap][pos][2]=0;
         }
         this.apDetails[ap][pos][0] = thief+1;
