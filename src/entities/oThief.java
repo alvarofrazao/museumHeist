@@ -1,8 +1,5 @@
 package src.entities;
 
-import java.util.Random;
-
-import src.entities.oStates;
 import src.infrastructure.MemException;
 import src.sharedRegions.*;
 
@@ -97,6 +94,10 @@ public class oThief extends Thread {
  */
     public void setState(int newState) {
         state = newState;
+    }
+
+    public int getThiefState() {
+        return state;
     }
 
     public void setPartyPos(int pos){
