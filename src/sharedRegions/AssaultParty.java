@@ -83,7 +83,7 @@ public class AssaultParty {
         System.out.println("addthief " + curThread.getThiefID()+" currentThiefNum = " +currentThiefNum );
         //thieves[currentThiefNum] = curThread;
         curThread.setPartyPos(currentThiefNum);
-        repos.addThiefToAssaultParty(curThread.getThiefID(), this.id);
+        repos.addThiefToAssaultParty(curThread.getThiefID(), this.id, currentThiefNum);
         thiefDist[currentThiefNum++] = 0;
         cond.await();
         repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
@@ -110,6 +110,7 @@ public class AssaultParty {
             if(!canMove){
                 move--;
                 thiefDist[curIdx] += move;
+                System.out.println("ganza crawlin");
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
                 System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 cond.signal();
@@ -127,6 +128,7 @@ public class AssaultParty {
             if (nextPos >= roomDist) {
                 //curThread.setPos(roomDist);
                 thiefDist[curIdx] = roomDist;
+                System.out.println("ganza chegou ao room");
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
                 repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.AT_A_ROOM);
                 hasArrived += 1;
@@ -176,6 +178,7 @@ public class AssaultParty {
             if(!canMove){
                 move--;
                 thiefDist[curIdx] -= move;
+                System.out.println("ganza crawlout");
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
                 System.out.println("crawlOut "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 reverseCond.signal();
@@ -193,6 +196,7 @@ public class AssaultParty {
             if (nextPos <= 0) {
                 //curThread.setPos(roomDist);
                 thiefDist[curIdx] = 0;
+                System.out.println("ganza chegou ao control");
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
                 repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.COLLECTION_SITE);
                 hasArrived++;

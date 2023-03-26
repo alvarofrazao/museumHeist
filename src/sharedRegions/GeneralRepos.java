@@ -184,26 +184,19 @@ public class GeneralRepos {
     }
 
     /**
-     * Associate thief with an assault party, places thief in first open space.
+     * Associate thief with an assault party, places thief in specified space.
      * Open spaces in assault party are determined by value 0
      * @param thief id of thief to associate
      * @param ap    id of assault party to associate to
+     * @param pos   position to place thief in
      */
-    public void addThiefToAssaultParty(int thief, int ap){
-        boolean placedThief = false;
+    public void addThiefToAssaultParty(int thief, int ap, int pos){
         lock.lock();
-        for(int i=0; i<3; i++){
-            if (this.apDetails[ap][i][0]==0){
-                this.apDetails[ap][i][0]=thief+1;
-                placedThief=true;
-                GenericIO.writelnString("------------------------------------------------------------------");
-                break;
-            }
+        if (this.apDetails[ap][pos][0]!=0){
+            GenericIO.writelnString(String.format("---------------------------------replaced thief %d in assault party %d by thief %d---------------------------------", this.apDetails[ap][pos][0]-1, ap, thief));
+            this.apDetails[ap][pos][2]=0;
         }
-        if(!placedThief){
-            GenericIO.writelnString(String.format("The operation of associating thief %d to party %d has failed, thieves %d,%d,%d are in party! Check that thieves are being removed correctly or that party had empty space", thief, ap, this.apDetails[ap][0][0]-1, this.apDetails[ap][1][0]-1, this.apDetails[ap][2][0]-1));
-            // System.exit (1);
-        }
+        this.apDetails[ap][pos][0] = thief+1;
         logState();
         lock.unlock();
     }
@@ -224,7 +217,7 @@ public class GeneralRepos {
             }
         }
         if(!removedThief){
-            GenericIO.writelnString("The operation of removing thief from party has failed! Check that thieves are being added correctly or that thief is in this party");
+            GenericIO.writelnString("The operation of removing thief "+ thief +" from party "+ ap+" has failed! Check that thieves are being added correctly or that thief is in this party. Maybe it was replaced?");
             // System.exit (1);
         }
         logState();
@@ -248,7 +241,7 @@ public class GeneralRepos {
                 return;
             }
         }
-        GenericIO.writelnString("The operation of updating thief position went wrong! Couldnt find thief in assault party");
+        GenericIO.writelnString(String.format("The operation of updating thief %d of assault party %d position went wrong! Couldnt find thief in assault party", thief, ap));
         // System.exit (1);
     }
 
@@ -268,7 +261,8 @@ public class GeneralRepos {
                 return;
             }
         }
-        GenericIO.writelnString(String.format("The operation of updating thief's canvas went wrong! Couldnt find thief %d in assault party %d", thief, ap));
+        GenericIO.writelnString(String.format("The operation of updating thief's canvas went wrong! Couldnt find thief %d in assault party %d, maybe it was replaced?", thief, ap));
+        lock.unlock();
         // System.exit (1);
     }
 
