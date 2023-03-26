@@ -70,7 +70,7 @@ public class ControlCollectionSite {
         this.thiefSlots = 3;
         this.availableThieves = 0;
         this.waitingQueueSize = 0;
-        this.nextParty = 0;
+        this.nextParty = -1;
         this.lastRoom = -1;
         this.signalNum = 0;
     }
@@ -83,6 +83,12 @@ public class ControlCollectionSite {
             }
         }
         return -1;
+    }
+
+    public void printRoomStatus(){
+        for(boolean x: emptyRooms){
+            System.out.println("Room status " + x);
+        }
     }
 
     public int getNextRoom(){
@@ -119,6 +125,10 @@ public class ControlCollectionSite {
 
     public int prepareAssaultParty() throws InterruptedException {
         lock.lock();
+        nextParty++;
+        if(nextParty > 1){
+            nextParty = 0;
+        }
         //System.out.println("prepareAssaultParty");
         repos.setMasterThiefState(mStates.ASSEMBLING_A_GROUP);
         nextRoom = this.computeNextRoom();
@@ -135,9 +145,11 @@ public class ControlCollectionSite {
             }
         }
         //log state
+
+        System.out.println("nextParty ccl " + nextParty);
         partyRunStatus[nextParty] = true;
         lock.unlock();
-        return nextParty++;
+        return nextParty;
     }
 
     public boolean getHeistStatus() {
@@ -207,7 +219,7 @@ public class ControlCollectionSite {
         //waitingQueue.write(curThread);
         //waitingQueueSize++;
         canvasCond.await();
-        repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
+        //repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
         lock.unlock();
     }
 

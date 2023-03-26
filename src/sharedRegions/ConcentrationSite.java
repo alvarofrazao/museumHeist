@@ -40,12 +40,11 @@ public class ConcentrationSite {
             partyRdyCond.await();
             // lock.lock();
         }
+        nextParty++;
         if(nextParty > 1){
             nextParty = 0;
         }
-        else{
-            nextParty++;
-        }
+
         thiefCount = 0;
         //repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
         lock.unlock();

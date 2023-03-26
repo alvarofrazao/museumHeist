@@ -81,7 +81,7 @@ public class AssaultParty {
         setupCond.await();
         // lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
-        //System.out.println("addthief " + curThread.getThiefID()+" currentThiefNum = " +currentThiefNum );
+        System.out.println("addthief " + curThread.getThiefID()+" currentThiefNum = " +currentThiefNum );
         //thieves[currentThiefNum] = curThread;
         curThread.setPartyPos(currentThiefNum);
         thiefDist[currentThiefNum++] = 0;
@@ -188,6 +188,7 @@ public class AssaultParty {
             if (nextPos <= 0) {
                 //curThread.setPos(roomDist);
                 thiefDist[curIdx] = 0;
+                hasArrived++;
                 //log state at a room
                 reverseCond.signal();
                 lock.unlock();
