@@ -6,12 +6,21 @@ import src.entities.oThief;
 
 public class Museum {
 
-    
+
     private int[] museumRoomsDistance;
     private int[] museumRoomsPaintings;
     private final GeneralRepos repos;
     private ReentrantLock lock;
 
+    /***
+     * Instatiation of Museum object 
+     * @param numberOfRooms 
+     * @param MAX_D maximum range for room distance random number generation
+     * @param MIN_D minimum range for room distance random number generation
+     * @param MAX_P maximum range for number of paintings random number generation
+     * @param MIN_P minimum range for number of paintings random number generation
+     * @param repos reference to a GeneralRepository shared memory region
+     */
     public Museum(int numberOfRooms, int MAX_D, int MIN_D, int MAX_P, int MIN_P, GeneralRepos repos) {
         this.museumRoomsDistance = new int[numberOfRooms];
         this.museumRoomsPaintings = new int[numberOfRooms];
@@ -35,6 +44,11 @@ public class Museum {
         return museumRoomsPaintings[roomID];
     }
 
+    /**
+     * Computes whether or not the thief successfully stole a canvas from the room
+     * @param roomID
+     * @return Whether or not the thief thread managed to get a canvas
+    * */
     public boolean rollACanvas(int roomID) {
 
         lock.lock();

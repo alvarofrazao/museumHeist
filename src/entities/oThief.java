@@ -7,38 +7,87 @@ import java.lang.Math;
 
 public class oThief extends Thread {
 
-    private char Sit;// either waiting to join AP ('W') or in party ('P')
-
-    private int thiefID;
-
-    private int MD; // thief's maximum displacement
-
-    //private int currentPosition;
-    private int partyPos;
-
-    private boolean carryingCanvas;
-
-    private boolean firstCycle;
-
-    private int curAP;
-
-    private int currentRoomID;
-
-    private int state;
-
+    /**
+     * Reference to the Assault Party array
+     */
     private AssaultParty[] arrayAP;
 
+    /**
+     * Reference to the Collection and Control Site shared region
+     */
     private ControlCollectionSite controlSite;
 
+    /**
+     * Reference to the Concentration Site shared region
+     */
     private ConcentrationSite concentSite;
 
+    /**
+     * Reference to the Museum shared region
+     */
     private Museum museum;
+
+    /**
+     * Current situation of the thief thread: either 'W' for "waiting for a party" or 'P' for "currently in a party" 
+     */
+    private char Sit;
+
+    /**
+     * Index of the thief in the thiefArray
+     */
+    private int thiefID;
+
+    /**
+     * Maximum displacement of the thief thread
+     */
+    private int MD;
+
+    /**
+     * Current index of the thief in the party its assigned to
+     */
+    private int partyPos;
+
+    /**
+     * Flag for canvas posession
+     */
+    private boolean carryingCanvas;
+
+    /**
+     * Whether or not its the first lifecycle iteration of the thread
+     */
+    private boolean firstCycle;
+
+    /**
+     * Currently assigned party index
+     */
+    private int curAP;
+
+    /**
+     * Index of the room assigned to the current party
+     */
+    private int currentRoomID;
+
+    /**
+     * State variable
+     */
+    private int state;
+
+    /***
+     * 
+     * @param thiefID 
+     * @param arrayAP Reference to the array containing all AssaultParty shared memory regions
+     * @param controlSite Reference to the ControlCollectionSite shared memory region
+     * @param concentSite Reference to the ConcentrationSite shared memory region
+     * @param museum Reference to the Museum shared memory region
+     * @param MAX_D Maximum boundary for thief maximum displacement calculation
+     * @param MIN_D Minimum boundary for thief maximum displacement calculation
+     */
 
     public oThief(int thiefID, AssaultParty[] arrayAP, ControlCollectionSite controlSite, ConcentrationSite concentSite, Museum museum, int MAX_D, int MIN_D) {
         this.thiefID = thiefID;
         this.MD = (int) ((Math.random() * (MAX_D - MIN_D)) + MIN_D);
         this.Sit = 'W';
-        //this.currentPosition = 0;
+
         this.partyPos = -1;
         this.carryingCanvas = false;
         this.state = 0;
@@ -48,12 +97,6 @@ public class oThief extends Thread {
         this.museum = museum;
         this.firstCycle = true;
     }
-
-    
-
-    /* public int getCurrentPosition() { // thief distance to assigned room, may not be reasonable to directly assign
-        return currentPosition;
-    } */
 
     public int getPartyPos(){
         return partyPos;
@@ -87,14 +130,6 @@ public class oThief extends Thread {
         carryingCanvas = canvas;
     }
 
-    /* public void moveIn(int nextPos) {
-        currentPosition += nextPos;
-    }
-
-    public void moveOut(int nextPos) {
-        currentPosition -= nextPos;
-    }
- */
     public void setState(int newState) {
         state = newState;
     }
@@ -116,6 +151,9 @@ public class oThief extends Thread {
     }
 
 
+    /**
+     * Lifecycle of the Ordinary Thief thread
+     */
     @Override
     public void run()  {
         try {

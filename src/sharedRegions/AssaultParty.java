@@ -8,24 +8,80 @@ import src.entities.oThief;
 
 public class AssaultParty {
 
+    /**
+     * Main monitor object
+     */
     private ReentrantLock lock;
+
+    /**
+     * Condition variable used before the ingoing movement
+     */
     private Condition cond;
+
+    /**
+     * Condition variable used before and during the outgoing momevement
+     */
     private Condition reverseCond;
+
+    /**
+     * Condition variable used for the party formation phase
+     */
     private Condition setupCond;
     
-
-    private int currentRoomID;
+    /**
+     * Reference to the Museum shared region
+     */
     private Museum museum;
-    //private oThief[] thieves;
-    private int[] thiefDist;
-    private int currentThiefNum;
-    private int thiefMax;
+
+
+    /**
+     * Reference to the generalRepository shared region
+     */
     private final GeneralRepos repos;
+
+    /**
+     * Index of the room currently assigned to the party
+     */
+    private int currentRoomID;
+
+    /**
+     * Array storing the current distance of each thief to the Collection Site
+     */
+    private int[] thiefDist;
+
+    /**
+     * Number of thieves currently in the party. 
+     */
+    private int currentThiefNum;
+
+    /**
+     * Number of thieves that have arrived at the movement target (either Museum room or Collection Site)
+     */
     private int hasArrived;
+
+    /**
+     * Maximum separation between two consecutive thieves
+     */
     private int S;
+
+    /**
+     * Index of the party in the party array
+     */
     private int id;
+
+    /**
+     * Party status flag. True means the thieves are currently between the CRAWLING_INWARDS and COLLECTION_SITE states
+     */
     private boolean isRunning;
 
+    /***
+     * Instantiation of AssaultParty object
+     * @param id Party id in the AssaultParty array: either 0 or 1
+     * @param partySize Number of thieves in a single party
+     * @param S Maximum distance between to consecutive thieves
+     * @param museum Reference to the Museum shared memory region 
+     * @param repos Reference to the GeneralRepository shared memory region
+     */
     public AssaultParty(int id, int partySize, int thiefMax, int S, Museum museum, GeneralRepos repos) {
         this.id = id;
         this.lock = new ReentrantLock();
@@ -36,26 +92,14 @@ public class AssaultParty {
         this.museum = museum;
         this.repos = repos;
         this.currentThiefNum = 0;
-        this.thiefMax = thiefMax;
         this.hasArrived = 0;
         this.S = S;
         this.isRunning = false;
     }
 
-    public boolean isFull() {
-        if (currentThiefNum >= thiefMax) {
-            return true;
-        } else
-            return false;
-    }
 
-    public int getPartySize() {
-        return thiefMax;
-    }
-
+    
     public boolean getStatus() {
-        lock.lock();
-        lock.unlock();
         return isRunning;
     }
 
@@ -63,9 +107,13 @@ public class AssaultParty {
         return currentRoomID;
     }
 
+
+    /***
+     * Setups up AssaultParty variables for party formation
+     * @param roomID index of the room assigned to the party
+     */
     public void setupParty(int roomID) {
         lock.lock();
-        //System.out.println("setupParty");
         currentThiefNum = 0;
         hasArrived = 0;
         isRunning = false;
@@ -78,12 +126,16 @@ public class AssaultParty {
         lock.unlock();
     }
 
+
+    /***
+     * Assigns thief to party, and blocks waiting for departure signal.
+     * @return Room index that was assigned to the party
+     * @throws InterruptedException
+     */
     public int addThief() throws InterruptedException {
         lock.lock();
         setupCond.await();
         oThief curThread = (oThief) Thread.currentThread();
-        //System.out.println("addthief " + curThread.getThiefID()+" currentThiefNum = " +currentThiefNum );
-        //thieves[currentThiefNum] = curThread;
         curThread.setPartyPos(currentThiefNum);
         repos.addThiefToAssaultParty(curThread.getThiefID(), this.id,currentThiefNum);
         thiefDist[currentThiefNum++] = 0;
@@ -94,6 +146,11 @@ public class AssaultParty {
     }
 
 
+    /***
+     * Method for the ingoing movement, each thief moves until it is S units away from the one behind them, then stops and signals another thief to move,
+     * repeating the process until all three arrive at the Museum Room
+     * @throws InterruptedException
+     */
     public void crawlIn() throws InterruptedException {
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
@@ -102,7 +159,6 @@ public class AssaultParty {
         int behindDist;
         int nextPos = 0;
         int roomDist = museum.getRoomDistance(curThread.getCurRoom());
-        //System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
         boolean canMove = true;
 
         for (; move <= roomDist; move++) {
@@ -112,7 +168,6 @@ public class AssaultParty {
                 move--;
                 thiefDist[curIdx] += move;
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
-                //System.out.println("crawlIn "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 cond.signal();
                 cond.await();
                 canMove = true;
@@ -123,6 +178,8 @@ public class AssaultParty {
 
             nextPos = move + thiefDist[curIdx];
 
+
+            //Arrival detection
             if (nextPos >= roomDist) {
                 thiefDist[curIdx] = roomDist;
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
@@ -133,6 +190,7 @@ public class AssaultParty {
                 break;
             }
 
+            //Computing the index of the thief that is behind the current Thread
             for(int i = 0;i < 3; i++){
                 if(thiefDist[i] < thiefDist[curIdx]){
                     if(thiefDist[i] > behindDist){
@@ -141,18 +199,27 @@ public class AssaultParty {
                 }
             }
 
+            //matching distance detection
             for(int i = 0; i < 3; i++){
                 if(nextPos == thiefDist[i]){
+                    move++;
                     break;
                 }
             }
 
+            //Movement iteration stopping condition
             if(nextPos > (behindDist + S)){
                 canMove = false;
             }
         }
         return;
     }
+
+    /***
+     * Method for the outgoing movement, each thief moves until it is S units away from the one behind them, then stops and signals another thief to move,
+     * repeating the process until all three arrive at the Collection Site
+     * @throws InterruptedException
+     */
 
     public void crawlOut() throws InterruptedException{
         lock.lock();
@@ -162,7 +229,6 @@ public class AssaultParty {
         int behindDist;
         int nextPos = 0;
         int roomDist = museum.getRoomDistance(curThread.getCurRoom());
-        //System.out.println("crawlOut "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
         boolean canMove = true;
 
         for (; move <= roomDist; move++) {
@@ -172,7 +238,6 @@ public class AssaultParty {
                 move--;
                 thiefDist[curIdx] -= move;
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
-                //System.out.println("crawlOut "+ curThread.getCurAP() + " " + curThread.getThiefID() + " " + curIdx + " " + thiefDist[curIdx]);
                 reverseCond.signal();
                 reverseCond.await();
                 canMove = true;
@@ -184,6 +249,7 @@ public class AssaultParty {
 
             nextPos = thiefDist[curIdx] - move;
 
+            //Arrival detection
             if (nextPos <= 0) {
                 thiefDist[curIdx] = 0;
                 repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
@@ -197,6 +263,7 @@ public class AssaultParty {
                 break;
             }
 
+            //Computing the index of the thief that is behind the current Thread
             for(int i = 0;i < 3; i++){
                 if(thiefDist[i] > thiefDist[curIdx]){
                     if(thiefDist[i] < behindDist){
@@ -205,12 +272,16 @@ public class AssaultParty {
                 }
             }
 
+
+            //matching distance detection
             for(int i = 0; i < 3; i++){
                 if(nextPos == thiefDist[i]){
+                    move++;
                     break;
                 }
             }
 
+            //Movement iteration stopping condition
             if(nextPos < (behindDist -S )){
                 canMove = false;
             }
@@ -219,6 +290,11 @@ public class AssaultParty {
     }
     
     
+    /***
+     * Method for preparing and initiating the outgoing movement: 
+     * the last thread to call the method signals one other thread waiting on the condition to initiate the movement
+     * @throws InterruptedException
+     */
 
     public void reverseDirection() throws InterruptedException {
         lock.lock();
@@ -237,6 +313,11 @@ public class AssaultParty {
         }
     }
 
+
+    /***
+     * Method that signals the start of the party's ingoing movement: the Master signals a single thread to start moving 
+     * @throws InterruptedException
+     */
 
     public void signalDeparture() throws InterruptedException {
         lock.lock();

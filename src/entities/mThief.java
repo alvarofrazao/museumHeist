@@ -6,14 +6,32 @@ import src.sharedRegions.ControlCollectionSite;
 
 public class mThief extends Thread {
 
+    /**
+     * Master Thief state variable
+     */
     private int state;
 
+    /**
+     * Reference to the Assault Party array
+     */
     private AssaultParty[] assaultParties;
 
+    /**
+     * Reference to the Collection and Control Site shared region
+     */
     private ControlCollectionSite controlSite;
 
+    /**
+     * Reference to the Concentration Site shared region
+     */
     private ConcentrationSite concentrationSite;
 
+    /***
+     * Master Thief Thread Instantiation
+     * @param assaultParties Reference to the array containing all AssaultParty shared memory regions
+     * @param controlSite Reference to the ControlCollectionSite shared memory region
+     * @param concentSite Reference to the ConcentrationSite shared memory region
+     */
     public mThief(AssaultParty[] assaultParties, ControlCollectionSite controlSite, ConcentrationSite concentrationSite) {
         this.state = mStates.PLANNING_THE_HEIST;
         this.assaultParties = assaultParties;
@@ -29,6 +47,9 @@ public class mThief extends Thread {
         state = i;
     }
 
+    /**
+     * Lifecycle of the Master Thief thread
+     */
     @Override
     public void run() {
         controlSite.startOperations();
@@ -50,7 +71,6 @@ public class mThief extends Thread {
                     case 2:
                         controlSite.sumUpResults();
                         heistRun = false;
-                        //controlSite.finalSignal();
                         break;
                     default:
                         break;

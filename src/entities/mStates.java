@@ -1,6 +1,11 @@
 package src.entities;
 
+/***
+ * Definition of the state variables for the Master Thief Entity
+ */
+
 public class mStates {
+
     public static final int PLANNING_THE_HEIST = 0;
     public static final int DECIDING_WHAT_TO_DO = 1;
     public static final int ASSEMBLING_A_GROUP = 2;

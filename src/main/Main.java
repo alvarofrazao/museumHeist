@@ -12,6 +12,7 @@ import src.entities.oThief;
 public class Main {
     public static void main(String[] args) {
         try {
+            //Object instantiation section and logfile preparation
             AssaultParty[] aParties = new AssaultParty[2];
             GeneralRepos repos = new GeneralRepos("logfile.txt");
             Museum museum = new Museum(5, 30, 15, 16, 8, repos);
@@ -30,11 +31,14 @@ public class Main {
                 repos.setOrdinaryThiefMD(i, thieves[i].getMD());
             }
 
+            //thread start section
             master.start();
             for (int i = 0; i < 6; i++) {
                 thieves[i].start();
             }
 
+
+            //thread join section
             try {
                 master.join();
             } catch (InterruptedException e) {
