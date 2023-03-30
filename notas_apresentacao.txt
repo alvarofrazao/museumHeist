@@ -1,0 +1,14 @@
+coisas a melhorar:
+
+especificar melhor o que e que as variaveis sao: prefixos de m no caso de monitores e de t no caso de threads
+(ja naosera preciso alterar isto para o A2, mas vou faze-lo para deixar o codigo limpo)
+
+alterar os awaits para estarem dentro de whiles regidos por condiçoes de validaçao
+
+meter as cenas corretas dentro de um try catch
+
+corrigir todos os metodos inter-monitor
+
+
+asignment 2:
+temos que fazer os stubs para cada area partilhada, prof da um data type para o canal de comunicaçao
