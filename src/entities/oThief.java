@@ -160,10 +160,10 @@ public class oThief extends Thread {
             while(controlSite.amINeeded()){
                 curAP = concentSite.prepareExcursion();
                 currentRoomID = arrayAP[curAP].addThief();
-                arrayAP[curAP].crawlIn();
+                arrayAP[curAP].crawlIn(museum.getRoomDistance(currentRoomID));
                 carryingCanvas = museum.rollACanvas(currentRoomID);
                 arrayAP[curAP].reverseDirection();
-                arrayAP[curAP].crawlOut();
+                arrayAP[curAP].crawlOut(museum.getRoomDistance(currentRoomID));
                 controlSite.handACanvas();
             }
         } catch (InterruptedException e) {

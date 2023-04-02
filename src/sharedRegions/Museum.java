@@ -37,11 +37,23 @@ public class Museum {
     }
 
     public int getRoomDistance(int roomID) {
-        return museumRoomsDistance[roomID];
+        int roomDist;
+        try{
+            lock.lock();
+            roomDist =  museumRoomsDistance[roomID];
+            return roomDist;
+        }finally{
+            lock.unlock();
+        }
     }
 
     public int getPaintsInRoom(int roomID) {
-        return museumRoomsPaintings[roomID];
+        try{
+            lock.lock();
+            return museumRoomsPaintings[roomID];
+        }finally{
+            lock.unlock();
+        }
     }
 
     /**

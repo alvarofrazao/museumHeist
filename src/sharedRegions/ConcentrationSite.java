@@ -53,10 +53,14 @@ public class ConcentrationSite {
      * @throws InterruptedException
      */
 
-    public void sendAssaultParty() throws InterruptedException { 
+    public void sendAssaultParty(){ 
         lock.lock();
         while(thiefCount < 3){
-            partyRdyCond.await();
+            try {
+                partyRdyCond.await();   
+            } catch (InterruptedException e) {
+                System.out.println("Interrupted exception at mThief call of sendAssaultParty");
+            }
         }
         nextParty++;
         if(nextParty > 1){
@@ -71,11 +75,9 @@ public class ConcentrationSite {
     /***
      * Prepares the thief to be added to the current working Assault Party
      * @return aParties index of the assigned Assault Party
-     * @throws InterruptedException
-     * @throws MemException
      */
 
-    public int prepareExcursion() throws InterruptedException, MemException {
+    public int prepareExcursion(){
         lock.lock();
         thiefCount++;
         repos.setOrdinaryThiefPartyState(((oThief) Thread.currentThread()).getThiefID(), 'P');
