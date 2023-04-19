@@ -30,6 +30,11 @@ public class AssaultParty {
     private Condition setupCond;
 
     /**
+     * 
+     */
+    private Condition setupMCond;
+
+    /**
      * Reference to the generalRepository shared region
      */
     private final GeneralRepos repos;
@@ -123,10 +128,10 @@ public class AssaultParty {
             while (currentThiefNum < 3) {
                 setupCond.signalAll();
                 try {
-                    setupCond.await();
+                    setupMCond.await();
                 } catch (Exception e) {
 
-                }
+                } 
             }
         } finally {
             lock.unlock();
@@ -142,6 +147,7 @@ public class AssaultParty {
     public int addThief() throws InterruptedException {
         try {
             lock.lock();
+            setupMCond.signal();
             setupCond.await();
             oThief curThread = (oThief) Thread.currentThread();
             int thiefIdx = currentThiefNum;
