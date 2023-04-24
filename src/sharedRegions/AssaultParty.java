@@ -216,78 +216,74 @@ public class AssaultParty {
             boolean canMove = true;
             boolean hold = true;
 
-            while (thiefDist[curIdx] < roomDist) {
+            for (; move <= roomDist; move++) {
                 behindDist = -1;
-                for (; move <= curThread.getMD(); move++) {
-
-                    if (!canMove) {
-                        move--;
-                        thiefDist[curIdx] += move;
-                        repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
+    
+                if(!canMove){
+                    move--;
+                    thiefDist[curIdx] += move;
+                    repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
+                    moveRestrictIn[curIdx] = true;
+                    if((curIdx + 1) >= 3){
+                        moveRestrictIn[0] = false;
+                    }
+                    else{
+                        moveRestrictIn[curIdx + 1] = false;
+                    }
+                    cond.signalAll();
+                    while(moveRestrictIn[curIdx])
+                    {
+                        cond.await();
+                    }
+                    canMove = true;
+                    curIdx = curThread.getPartyPos();
+                    behindDist = thiefDist[curIdx];
+                    move = 1;
+                }
+    
+                nextPos = move + thiefDist[curIdx];
+    
+    
+                //Arrival detection
+                if (nextPos >= roomDist) {
+                    thiefDist[curIdx] = roomDist;
+                    repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
+                    repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.AT_A_ROOM);
+                    hasArrived += 1;
+                    moveRestrictIn[curIdx] = true;
+                    if((curIdx + 1) >= 3){
+                        moveRestrictIn[0] = false;
+                    }
+                    else{
+                        moveRestrictIn[curIdx + 1] = false;
+                    }
+                    cond.signalAll();
+                    break;
+                }
+    
+                //Computing the index of the thief that is behind the current Thread
+                for(int i = 0;i < 3; i++){
+                    if(thiefDist[i] < thiefDist[curIdx]){
+                        if(thiefDist[i] > behindDist){
+                            behindDist = thiefDist[i];
+                        }
+                    }
+                }
+    
+                //matching distance detection
+                for(int i = 0; i < 3; i++){
+                    if(nextPos == thiefDist[i]){
+                        move++;
                         break;
                     }
-
-                    nextPos = move + thiefDist[curIdx];
-
-                    // Arrival detection
-                    if (nextPos >= roomDist) {
-                        thiefDist[curIdx] = roomDist;
-                        repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
-                        repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.AT_A_ROOM);
-                        hasArrived += 1;
-                        moveRestrictIn[curIdx] = true;
-                        if ((curIdx + 1) >= 3) {
-                            moveRestrictIn[0] = false; 
-                        } else {
-                            moveRestrictIn[(curIdx + 1)] = false;
-                        }
-                        break;
-                    }
-
-                    // Computing the index of the thief that is behind the current Thread
-                    for (int i = 0; i < 3; i++) {
-                        if (thiefDist[i] < thiefDist[curIdx]) {
-                            if (thiefDist[i] > behindDist) {
-                                behindDist = thiefDist[i];
-                            }
-                        }
-                    }
-
-                    // matching distance detection
-                    for (int i = 0; i < 3; i++) {
-                        if (nextPos == thiefDist[i]) {
-                            move++;
-                            break;
-                        }
-                    }
-
-                    // Movement iteration stopping condition
-                    if (nextPos > (behindDist + S)) {
-                        canMove = false;
-                    }
-
                 }
-
-                moveRestrictIn[curIdx] = true;
-                
-                if ((curIdx + 1) >= 3) {
-                    moveRestrictIn[0] = false;
-                }else{
-                    moveRestrictIn[(curIdx + 1)] = false;
+    
+                //Movement iteration stopping condition
+                if(nextPos > (behindDist + S)){
+                    canMove = false;
                 }
-                cond.signalAll();
-                if (thiefDist[curIdx] >= roomDist) {
-                    return;
-                }
-                while (hold) {
-                    cond.await();
-                    hold = false;
-                }
-                hold = true;
-                canMove = true;
-                behindDist = -1;
-                move = 1;
             }
+            
         } finally {
             while (lock.isHeldByCurrentThread()) {
                 lock.unlock();
