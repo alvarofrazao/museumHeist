@@ -318,7 +318,7 @@ public class ControlCollectionSite {
         canvasHandInQueue.write(curThread.hasPainting());
         repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
         canvasRecvCond.signal();
-        canvasCond.await();
+        //canvasCond.await();
         repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
         lock.unlock();
     }
