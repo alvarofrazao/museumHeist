@@ -333,14 +333,10 @@ public class AssaultParty {
                             isRunning = false;
                         }
                         moveRestrictOut[curIdx] = true;
-                        System.out.println("mvout[" + curIdx + "]" + " = " + moveRestrictOut[curIdx] + "\n");
                         if ((curIdx + 1) >= 3) {
                             moveRestrictOut[0] = false;
-                            System.out.println("mvout[" + (0) + "]" + " = " + moveRestrictOut[0] + "\n");
                         } else {
                             moveRestrictOut[(curIdx + 1)] = false;
-                            System.out.println(
-                                    "mvout[" + (curIdx + 1) + "]" + " = " + moveRestrictOut[curIdx + 1] + "\n");
                         }
                         reverseCond.signalAll();
                         while (moveRestrictOut[curIdx]) {
@@ -372,14 +368,10 @@ public class AssaultParty {
                     }
                 }
                 moveRestrictOut[curIdx] = true;
-                System.out.println("mvout[" + curIdx + "]" + " = " + moveRestrictOut[curIdx] + "\n");
                 if ((curIdx + 1) >= 3) {
                     moveRestrictOut[0] = false;
-                    System.out.println("mvout[" + (curIdx + 1) + "]" + " = " + moveRestrictOut[0] + "\n");
                 } else {
                     moveRestrictOut[(curIdx + 1)] = false;
-                    System.out.println("mvout[" + (curIdx + 1) + "]" + " = " + moveRestrictOut[curIdx + 1] + "\n");
-
                 }
                 reverseCond.signalAll();
                 if (thiefDist[curIdx] <= 0) {
@@ -412,7 +404,7 @@ public class AssaultParty {
         try {
             lock.lock();
             oThief curThread = (oThief) Thread.currentThread();
-
+            hasArrived--;
             if (hasArrived <= 0) {
                 reverseCond.signalAll();
                 moveRestrictOut[0] = false;
@@ -429,6 +421,7 @@ public class AssaultParty {
              * }
              */
             cond.signalAll();
+            
             while (moveRestrictOut[curThread.getPartyPos()]) {
                 reverseCond.await();
             }
