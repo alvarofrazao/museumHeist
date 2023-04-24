@@ -19,6 +19,11 @@ public class AssaultParty {
     private Condition cond;
 
     /**
+     * 
+     */
+
+    private Condition setupCond;
+    /**
      * Condition variable used before and during the outgoing momevement
      */
     private Condition reverseCond;
@@ -105,14 +110,10 @@ public class AssaultParty {
         this.cond = lock.newCondition();
         this.reverseCond = lock.newCondition();
         this.partyFullCond = lock.newCondition();
+        this.setupCond = lock.newCondition();
         this.thiefDist = new int[partySize];
         this.moveRestrictIn = new boolean[partySize];
         this.moveRestrictOut = new boolean[partySize];
-        /*
-         * for(int i = 0; i < partySize; i++){
-         * moveRestrict[i] = false;
-         * }
-         */
         this.museum = museum;
         this.repos = repos;
         this.holdFlag = true;
@@ -144,14 +145,13 @@ public class AssaultParty {
             holdFlag = true;
             currentRoomID = roomID;
             while (currentThiefNum < 3) {
-                /*
-                 * setupCond.signalAll();
-                 * lock.unlock();
+                /* lock.unlock();
                  * lock.lock();
                  */
 
                 try {
                     partyFullCond.await();
+                    setupCond.signalAll();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -173,22 +173,29 @@ public class AssaultParty {
     public int addThief() throws InterruptedException {
         try {
             lock.lock();
-            // setupCond.await();
+            partyFullCond.signalAll();
+            setupCond.await();
+            int partyPos;
             oThief curThread = (oThief) Thread.currentThread();
-            int partyPos = currentThiefNum;
+            if(currentThiefNum >= 3){
+                partyPos = 2;
+            }
+            else{
+                partyPos = currentThiefNum;
+            }
             curThread.setPartyPos(partyPos);
-            repos.addThiefToAssaultParty(curThread.getThiefID(), this.id, currentThiefNum);
+            //repos.addThiefToAssaultParty(curThread.getThiefID(), this.id, currentThiefNum);
             thiefDist[partyPos] = 0;
+            currentThiefNum++;
             moveRestrictIn[partyPos] = true;
             moveRestrictOut[partyPos] = true;
-            currentThiefNum++;
             partyFullCond.signalAll();
             while (moveRestrictIn[partyPos]) {
                 cond.await();
             }
-            repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
+            //repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
             return currentRoomID;
-        } finally {
+        }finally {
             while (lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
@@ -311,78 +318,78 @@ public class AssaultParty {
             int roomDist = museum.getRoomDistance(curThread.getCurRoom());
             boolean canMove = true;
 
-            while (thiefDist[curIdx] > 0) {
+            for (; move <= roomDist; move++) {
                 behindDist = roomDist + 1;
-                for (; move <= curThread.getMD(); move++) {
-                    if (!canMove) {
-                        move--;
-                        thiefDist[curIdx] -= move;
-                        repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
+    
+                if(!canMove){
+                    move--;
+                    thiefDist[curIdx] -= move;
+                    repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
+                    moveRestrictOut[curIdx] = true;
+                    if((curIdx + 1) >= 3){
+                        moveRestrictOut[0] = false;
+                    }
+                    else{
+                        moveRestrictOut[curIdx + 1] = false;
+                    }
+                    reverseCond.signalAll();
+                    while(moveRestrictOut[curIdx]){
+                        reverseCond.await();
+                    }
+                    
+                    canMove = true;
+                    behindDist = roomDist + 1;
+                    move = 1;
+                }
+    
+                nextPos = thiefDist[curIdx] - move;
+    
+                //Arrival detection
+                if (nextPos <= 0) {
+                    thiefDist[curIdx] = 0;
+                    repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
+                    repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.COLLECTION_SITE);
+                    hasArrived++;
+                    if(hasArrived == 3){
+                        isRunning = false;
+                    }
+                    moveRestrictOut[curIdx] = true;
+                    if((curIdx + 1) >= 3){
+                        moveRestrictOut[0] = false;
+                    }
+                    else{
+                        moveRestrictOut[curIdx + 1] = false;
+                    }
+                    reverseCond.signalAll();
+                    
+                    
+                    break;
+                }
+    
+                //Computing the index of the thief that is behind the current Thread
+                for(int i = 0;i < 3; i++){
+                    if(thiefDist[i] > thiefDist[curIdx]){
+                        if(thiefDist[i] < behindDist){
+                            behindDist = thiefDist[i];
+                        }
+                    }
+                }
+    
+    
+                //matching distance detection
+                for(int i = 0; i < 3; i++){
+                    if(nextPos == thiefDist[i]){
+                        move++;
                         break;
                     }
-
-                    nextPos = thiefDist[curIdx] - move;
-
-                    // Arrival detection
-                    if (nextPos <= 0) {
-                        thiefDist[curIdx] = 0;
-                        repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
-                        repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.COLLECTION_SITE);
-                        hasArrived++;
-                        if (hasArrived == 3) {
-                            isRunning = false;
-                        }
-                        moveRestrictOut[curIdx] = true;
-                        if ((curIdx + 1) >= 3) {
-                            moveRestrictOut[0] = false;
-                        } else {
-                            moveRestrictOut[(curIdx + 1)] = false;
-                        }
-                        reverseCond.signalAll();
-                        while (moveRestrictOut[curIdx]) {
-                            reverseCond.await();
-                        }
-                        break;
-                    }
-
-                    // Computing the index of the thief that is behind the current Thread
-                    for (int i = 0; i < 3; i++) {
-                        if (thiefDist[i] > thiefDist[curIdx]) {
-                            if (thiefDist[i] < behindDist) {
-                                behindDist = thiefDist[i];
-                            }
-                        }
-                    }
-
-                    // matching distance detection
-                    for (int i = 0; i < 3; i++) {
-                        if (nextPos == thiefDist[i]) {
-                            move++;
-                            break;
-                        }
-                    }
-
-                    // Movement iteration stopping condition
-                    if (nextPos < (behindDist - S)) {
-                        canMove = false;
-                    }
                 }
-                moveRestrictOut[curIdx] = true;
-                if ((curIdx + 1) >= 3) {
-                    moveRestrictOut[0] = false;
-                } else {
-                    moveRestrictOut[(curIdx + 1)] = false;
+    
+                //Movement iteration stopping condition
+                if(nextPos < (behindDist -S )){
+                    canMove = false;
                 }
-                reverseCond.signalAll();
-                if (thiefDist[curIdx] <= 0) {
-                    return;
-                }
-                while (moveRestrictOut[curIdx]) {
-                    reverseCond.await();
-                }
-                canMove = true;
-                move = 1;
             }
+
 
         } finally {
             while (lock.isHeldByCurrentThread()) {
