@@ -12,3 +12,69 @@ corrigir todos os metodos inter-monitor
 
 asignment 2:
 temos que fazer os stubs para cada area partilhada, prof da um data type para o canal de comunicaçao
+
+dados requeridos para cada metodo:
+
+setupParty: precisa do roomID para a party a criar
+
+addThief:tem que retornar dois valores:
+    indice do ladrao na party e a sala para onde
+    a party vai
+    ID do thief
+
+crawlIn:
+    precisa do indice do ladrao na party
+    e da distancia ate a sala (possivelmente algo que
+    se pode guardar na thread?)
+    ID do thief
+
+crawlOut:
+    precisa do indice do ladrao na party e da distancia
+    ate a sala
+    ID do thief
+
+reverseDirection:
+    precisa do indice do ladrao na party e precisa do
+    ID do thief
+
+signalDeparture:
+    necessita apenas do indice da party a que vai aceder
+
+rollACanvas:
+    precisa do indice da sala que esta a ser roubada
+    necessita do indice do party e o ID do thief
+    retorna um boolean do estado do canvas num ladrao
+
+amINeeded:
+    retorna um boolean, requer o ID do thief e o id
+    da assaultParty ao qual pertence(u) caso haja
+prepareAssaultParty:
+    retorna o numero da sala alvo da proxima party
+
+takeARest: nao precisa de nada e nao retorna nada
+
+collectACanvas:
+    nao requer nada e nao retorna nada
+
+handACanvas:
+    requer o ID do thief, o id da party ao qual o thief
+    pertence, requer o bool do canvas de um ladrao e
+    o int correspondente ao numero da sala alvo desse
+    thief
+
+appraiseSit:
+    retorna um inteiro
+    nao requer nada externo
+
+startOperations:
+    nao requer nem retorna nada
+
+sumUpResults:
+    nao requer nem retorna nada
+
+sendAssaultParty:
+    nao requer nem retorna nada
+
+prepareExcursion:
+    requer o ID do thief e retorna o indice da party
+    ao qual este se vai juntar

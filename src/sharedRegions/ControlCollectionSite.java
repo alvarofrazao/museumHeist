@@ -17,27 +17,32 @@ public class ControlCollectionSite {
     private ReentrantLock lock;
 
     /**
-     * Condition variable used to control access through the handACanvas method by the Ordinary Thief threads
+     * Condition variable used to control access through the handACanvas method by
+     * the Ordinary Thief threads
      */
     private Condition canvasCond;
 
     /**
-     * Condition variable used to block Ordinary Thief threads before they join a party
+     * Condition variable used to block Ordinary Thief threads before they join a
+     * party
      */
     private Condition prepAssaultCond;
 
     /**
-     * Condition variable used to signal the Master Thief thread during its blocking stage in the appraiseSit method
+     * Condition variable used to signal the Master Thief thread during its blocking
+     * stage in the appraiseSit method
      */
     private Condition readyCond;
 
     /**
-     * Condition variable used signal the Master Thief thread when an Ordinary Thief thread has arrived to hand in something
+     * Condition variable used signal the Master Thief thread when an Ordinary Thief
+     * thread has arrived to hand in something
      */
     private Condition canvasRecvCond;
 
     /**
-     * Condition variable used to control how many thieves are signaled during the ASSEMBLING_A_GROUP state of the Master Thief thread
+     * Condition variable used to control how many thieves are signaled during the
+     * ASSEMBLING_A_GROUP state of the Master Thief thread
      */
     private Condition signalCond;
 
@@ -60,14 +65,15 @@ public class ControlCollectionSite {
      * Array storing the run status of all parties
      */
     private boolean[] partyRunStatus;
-    
+
     /**
      * FIFO used to store the canvas values of the thief threads
      */
     private MemFIFO<Boolean> canvasHandInQueue;
 
     /**
-     * FIFO used to store the information regarding which rooms the canvas values where computed in
+     * FIFO used to store the information regarding which rooms the canvas values
+     * where computed in
      */
     private MemFIFO<Integer> roomHandInQueue;
 
@@ -112,7 +118,8 @@ public class ControlCollectionSite {
     private int waitingThieves;
 
     /**
-     * Flag to determine whether or not the thief threads can write in to the FIFO objects
+     * Flag to determine whether or not the thief threads can write in to the FIFO
+     * objects
      */
     private boolean handIn;
 
@@ -123,10 +130,12 @@ public class ControlCollectionSite {
 
     /***
      * ControlCollectionSite object instantiation
-     * @param aParties Reference to array containg all AssaultParty shared memory regions
-     * @param repos Reference to GeneralRepository shared memory region
+     * 
+     * @param aParties   Reference to array containg all AssaultParty shared memory
+     *                   regions
+     * @param repos      Reference to GeneralRepository shared memory region
      * @param roomNumber Number of rooms in the museum
-     * @param thiefMax Maximum number of thieves in total
+     * @param thiefMax   Maximum number of thieves in total
      * @throws MemException
      */
 
@@ -147,7 +156,7 @@ public class ControlCollectionSite {
 
         try {
             this.canvasHandInQueue = new MemFIFO<Boolean>(new Boolean[thiefMax]);
-            this.roomHandInQueue = new MemFIFO<Integer>(new Integer[thiefMax]);      
+            this.roomHandInQueue = new MemFIFO<Integer>(new Integer[thiefMax]);
         } catch (MemException e) {
         }
 
@@ -166,29 +175,33 @@ public class ControlCollectionSite {
 
     /***
      * Determines which room to next send a party to
+     * 
      * @return Room array index
      */
-    public int computeNextRoom(){
-        lock.lock();
-        for(int i = 0;i < emptyRooms.length; i++){
-            if(!emptyRooms[i]){
-                if(i != lastRoom){
-                    lastRoom = i;
-                    break;
-                }   
+    public int computeNextRoom() {
+        try {
+            lock.lock();
+            for (int i = 0; i < emptyRooms.length; i++) {
+                if (!emptyRooms[i]) {
+                    if (i != lastRoom) {
+                        lastRoom = i;
+                        break;
+                    }
+                }
             }
+            return lastRoom;
+        } finally {
+            lock.unlock();
         }
-        lock.unlock();
-        return lastRoom;
     }
-    
-    public void printRoomStatus(){
-        for(boolean x: emptyRooms){
+
+    public void printRoomStatus() {
+        for (boolean x : emptyRooms) {
             System.out.println("Room status " + x);
         }
     }
 
-    public int getNextRoom(){
+    public int getNextRoom() {
         return nextRoom;
     }
 
@@ -198,6 +211,7 @@ public class ControlCollectionSite {
 
     /***
      * Controls the lifecycle of the Ordinary Thief threads
+     * 
      * @return true or false, depending on the status of the heist
      * @throws InterruptedException
      */
@@ -205,7 +219,7 @@ public class ControlCollectionSite {
         lock.lock();
         availableThieves++;
         oThief curThread = (oThief) Thread.currentThread();
-        if (!curThread.isFirstCycle()){
+        if (!curThread.isFirstCycle()) {
             repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CONCENTRATION_SITE);
             repos.setOrdinaryThiefPartyState(curThread.getThiefID(), 'W');
             repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
@@ -214,7 +228,7 @@ public class ControlCollectionSite {
         readyCond.signal();
         prepAssaultCond.await();
         if (heistRun) {
-            if(thiefSlots >= 0){
+            if (thiefSlots >= 0) {
                 signalCond.signal();
                 thiefSlots--;
                 availableThieves--;
@@ -229,16 +243,17 @@ public class ControlCollectionSite {
         }
     }
 
-
     /***
-     * Sets up an Assault Party to be formed, assigning it a room and signaling the Ordinary Thief threads
+     * Sets up an Assault Party to be formed, assigning it a room and signaling the
+     * Ordinary Thief threads
+     * 
      * @return
      * @throws InterruptedException
      */
     public int prepareAssaultParty() throws InterruptedException {
         lock.lock();
         nextParty++;
-        if(nextParty > 1){
+        if (nextParty > 1) {
             nextParty = 0;
         }
         repos.setMasterThiefState(mStates.ASSEMBLING_A_GROUP);
@@ -247,10 +262,10 @@ public class ControlCollectionSite {
         if (nextRoom == -1) {
             return -1;
         }
-        repos.setAssaultPartyRoom(nextParty, nextRoom+1);
+        repos.setAssaultPartyRoom(nextParty, nextRoom + 1);
         for (int i = 0; i < 3; i++) {
             prepAssaultCond.signal();
-            if(thiefSlots >= 0){
+            if (thiefSlots >= 0) {
                 signalCond.await();
             }
         }
@@ -259,9 +274,9 @@ public class ControlCollectionSite {
         return nextParty;
     }
 
-    
     /***
      * Forces the Master Thief thread to sleep for a pre-determined amount of time
+     * 
      * @throws InterruptedException
      */
     public void takeARest() throws InterruptedException {
@@ -273,7 +288,9 @@ public class ControlCollectionSite {
     }
 
     /***
-     * Method for the retrieval of canvases from the Collection Site. Only one canvas is processed in a method call
+     * Method for the retrieval of canvases from the Collection Site. Only one
+     * canvas is processed in a method call
+     * 
      * @throws InterruptedException
      */
     public void collectACanvas() throws InterruptedException {
@@ -288,7 +305,7 @@ public class ControlCollectionSite {
                 queueSize--;
                 if (canvasRead) {
                     totalPaintings++;
-                    
+
                 } else {
                     emptyRooms[roomRead] = true;
                 }
@@ -302,14 +319,14 @@ public class ControlCollectionSite {
             }
         }
         repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
-        
+
         canvasCond.signalAll();
         lock.unlock();
     }
 
-
     /***
      * Method for the handing in of canvases
+     * 
      * @throws MemException
      * @throws InterruptedException
      */
@@ -317,24 +334,24 @@ public class ControlCollectionSite {
         lock.lock();
         oThief curThread = (oThief) Thread.currentThread();
         queueSize++;
-        
-        while(!handIn){
+
+        while (!handIn) {
             canvasRecvCond.signal();
             canvasCond.await();
-        } 
+        }
         handIn = false;
         roomHandInQueue.write(curThread.getCurRoom());
         canvasHandInQueue.write(curThread.hasPainting());
-        repos.setThiefCanvas(curThread.getCurAP(),curThread.getThiefID(), 0);
+        repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 0);
         canvasRecvCond.signal();
-        //canvasCond.await();
+        // canvasCond.await();
         repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
         lock.unlock();
     }
 
-
     /***
      * Method for controlling the lifecycle of the Master Thief Thread
+     * 
      * @return Integer value dependent on the current situation of the heist
      * @throws InterruptedException
      */
@@ -351,7 +368,7 @@ public class ControlCollectionSite {
         }
 
         if (emptyCounterSit == emptyRooms.length) {
-            if(queueSize != 0 ){
+            if (queueSize != 0) {
                 lock.unlock();
                 return 1;
             }
@@ -359,23 +376,23 @@ public class ControlCollectionSite {
                 readyCond.await();
             }
             this.heistRun = false;
-            
+
             lock.unlock();
             return 2;
         }
 
-        if(availableThieves >= 3){
+        if (availableThieves >= 3) {
             lock.unlock();
             return 0;
         }
 
-        for(int i = 0; i < aParties.length;i++){
-            if(partyRunStatus[i]){
+        for (int i = 0; i < aParties.length; i++) {
+            if (partyRunStatus[i]) {
                 lock.unlock();
                 return 1;
             }
         }
-        if(availableThieves >= 3){
+        if (availableThieves >= 3) {
             lock.unlock();
             return 0;
         }
@@ -402,9 +419,9 @@ public class ControlCollectionSite {
         return;
     }
 
-
     /***
-     * Transitory method for closing off the simulation: signals all Ordinary Thief threads upon exiting
+     * Transitory method for closing off the simulation: signals all Ordinary Thief
+     * threads upon exiting
      */
     public void sumUpResults() {
         lock.lock();
@@ -415,5 +432,3 @@ public class ControlCollectionSite {
         lock.unlock();
     }
 }
-
-    
