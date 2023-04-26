@@ -29,8 +29,7 @@ crawlIn:
     ID do thief
 
 crawlOut:
-    precisa do indice do ladrao na party e da distancia
-    ate a sala
+    precisa do indice do ladrao na party e da distancia ate a sala
     ID do thief
 
 reverseDirection:
