@@ -161,7 +161,6 @@ public class oThief extends Thread {
                 curAP = concentSite.prepareExcursion();
                 currentRoomID = arrayAP[curAP].addThief();
                 arrayAP[curAP].crawlIn();
-                //arrayAP[curAP].holdEntry();
                 carryingCanvas = museum.rollACanvas(currentRoomID);
                 arrayAP[curAP].reverseDirection();
                 arrayAP[curAP].crawlOut();
