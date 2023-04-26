@@ -75,11 +75,6 @@ public class AssaultParty {
     private int id;
 
     /**
-     * 
-     */
-    private boolean hold;
-
-    /**
      * Party status flag. True means the thieves are currently between the
      * CRAWLING_INWARDS and COLLECTION_SITE states
      */
@@ -115,7 +110,6 @@ public class AssaultParty {
         this.moveRestrictIn = new boolean[partySize];
         this.moveRestrictOut = new boolean[partySize];
         this.museum = museum;
-        this.hold = true;
         this.repos = repos;
         this.currentThiefNum = 0;
         this.hasArrived = 0;
@@ -145,9 +139,8 @@ public class AssaultParty {
             currentRoomID = roomID;
             while (currentThiefNum < 3) {
                 try {
-                    partyFullCond.await();
                     setupCond.signalAll();
-                    hold = false;
+                    partyFullCond.await();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -164,17 +157,14 @@ public class AssaultParty {
      * Assigns thief to party, and blocks waiting for departure signal.
      * 
      * @return Room index that was assigned to the party
-     * @throws InterruptedException
      */
-    public int addThief() throws InterruptedException {
+    public int addThief() {
         try {
             lock.lock();
             partyFullCond.signalAll();
-            /* while(hold){
-                setupCond.await();          
-            }
-            hold = true; */
-            setupCond.await();
+            try {
+                setupCond.await();
+            } catch (Exception e) {}
             int partyPos;
             oThief curThread = (oThief) Thread.currentThread();
 
@@ -188,13 +178,13 @@ public class AssaultParty {
             repos.addThiefToAssaultParty(curThread.getThiefID(), this.id, currentThiefNum);
             thiefDist[partyPos] = 0;
             currentThiefNum++;
-            //System.out.print("party " + id + " CTN- " + currentThiefNum + '\n');
             moveRestrictIn[partyPos] = true;
             moveRestrictOut[partyPos] = true;
             partyFullCond.signalAll();
             while (moveRestrictIn[partyPos]) {
-                // partyFullCond.signalAll();
-                cond.await();
+                try {                    
+                    cond.await();
+                } catch (Exception e) {}
             }
             repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
             return currentRoomID;
@@ -211,9 +201,8 @@ public class AssaultParty {
      * from the one behind them, then stops and signals another thief to move,
      * repeating the process until all three arrive at the Museum Room
      * 
-     * @throws InterruptedException
      */
-    public void crawlIn() throws InterruptedException {
+    public void crawlIn(int distance) {
         try {
             lock.lock();
             oThief curThread = (oThief) Thread.currentThread();
@@ -222,7 +211,8 @@ public class AssaultParty {
 
             int behindDist;
             int nextPos = 0;
-            int roomDist = museum.getRoomDistance(curThread.getCurRoom());
+            // int roomDist = museum.getRoomDistance(curThread.getCurRoom());
+            int roomDist = distance;
             boolean canMove = true;
 
             for (; move <= roomDist; move++) {
@@ -242,7 +232,9 @@ public class AssaultParty {
                     cond.signalAll();
                     while(moveRestrictIn[curIdx])
                     {
-                        cond.await();
+                        try {
+                            cond.await();                            
+                        } catch (Exception e) {}
                     }
                     canMove = true;
                     curIdx = curThread.getPartyPos();
@@ -309,7 +301,7 @@ public class AssaultParty {
      * @throws InterruptedException
      */
 
-    public void crawlOut() throws InterruptedException {
+    public void crawlOut(int distance) throws InterruptedException {
         try {
             lock.lock();
             oThief curThread = (oThief) Thread.currentThread();
@@ -317,7 +309,8 @@ public class AssaultParty {
             int curIdx = curThread.getPartyPos();
             int behindDist;
             int nextPos = 0;
-            int roomDist = museum.getRoomDistance(curThread.getCurRoom());
+            // int roomDist = museum.getRoomDistance(curThread.getCurRoom());
+            int roomDist = distance;
             boolean canMove = true;
 
             for (; move <= roomDist; move++) {
