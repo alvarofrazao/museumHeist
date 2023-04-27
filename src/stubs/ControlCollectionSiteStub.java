@@ -194,7 +194,7 @@ public class ControlCollectionSiteStub {
 
         inMessage= (Message) com.readObject();
         if(inMessage.getMsgType() != MessageType.ACK){
-            GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
+            GenericIO.writelnString("Thread " + curThread.getThiefID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
         }
