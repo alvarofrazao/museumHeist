@@ -12,6 +12,11 @@ public class mThief extends Thread {
     private int state;
 
     /**
+     * ID variable
+     */
+    private int id;
+
+    /**
      * Reference to the Assault Party array
      */
     private AssaultParty[] assaultParties;
@@ -32,11 +37,12 @@ public class mThief extends Thread {
      * @param controlSite Reference to the ControlCollectionSite shared memory region
      * @param concentSite Reference to the ConcentrationSite shared memory region
      */
-    public mThief(AssaultParty[] assaultParties, ControlCollectionSite controlSite, ConcentrationSite concentrationSite) {
+    public mThief(AssaultParty[] assaultParties, ControlCollectionSite controlSite, ConcentrationSite concentrationSite, int id) {
         this.state = mStates.PLANNING_THE_HEIST;
         this.assaultParties = assaultParties;
         this.controlSite = controlSite;
         this.concentrationSite = concentrationSite;
+        this.id = id;
     }
 
     public int getCurState() {
@@ -45,6 +51,10 @@ public class mThief extends Thread {
 
     public void setState(int i) {
         state = i;
+    }
+
+    public int getID(){
+        return id;
     }
 
     /**

@@ -23,7 +23,7 @@ public class Main {
             ControlCollectionSite controlSite = new ControlCollectionSite(aParties, repos, 5, 6);
             ConcentrationSite concentSite = new ConcentrationSite(aParties, repos);
 
-            mThief master = new mThief(aParties, controlSite, concentSite);
+            mThief master = new mThief(aParties, controlSite, concentSite, 9);
             oThief[] thieves = new oThief[6];
 
             for (int i = 0; i < 6; i++) {

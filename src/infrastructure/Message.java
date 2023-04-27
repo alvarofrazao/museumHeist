@@ -98,7 +98,7 @@ public class Message implements Serializable {
 
     /**
      * Type 2 instantiation
-     * @param type Message type: STARTOP,APSITREP,SNDPTY,SIGNDEP,TKREST,
+     * @param type Message type: STARTOP,APSITREP,SNDPTY,SIGNDEP,TKREST,PREPAP
      *                           COLCANV,SUMRES,PREPEX,PREPEXREP,GETDIST,GETDISTREP
      * @param id entity ID or integer value 
      */
@@ -106,29 +106,14 @@ public class Message implements Serializable {
         
         msgType = type; 
         switch(msgType){
-            case MessageType.STARTOP:
+            default:
                 this.thId = val1;
                 break;
             case MessageType.APSITREP:
                 this.retValInt1 = val1;
                 break;
-            case MessageType.SNDPTY:
-                this.thId = val1;
-                break;
             case MessageType.SIGNDEP:
                 this.oThAP = val1;
-                break;
-            case MessageType.TKREST:
-                this.thId = val1;
-                break;
-            case MessageType.COLCANV:
-                this.thId = val1;
-                break;
-            case MessageType.SUMRES:
-                this.thId = val1;
-                break;
-            case MessageType.PREPEX:
-                this.thId = val1;
                 break;
             case MessageType.PREPEXREP:
                 this.retValInt1 = val1;
@@ -139,7 +124,7 @@ public class Message implements Serializable {
             case MessageType.GETDISTREP:
                 this.retValInt1 = val1;
                 break;
-
+        }
     }
 
     /**
@@ -197,6 +182,7 @@ public class Message implements Serializable {
                 this.oThRoom = id;
                 this.retValInt1 = val1;
                 break;
+        }
     }
 
     /**
@@ -335,5 +321,72 @@ public class Message implements Serializable {
         this.thId = id;
         this.oThFC = fc;
         this.oThSit = pstate;
+    }
+
+    public int getMsgType(){
+        return msgType;
+    }
+
+    public int getRI1(){
+        return retValInt1;
+    }
+
+    public int getRI2(){
+        return retValInt2;
+    }
+
+    public boolean getRB(){
+        return retBoolVal;
+    }
+
+    public String getLogName(){
+        return logName;
+    }
+
+    public int getThId(){
+        return thId;
+    }
+
+    public int getThState(){
+        return thState;
+    }
+
+    public char getoThSit(){
+        return oThSit;
+    }
+
+   
+    public int getoThMaxDist(){
+        return oThMaxDist;
+    } 
+
+
+    public int getoThPartyPos(){
+        return oThPartyPos;
+    } 
+
+
+    public boolean getoThCanvas(){
+        return oThCanvas;
+    }
+
+
+    public boolean getoThFC() {
+        return oThFC;
+    }
+
+
+    public int getoThAP() {
+        return oThAP;
+    }
+
+
+    public int getoThRoom(){
+        return oThRoom;
+    }
+    
+
+    public int getroomDist(){
+        return roomDist;
     }
 }
