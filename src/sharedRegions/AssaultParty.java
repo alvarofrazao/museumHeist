@@ -349,6 +349,8 @@ public class AssaultParty {
                         isRunning = false;
                     }
                     moveRestrictOut[curIdx] = true;
+                    reverseCond.signalAll();
+
                     if((curIdx + 1) >= 3){
                         moveRestrictOut[0] = false;
                     }

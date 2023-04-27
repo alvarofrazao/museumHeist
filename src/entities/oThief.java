@@ -68,6 +68,11 @@ public class oThief extends Thread {
     private int currentRoomID;
 
     /**
+     * 
+     */
+    private int dist;
+
+    /**
      * State variable
      */
     private int state;
@@ -91,6 +96,7 @@ public class oThief extends Thread {
         this.partyPos = -1;
         this.carryingCanvas = false;
         this.state = 0;
+        this.dist = -1;
         this.arrayAP = arrayAP;
         this.controlSite = controlSite;
         this.concentSite = concentSite;
@@ -160,10 +166,11 @@ public class oThief extends Thread {
             while(controlSite.amINeeded()){
                 curAP = concentSite.prepareExcursion();
                 currentRoomID = arrayAP[curAP].addThief();
-                arrayAP[curAP].crawlIn(museum.getRoomDistance(currentRoomID));
+                dist = museum.getRoomDistance(currentRoomID);
+                arrayAP[curAP].crawlIn(dist);
                 carryingCanvas = museum.rollACanvas(currentRoomID);
                 arrayAP[curAP].reverseDirection();
-                arrayAP[curAP].crawlOut(museum.getRoomDistance(currentRoomID));
+                arrayAP[curAP].crawlOut(dist);
                 controlSite.handACanvas();
             }
         } catch (InterruptedException e) {
