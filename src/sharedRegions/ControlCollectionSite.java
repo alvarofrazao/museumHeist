@@ -115,7 +115,7 @@ public class ControlCollectionSite {
     /**
      * 
      */
-    private int waitingThieves;
+    private boolean hold;
 
     /**
      * Flag to determine whether or not the thief threads can write in to the FIFO
@@ -162,11 +162,11 @@ public class ControlCollectionSite {
 
         this.heistRun = true;
         this.handIn = true;
-
+        this.hold = true;
         this.totalPaintings = 0;
         this.thiefSlots = 3;
         this.availableThieves = 0;
-        this.waitingThieves = 0;
+        //this.waitingThieves = 0;
         this.nextParty = -1;
         this.lastRoom = -1;
         this.nextRoom = -1;
@@ -226,13 +226,15 @@ public class ControlCollectionSite {
             curThread.setFirstCycle(false);
         }
         readyCond.signal();
-        prepAssaultCond.await();
+        while(hold){
+            prepAssaultCond.await();
+        }
         if (heistRun) {
             if (thiefSlots >= 0) {
                 signalCond.signal();
                 thiefSlots--;
                 availableThieves--;
-                waitingThieves++;
+                //waitingThieves++;
             }
             lock.unlock();
             return true;
@@ -265,11 +267,14 @@ public class ControlCollectionSite {
         repos.setAssaultPartyRoom(nextParty, nextRoom + 1);
         for (int i = 0; i < 3; i++) {
             prepAssaultCond.signal();
-            if (thiefSlots >= 0) {
+            if (thiefSlots > 0) {
+                hold = false;
                 signalCond.await();
             }
+            hold = true;
         }
         partyRunStatus[nextParty] = true;
+        hold = true;
         lock.unlock();
         return nextParty;
     }
@@ -376,7 +381,8 @@ public class ControlCollectionSite {
                 readyCond.await();
             }
             this.heistRun = false;
-
+            this.hold = false;
+            prepAssaultCond.signalAll();
             lock.unlock();
             return 2;
         }
