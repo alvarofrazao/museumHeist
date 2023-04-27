@@ -113,11 +113,6 @@ public class ControlCollectionSite {
     private int queueSize;
 
     /**
-     * 
-     */
-    private int waitingThieves;
-
-    /**
      * Flag to determine whether or not the thief threads can write in to the FIFO
      * objects
      */
@@ -166,7 +161,6 @@ public class ControlCollectionSite {
         this.totalPaintings = 0;
         this.thiefSlots = 3;
         this.availableThieves = 0;
-        this.waitingThieves = 0;
         this.nextParty = -1;
         this.lastRoom = -1;
         this.nextRoom = -1;
@@ -232,7 +226,6 @@ public class ControlCollectionSite {
                 signalCond.signal();
                 thiefSlots--;
                 availableThieves--;
-                waitingThieves++;
             }
             lock.unlock();
             return true;

@@ -2,314 +2,199 @@ package src.infrastructure;
 
 public class MessageType {
 
-    /**
-     * Start Operations request
+    /**---
+     * Start Operations request int type, int id
      */
     public static final int STARTOP = 1;
+
+    /**
+     * Appraise Situation request int type
+     */
+    public static final int APSIT= 2;
+
+    /**
+     * Appraise Situation reply int type, int return
+     */
+    public static final int APSITREP= 3;
+
+    /**
+     * Prepare Assault Party request int type, int id
+     */
+    public static final int PREPAP= 4;
+
+    /**
+     * Prepare Assault Party reply int type, int id, int ap
+     */
+    public static final int PREPAPREP = 5;
+
+    /**
+     * Setup Party request int type
+     */
+    public static final int SETP= 6;
+
+    /**
+     * Send Assault party request int type, int id
+     */
+    public static final int SNDPTY = 7;
+      
+    /**
+     * Signal departure request int type, int ap
+     */
+    public static final int SIGNDEP= 8;
+       
+    /**
+     * Take a rest request int type, int id
+     */
+    public static final int TKREST= 9;
+
+    /**
+     * Collect a canvas request int type, int id
+     */
+    public static final int COLCANV = 10;
+       
+    /**
+     * Sum up results request int type, int id
+     */
+    public static final int SUMRES = 11;
     
     /**
-     * Start Operations reply
+     * Am I needed request int type, int id, boolean fc, char pstate
      */
-    public static final int STARTOPREP= 2;
-    
+    public static final int AIN = 11;
 
     /**
-     * Appraise Situation request
+     * Am I needed reply int type, boolean result, boolean fc
      */
-    public static final int APSIT= 3;
-
-    /**
-     * Appraise Situation reply
-     */
-    public static final int APSITREP= 4;
-
-    /**
-     * Prepare Assault PArty request
-     */
-    public static final int PREPAP= 5;
-
-    /**
-     * Prepare Assault PArty reply
-     */
-    public static final int PREPAPREP = 6;
-
-    /**
-     * Setup Party request
-     */
-    public static final int SETP= 7;
-
-    /**
-     * Setup Party reply 
-     */
-    public static final int SETPREP = 8;
-
-    /**
-     * Send Assault party request
-     */
-    public static final int SNDPTY = 9;
+    public static final int AINREP = 12;
     
     /**
-     * Send Assault party reply
+     * Prepare excursion request int type, int id
      */
-    public static final int SNDPTYREP = 10;
+    public static final int PREPEX = 13;
     
     /**
-     * Signal departure request
+     * Prepare excursion reply int type, int nextparty
      */
-    public static final int SIGNDEP= 11;
+    public static final int PREPEXREP = 14;
     
     /**
-     * Signal departure reply
+     * addThief request int type, int id, int party
      */
-    public static final int SIGNDEPREP = 12;
+    public static final int ADDTH = 15;
     
     /**
-     * Take a rest request
+     * addThief reply int type, int id, int partypos, int room
      */
-    public static final int TKREST= 13;
+    public static final int ADDTHREP = 16;
     
     /**
-     * Take a rest reply
+     * getRoomDistance request int type, int room
      */
-    public static final int TKRESTREP = 14;
+    public static final int GETDIST = 17;
     
     /**
-     * Collect a canvas request
+     * getRoomDistance reply int type, int dist
      */
-    public static final int COLCANV = 15;
+    public static final int GETDISTREP= 18;
     
     /**
-     * Collect a canvas reply
+     * crawlIn request int type, int id, int dist, int ap, int partypos
      */
-    public static final int COLCANVREP = 16;
+    public static final int CRIN = 19;
+   
+    /**
+     * rollACanvas request int type, int id, int room
+     */
+    public static final int ROLLCAN = 20;
     
     /**
-     * Sum up results request
+     * rollACanvas reply int type, boolean result
      */
-    public static final int SUMRES = 17;
-    
-    /**
-     * Sum up results reply
-     */
-    public static final int SUMRESREP = 18;
-    
-    /**
-     * Am I needed request
-     */
-    public static final int AIN = 19;
+    public static final int ROLLCANREP = 21;
 
     /**
-     * Am I needed reply
+     * reverseDirection request int type, int id, int ap, int partypos
      */
-    public static final int AINREP = 20;
-    
-    /**
-     * Prepare excursion request
-     */
-    public static final int PREPEX = 21;
-    
-    /**
-     * Prepare excursion reply
-     */
-    public static final int PREPEXREP = 22;
-    
-    /**
-     * addThief request
-     */
-    public static final int ADDTH = 23;
-    
-    /**
-     * addThief reply
-     */
-    public static final int ADDTHREP = 24;
-    
-    /**
-     * getRoomDistance request
-     */
-    public static final int GETDIST = 25;
-    
-    /**
-     * getRoomDistance reply
-     */
-    public static final int GETDISTREP= 26;
-    
-    /**
-     * crawlIn request
-     */
-    public static final int CRIN = 27;
-    
-    /**
-     * crawlIn reply
-     */
-    public static final int CRINREP = 28;
-    
-    /**
-     * rollACanvas request
-     */
-    public static final int ROLLCAN = 29;
-    
-    /**
-     * rollACanvas reply
-     */
-    public static final int ROLLCANREP = 30;
+    public static final int REVDIR = 22;
 
     /**
-     * reverseDirection request
+     * crawlOut request int type, int id, int ap, int dist, int partypos
      */
-    public static final int REVDIR = 31;
+    public static final int CROUT = 23;
+
 
     /**
-     * reverseDirection reply
+     * handACanvas request int type, int id, boolean canvas, int room
      */
-    public static final int REVDIRREP = 32;
+    public static final int HNDCAN = 24;
 
     /**
-     * crawlOut request
+     * Logfile initialization request int type, string fname
      */
-    public static final int CROUT = 33;
+    public static final int LOGINIT = 25;
 
     /**
-     * crawlOut reply
+     * setOrdinaryThiefState request int type, int id, int state
      */
-    public static final int CROUTREP = 34;
+    public static final int SETOTSTT = 26;
 
     /**
-     * handACanvas request
+     * setOrdinaryThiefPartyState request int type, int id, char state
      */
-    public static final int HNDCAN = 35;
+    public static final int SETOTPSTT= 27;
 
     /**
-     * handACanvas reply
+     * setOrdinaryThiefMD request int type, int id, int md
      */
-    public static final int HNDCANREP = 36;
+    public static final int SETTHMD = 28;
 
     /**
-     * Logfile initialization request
+     * setMasterThiefState request int type, int id, int state
      */
-    public static final int LOGINIT = 37;
+    public static final int SETMTHSTT= 29;
 
     /**
-     * Logfile initialization reply
+     * setAssaultPartyRoom request int type, int ap, int room
      */
-    public static final int LOGINITREP = 38;
+    public static final int ADDTHAP = 30;
 
     /**
-     * setOrdinaryThiefState request
+     * removeThiefFromAssaultParty request int type, int id, int ap
      */
-    public static final int SETOTSTT = 39;
+    public static final int REMTHAP = 31;
 
     /**
-     * setOrdinaryThiefState reply
+     * setThiefPosition request int type, int id, int pos
      */
-    public static final int SETOTSTTREP = 40;
+    public static final int SETTHPOS= 32;
 
     /**
-     * setOrdinaryThiefPartyState request
+     * setThiefCanvas request int type, int id, boolean canvas
      */
-    public static final int SETOTPSTT= 41;
+    public static final int SETTHCAN= 33;
 
     /**
-     * setOrdinaryThiefPartyState reply
+     * setNumPaintingsInRoom request int type, int room, int numpaint
      */
-    public static final int SETOTPSTTREP = 42;
+    public static final int SETPNTSRM = 34;
 
     /**
-     * setOrdinaryThiefMD request
+     * setRoomDistance request int type, int room, int roomdist
      */
-    public static final int SETTHMD = 43;
+    public static final int SETRMDIS = 35;
 
     /**
-     * setOrdinaryThiefMD reply
+     * setRoomDistanceAndPaintings request int type, int room, int dist, int numpaint
      */
-    public static final int SETTHMDREP = 44;
+    public static final int SETRDISTPNTS = 36;
 
     /**
-     * setMasterThiefState request
+     * finalResult request int type
      */
-    public static final int SETMTHSTT= 45;
+    public static final int FINRES = 37;
 
     /**
-     * setMasterThiefState reply
+     * Generic void Acknowledge int type,
      */
-    public static final int SETMTHSTTREP = 46;
-
-    /**
-     * setAssaultPartyRoom request
-     */
-    public static final int ADDTHAP = 47;
-
-    /**
-     * addThiefToAssaultParty reply
-     */
-    public static final int ADDTHAPREP = 48;
-
-    /**
-     * removeThiefFromAssaultParty request
-     */
-    public static final int REMTHAP = 49;
-
-    /**
-     * removeThiefFromAssaultParty reply
-     */
-    public static final int REMTHAPREP = 50;
-
-    /**
-     * setThiefPosition request
-     */
-    public static final int SETHTPOS= 51;
-
-    /**
-     * setThiefPosition reply
-     */
-    public static final int SETHTPOSREP = 52;
-
-    /**
-     * setThiefCanvas request
-     */
-    public static final int SETTHCAN= 53;
-
-    /**
-     * setThiefCanvas reply
-     */
-    public static final int SETTHCANREP = 54;
-
-    /**
-     * setNumPaintingsInRoom request
-     */
-    public static final int SETPNTSRM = 55;
-
-    /**
-     * setNumPaintingsInRoom reply
-     */
-    public static final int SETPNTSRMREP = 56;
-
-    /**
-     * setRoomDistance request
-     */
-    public static final int SETRMDIS = 57;
-
-    /**
-     * setRoomDistance reply
-     */
-    public static final int SETRMDISREP = 58;
-
-    /**
-     * setRoomDistanceAndPaintings request
-     */
-    public static final int SETRDISTPNTS = 59;
-
-    /**
-     * setRoomDistanceAndPaintings reply
-     */
-    public static final int SETRDISTPNTSREP= 60;
-
-    /**
-     * finalResult request
-     */
-    public static final int FINRES = 61;
-
-    /**
-     * finalResult reply
-     */
-    public static final int FINRESREP = 62;
+    public static final int ACK = 38;
 }
