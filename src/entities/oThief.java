@@ -156,7 +156,6 @@ public class oThief extends Thread {
         this.firstCycle = firstCycle;
     }
 
-
     /**
      * Lifecycle of the Ordinary Thief thread
      */

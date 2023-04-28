@@ -129,9 +129,9 @@ public class Message implements Serializable {
 
     /**
      * Type 3 Instantiation
-     * @param type Message type: PREPAPREP,ADDTH,ROLLCAN,SETOTSTT,SETTHMD,
-     *                           SETMTHSTT,ADDTHAP,REMTHAP,SETTHPOS,SETPNTSRM,SETRMDIS
-     * @param id entity ID (room/thread)
+     * @param type Message type: PREPAPREP,ADDTH,ROLLCAN,SETOTSTT,SETTHMD,SETAPRM
+     *                           SETMTHSTT,ADDTHAP,REMTHAP,SETPNTSRM,SETRMDIS
+     * @param id entity ID (room/thread/party)
      * @param val1 integer value
      */
     public Message(int type, int id, int val1){
@@ -170,24 +170,16 @@ public class Message implements Serializable {
                 this.thId = id;
                 this.oThAP = val1;
                 break;
-            case MessageType.SETTHPOS:
-                this.thId = id;
+            case MessageType.SETAPRM:
+                this.oThAP = id;
                 this.oThRoom = val1;
-                break;
-            case MessageType.SETPNTSRM:
-                this.oThRoom = id;
-                this.retValInt1 = val1;
-                break;
-            case MessageType.SETRMDIS:
-                this.oThRoom = id;
-                this.retValInt1 = val1;
                 break;
         }
     }
 
     /**
      * Type 4 Instantiation
-     * @param type Message type: ADDTHREP,REVDIR,SETRDISTPNTS
+     * @param type Message type: ADDTHREP,REVDIR,SETRDISTPNTS,SETTHPOS,SETTHCAN
      * @param id
      * @param val1
      * @param val2
@@ -209,6 +201,16 @@ public class Message implements Serializable {
             case MessageType.SETRDISTPNTS:
                 this.oThRoom = id;
                 this.roomDist = val1;
+                this.retValInt1 = val2;
+                break;
+            case MessageType.SETTHPOS:
+                this.thId = id;
+                this.oThPartyPos = val2;
+                this.oThAP = val1;
+                break;
+            case MessageType.SETTHCAN:
+                this.thId = id;
+                this.oThAP = val1;
                 this.retValInt1 = val2;
                 break;
         }
@@ -297,19 +299,6 @@ public class Message implements Serializable {
 
     /**
      * Type 11 Instantiation
-     * @param type Message type: SETTHCAN
-     * @param id
-     * @param canvas
-     */
-    public Message(int type, int id, boolean canvas){
-
-        msgType = type;
-        this.thId = id;
-        this.oThCanvas = canvas;
-    }
-
-    /**
-     * Type 12 Instantiation
      * @param type Message type: AIN
      * @param id
      * @param fc first cycle flag

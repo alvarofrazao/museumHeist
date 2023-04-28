@@ -156,6 +156,11 @@ public class MessageType {
     /**
      * setAssaultPartyRoom request int type, int ap, int room
      */
+    public static final int SETAPRM = 39;
+
+     /**
+      * Addthief to assault party request int type, int ap, int ppos
+      */
     public static final int ADDTHAP = 30;
 
     /**
