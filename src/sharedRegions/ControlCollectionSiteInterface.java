@@ -6,25 +6,23 @@ import src.infrastructure.MessageType;
 import src.entities.*;
 
 public class ControlCollectionSiteInterface {
-    
 
     /**
-    *  Reference to the ControlCollectionSite.
-    */
+     * Reference to the ControlCollectionSite.
+     */
 
-   private final ControlCollectionSite ccl ;
+    private final ControlCollectionSite ccl;
 
-   /**
-    *  Instantiation of an interface to the ControlCollectionSite.
-    *
-    *    @param  reference to the 
-    */
- 
-    public ControlCollectionSiteInterface(ControlCollectionSite ccl)
-    {
-       this.ccl = ccl;
+    /**
+     * Instantiation of an interface to the ControlCollectionSite.
+     *
+     * @param reference to the
+     */
+
+    public ControlCollectionSiteInterface(ControlCollectionSite ccl) {
+        this.ccl = ccl;
     }
-    
+
     /**
     *  Processing of the incoming messages.
     *

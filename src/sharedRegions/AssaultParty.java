@@ -81,13 +81,13 @@ public class AssaultParty {
     private boolean isRunning;
 
     /**
-     *Control variables for the in-going movement
-    */
+     * Control variables for the in-going movement
+     */
     private boolean moveRestrictIn[];
 
     /**
      * Control variables for the outgoing movement
-    */
+     */
     private boolean moveRestrictOut[];
 
     /***
@@ -146,9 +146,11 @@ public class AssaultParty {
                 }
             }
         } finally {
-            /* while (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            } */
+            /*
+             * while (lock.isHeldByCurrentThread()) {
+             * lock.unlock();
+             * }
+             */
             lock.unlock();
         }
     }
@@ -164,14 +166,14 @@ public class AssaultParty {
             partyFullCond.signalAll();
             try {
                 setupCond.await();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
             int partyPos;
             oThief curThread = (oThief) Thread.currentThread();
 
-            if(currentThiefNum >= 3){
+            if (currentThiefNum >= 3) {
                 partyPos = 2;
-            }
-            else{
+            } else {
                 partyPos = currentThiefNum;
             }
             curThread.setPartyPos(partyPos);
@@ -182,16 +184,19 @@ public class AssaultParty {
             moveRestrictOut[partyPos] = true;
             partyFullCond.signalAll();
             while (moveRestrictIn[partyPos]) {
-                try {                    
+                try {
                     cond.await();
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             }
             repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
             return currentRoomID;
-        }finally {
-            /* while (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            } */
+        } finally {
+            /*
+             * while (lock.isHeldByCurrentThread()) {
+             * lock.unlock();
+             * }
+             */
             lock.unlock();
         }
     }
@@ -217,78 +222,77 @@ public class AssaultParty {
 
             for (; move <= roomDist; move++) {
                 behindDist = -1;
-    
-                if(!canMove){
+
+                if (!canMove) {
                     move--;
                     thiefDist[curIdx] += move;
                     repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
                     moveRestrictIn[curIdx] = true;
-                    if((curIdx + 1) >= 3){
+                    if ((curIdx + 1) >= 3) {
                         moveRestrictIn[0] = false;
-                    }
-                    else{
+                    } else {
                         moveRestrictIn[curIdx + 1] = false;
                     }
                     cond.signalAll();
-                    while(moveRestrictIn[curIdx])
-                    {
+                    while (moveRestrictIn[curIdx]) {
                         try {
-                            cond.await();                            
-                        } catch (Exception e) {}
+                            cond.await();
+                        } catch (Exception e) {
+                        }
                     }
                     canMove = true;
                     curIdx = curThread.getPartyPos();
                     behindDist = thiefDist[curIdx];
                     move = 1;
                 }
-    
+
                 nextPos = move + thiefDist[curIdx];
-    
-    
-                //Arrival detection
+
+                // Arrival detection
                 if (nextPos >= roomDist) {
                     thiefDist[curIdx] = roomDist;
                     repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
                     repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.AT_A_ROOM);
                     hasArrived += 1;
                     moveRestrictIn[curIdx] = true;
-                    if((curIdx + 1) >= 3){
+                    if ((curIdx + 1) >= 3) {
                         moveRestrictIn[0] = false;
-                    }
-                    else{
+                    } else {
                         moveRestrictIn[curIdx + 1] = false;
                     }
                     cond.signalAll();
                     break;
                 }
-    
-                //Computing the index of the thief that is behind the current Thread
-                for(int i = 0;i < 3; i++){
-                    if(thiefDist[i] < thiefDist[curIdx]){
-                        if(thiefDist[i] > behindDist){
+
+                // Computing the index of the thief that is behind the current Thread
+                for (int i = 0; i < 3; i++) {
+                    if (thiefDist[i] < thiefDist[curIdx]) {
+                        if (thiefDist[i] > behindDist) {
                             behindDist = thiefDist[i];
                         }
                     }
                 }
-    
-                //matching distance detection
-                for(int i = 0; i < 3; i++){
-                    if(nextPos == thiefDist[i]){
+
+                // matching distance detection
+                for (int i = 0; i < 3; i++) {
+                    if (nextPos == thiefDist[i]) {
                         move++;
                         break;
                     }
                 }
-    
-                //Movement iteration stopping condition
-                if(nextPos > (behindDist + S)){
+
+                // Movement iteration stopping condition
+                if (nextPos > (behindDist + S)) {
                     canMove = false;
                 }
             }
-            
+
         } finally {
-            /* while (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            } */
+            /*
+             * while (lock.isHeldByCurrentThread()) {
+             * lock.unlock();
+             * }
+             */
             lock.unlock();
         }
     }
@@ -315,83 +319,80 @@ public class AssaultParty {
 
             for (; move <= roomDist; move++) {
                 behindDist = roomDist + 1;
-    
-                if(!canMove){
+
+                if (!canMove) {
                     move--;
                     thiefDist[curIdx] -= move;
                     repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
                     moveRestrictOut[curIdx] = true;
-                    if((curIdx + 1) >= 3){
+                    if ((curIdx + 1) >= 3) {
                         moveRestrictOut[0] = false;
-                    }
-                    else{
+                    } else {
                         moveRestrictOut[curIdx + 1] = false;
                     }
                     reverseCond.signalAll();
-                    while(moveRestrictOut[curIdx]){
+                    while (moveRestrictOut[curIdx]) {
                         reverseCond.await();
                     }
-                    
+
                     canMove = true;
                     behindDist = roomDist + 1;
                     move = 1;
                 }
-    
+
                 nextPos = thiefDist[curIdx] - move;
-    
-                //Arrival detection
+
+                // Arrival detection
                 if (nextPos <= 0) {
                     thiefDist[curIdx] = 0;
                     repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
                     repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.COLLECTION_SITE);
                     hasArrived++;
-                    if(hasArrived == 3){
+                    if (hasArrived == 3) {
                         isRunning = false;
                     }
                     moveRestrictOut[curIdx] = true;
                     reverseCond.signalAll();
 
-                    if((curIdx + 1) >= 3){
+                    if ((curIdx + 1) >= 3) {
                         moveRestrictOut[0] = false;
-                    }
-                    else{
+                    } else {
                         moveRestrictOut[curIdx + 1] = false;
                     }
                     reverseCond.signalAll();
-                    
-                    
+
                     break;
                 }
-    
-                //Computing the index of the thief that is behind the current Thread
-                for(int i = 0;i < 3; i++){
-                    if(thiefDist[i] > thiefDist[curIdx]){
-                        if(thiefDist[i] < behindDist){
+
+                // Computing the index of the thief that is behind the current Thread
+                for (int i = 0; i < 3; i++) {
+                    if (thiefDist[i] > thiefDist[curIdx]) {
+                        if (thiefDist[i] < behindDist) {
                             behindDist = thiefDist[i];
                         }
                     }
                 }
-    
-    
-                //matching distance detection
-                for(int i = 0; i < 3; i++){
-                    if(nextPos == thiefDist[i]){
+
+                // matching distance detection
+                for (int i = 0; i < 3; i++) {
+                    if (nextPos == thiefDist[i]) {
                         move++;
                         break;
                     }
                 }
-    
-                //Movement iteration stopping condition
-                if(nextPos < (behindDist -S )){
+
+                // Movement iteration stopping condition
+                if (nextPos < (behindDist - S)) {
                     canMove = false;
                 }
             }
 
-
         } finally {
-            /* while (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            } */
+            /*
+             * while (lock.isHeldByCurrentThread()) {
+             * lock.unlock();
+             * }
+             */
             lock.unlock();
         }
     }
@@ -425,16 +426,18 @@ public class AssaultParty {
              * }
              */
             cond.signalAll();
-            
+
             while (moveRestrictOut[curThread.getPartyPos()]) {
                 reverseCond.await();
             }
             repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_OUTWARDS);
             return;
         } finally {
-            /* while (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            } */
+            /*
+             * while (lock.isHeldByCurrentThread()) {
+             * lock.unlock();
+             * }
+             */
             lock.unlock();
         }
     }
@@ -454,9 +457,11 @@ public class AssaultParty {
             cond.signalAll();
 
         } finally {
-            /* while (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            } */
+            /*
+             * while (lock.isHeldByCurrentThread()) {
+             * lock.unlock();
+             * }
+             */
             lock.unlock();
         }
     }

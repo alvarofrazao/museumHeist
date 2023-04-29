@@ -19,7 +19,7 @@ public class ConcentrationSite {
      * Condition used for detecting if enough thieves have woken up to form a party
      */
     private Condition partyRdyCond;
-    
+
     /**
      * Reference to the General Repository shared region
      */
@@ -31,13 +31,15 @@ public class ConcentrationSite {
     private int nextParty;
 
     /**
-     * Number of thieves currently woken up 
+     * Number of thieves currently woken up
      */
     private int thiefCount;
 
     /***
      * Instantiation of ConcentrationSite object
-     * @param aParties reference to an array containing references to both Assault Party shared memory regions
+     * 
+     * @param aParties reference to an array containing references to both Assault
+     *                 Party shared memory regions
      * @param repos    reference to GeneralRepository shared memory region
      */
 
@@ -48,18 +50,21 @@ public class ConcentrationSite {
         this.nextParty = 0;
         this.thiefCount = 0;
     }
+
     /***
-     * Signals all Ordinary Thief threads waiting for the party to be sent and determines which party to form next
+     * Signals all Ordinary Thief threads waiting for the party to be sent and
+     * determines which party to form next
+     * 
      * @throws InterruptedException
      */
 
-    public void sendAssaultParty() throws InterruptedException { 
+    public void sendAssaultParty() throws InterruptedException {
         lock.lock();
-        while(thiefCount < 3){
+        while (thiefCount < 3) {
             partyRdyCond.await();
         }
         nextParty++;
-        if(nextParty > 1){
+        if (nextParty > 1) {
             nextParty = 0;
         }
 
@@ -70,6 +75,7 @@ public class ConcentrationSite {
 
     /***
      * Prepares the thief to be added to the current working Assault Party
+     * 
      * @return aParties index of the assigned Assault Party
      * @throws InterruptedException
      * @throws MemException

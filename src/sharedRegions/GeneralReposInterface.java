@@ -1,11 +1,8 @@
 package src.sharedRegions;
 
 public class GeneralReposInterface {
-    
 
-
-
-    /**
+  /**
     *  Processing of the incoming messages.
     *
     *  Validation, execution of the corresponding method and generation of the outgoing message.
