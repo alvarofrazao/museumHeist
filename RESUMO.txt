@@ -1,0 +1,19 @@
+O que eu fiz nestes ultimos dias foi:
+
+implementar os stubs: neste momento devem tar todos feitos, e dentro deles estao as mensagens que cada um deve enviar para o respetivo destino
+
+implementar os clientes: mClient e oClient sao os substitutos do oThief e mThief, neste caso era so alterar os nomes das regioes partilhadas para referenciarem os stubs em vez das zonas em sido
+    a partida isto deve tar bem tambem, depois quandot testarmos vemos
+
+implementar as interfaces: isto e o mais seca porque e muito copy paste. No processAndReply tens que implementar a verificaçao das mensagens para cada caso e depois implementar o processamento
+da mensagem que chegou. Isto envolve os proxies. Neste momento o que falta e escrever o codigo da parte do processamento do processAndReply, e garantir que a verificaçao de erros esta coerente com
+o que e suposto as mensagens enviarem
+
+implementar os proxies: isto tambem ja deve tar feito tendo em conta o que eu vi do codigo do borges, sao aqiulo que os monitores chamam para processarem os varios pedidos que lhes chegam
+
+Aquilo que eu agradecia que fizesses era se calhar começar a mexer no processAndReply de cada monitor se conseguires claro. Depois, e so garantir a coerencia do codigo com as mensagens e começar a testar
+
+A pior parte disto e mesmo as mensagens, dado que ha metodos dentro de metodos, entao tens que garantir que a informaçao relevante chega aonde e suposto. Como ha bues metodos, muitos deles diferentes,
+temos que nao so garantir que os construtores existem para aquelas combinaçoes de data types, mas tambem que esses dados sao postos nos campos corretos da mensagem
+
+Por fim, depois diz so se concordas com os campos que a mensagem vai ter.

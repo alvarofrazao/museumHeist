@@ -76,7 +76,7 @@ public class MuseumStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.ROLLCAN,curThread.getThiefID(),roomID);
+        outMessage = new Message(MessageType.ROLLCAN,curThread.getThiefID(),curThread.getCurAP(), roomID);
         com.writeObject(outMessage);
 
         inMessage = (Message) com.readObject();

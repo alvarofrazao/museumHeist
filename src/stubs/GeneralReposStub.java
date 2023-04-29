@@ -220,7 +220,7 @@ public class GeneralReposStub{
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.SETOTSTT,);
+        outMessage = new Message(MessageType.ADDTHAP, ap, pos);
         com.writeObject(outMessage);
 
         inMessage = (Message)com.readObject();
@@ -364,7 +364,7 @@ public class GeneralReposStub{
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.FINRES);
+        outMessage = new Message(MessageType.FINRES, total_paintings);
         com.writeObject(outMessage);
 
         inMessage = (Message)com.readObject();

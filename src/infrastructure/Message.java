@@ -87,9 +87,10 @@ public class Message implements Serializable {
      */
     private String logName = null;
 
+    //Message types das instantiaçoes estao incorretos, alguns em falta, outros nos sitios errados
     /**
      * Type 1 Instantiation
-     * @param type message type: APSIT,FINRES,ACK
+     * @param type message type: 
      */
     public Message(int type){
         
@@ -112,9 +113,6 @@ public class Message implements Serializable {
             case MessageType.APSITREP:
                 this.retValInt1 = val1;
                 break;
-            case MessageType.SIGNDEP:
-                this.oThAP = val1;
-                break;
             case MessageType.PREPEXREP:
                 this.retValInt1 = val1;
                 break;
@@ -125,6 +123,9 @@ public class Message implements Serializable {
                 this.oThRoom = val1;
                 break;
             case MessageType.GETDISTREP:
+                this.retValInt1 = val1;
+                break;
+            case MessageType.FINRES:
                 this.retValInt1 = val1;
                 break;
         }
@@ -211,6 +212,15 @@ public class Message implements Serializable {
                 this.thId = id;
                 this.oThAP = val1;
                 this.oThRoom = val2;
+            case MessageType.CRIN:
+                this.thId = id;
+                this.retValInt1 = val1;
+                this.oThPartyPos = val2;
+                break;
+            case MessageType.CROUT:
+                this.thId = id;
+                this.retValInt1 = val1;
+                this.oThPartyPos = val2;
         }
     }
 
@@ -269,17 +279,17 @@ public class Message implements Serializable {
 
     /**
      * Type 9 Instantiation
-     * @param type Message type: HNDCAN
+     * @param type Message type: HNDCAN,AIN
      * @param id
      * @param canvas
      * @param room
      */
-    public Message(int type, int id, boolean canvas, int room){
+    public Message(int type, int id, boolean valb, int vali){
 
         msgType = type;
         this.thId = id;
-        this.oThCanvas = canvas;
-        this.oThRoom = room;
+        this.oThFC = valb;
+        this.oThAP = vali;
     }
 
     /**
@@ -294,21 +304,29 @@ public class Message implements Serializable {
         this.thId = id;
         this.oThSit = pstate;
     }
-
+    
     /**
-     * Type 11 Instantiation
-     * @param type Message type: AIN
+     * Type 11Instantiation
+     * @param type
      * @param id
-     * @param fc first cycle flag
-     * @param pstate oThief party state
+     * @param ap
+     * @param room
+     * @param canvas
      */
-    public Message(int type, int id, boolean fc, char pstate){
-
+    public Message(int type,int id,int ap, int room,boolean canvas){
         msgType = type;
         this.thId = id;
-        this.oThFC = fc;
-        this.oThSit = pstate;
+        this.oThAP = ap;
+        this.oThRoom = room;
+        this.oThCanvas = canvas;
     }
+
+    public Message(int type, boolean val1, boolean val2){
+        msgType = type;
+        this.retBoolVal = val1;
+        this.oThFC = val2;
+    }
+
 
     public int getMsgType(){
         return msgType;

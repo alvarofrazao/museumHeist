@@ -30,7 +30,7 @@ public class AssaultPartyStub {
         this.serverPortNum = serverPortNum;
     }
 
-    public void setupParty(){
+    public void setupParty(int room){
 
         ClientCom com;
 
@@ -46,7 +46,7 @@ public class AssaultPartyStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.SETP,curThread.getID());
+        outMessage = new Message(MessageType.SETP,room);
         com.writeObject(outMessage);
 
         inMessage = (Message)com.readObject();
@@ -55,12 +55,6 @@ public class AssaultPartyStub {
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
-        }
-
-        if(inMessage.getThId() != curThread.getID()){
-            GenericIO.writelnString ("Thread " + curThread.getID () + ": Invalid barber id!");
-           GenericIO.writelnString (inMessage.toString ());
-           System.exit (1);
         }
 
         com.close();
@@ -83,7 +77,7 @@ public class AssaultPartyStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.ADDTH,curThread.getThiefID(),curThread.getCurAP());
+        outMessage = new Message(MessageType.ADDTH,curThread.getThiefID());
         com.writeObject(outMessage);
 
         inMessage = (Message) com.readObject();
@@ -116,7 +110,7 @@ public class AssaultPartyStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.CRIN,curThread.getThiefID(),dist,curThread.getCurAP(),curThread.getPartyPos());
+        outMessage = new Message(MessageType.CRIN,curThread.getThiefID(),dist,curThread.getPartyPos());
         com.writeObject(outMessage);
 
         inMessage = (Message) com.readObject();
@@ -147,7 +141,7 @@ public class AssaultPartyStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.CROUT,curThread.getThiefID(),dist,curThread.getCurAP(),curThread.getPartyPos());
+        outMessage = new Message(MessageType.CROUT,curThread.getThiefID(),dist,curThread.getPartyPos());
         com.writeObject(outMessage);
 
         inMessage = (Message) com.readObject();
@@ -178,7 +172,7 @@ public class AssaultPartyStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.REVDIR,curThread.getThiefID(),curThread.getPartyPos(),curThread.getCurRoom());
+        outMessage = new Message(MessageType.REVDIR,curThread.getThiefID(),curThread.getPartyPos());
         com.writeObject(outMessage);
 
         inMessage = (Message) com.readObject();
@@ -208,7 +202,7 @@ public class AssaultPartyStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.SIGNDEP,curThread.getID());
+        outMessage = new Message(MessageType.SIGNDEP);
         com.writeObject(outMessage);
 
         inMessage = (Message)com.readObject();

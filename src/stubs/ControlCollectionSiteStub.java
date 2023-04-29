@@ -48,7 +48,7 @@ public class ControlCollectionSiteStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.AIN,curThread.getThiefID(),curThread.isFirstCycle(),curThread.getCurSit());
+        outMessage = new Message(MessageType.AIN,curThread.getThiefID(),curThread.isFirstCycle(),curThread.getCurAP());
         com.writeObject(outMessage);
 
         inMessage = (Message) com.readObject();
@@ -96,7 +96,7 @@ public class ControlCollectionSiteStub {
         }
 
         if(inMessage.getThId() != curThread.getID()){
-            GenericIO.writelnString ("Thread " + curThread.getID () + ": Invalid barber id!");
+            GenericIO.writelnString ("Thread " + curThread.getID () + ": Invalid Thief id!");
            GenericIO.writelnString (inMessage.toString ());
            System.exit (1);
         }
@@ -124,7 +124,7 @@ public class ControlCollectionSiteStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.TKREST,curThread.getID());
+        outMessage = new Message(MessageType.TKREST);
         com.writeObject(outMessage);
 
         inMessage = (Message) com.readObject();
@@ -189,7 +189,7 @@ public class ControlCollectionSiteStub {
             }
             catch(InterruptedException e){}
         }
-        outMessage = new Message(MessageType.HNDCAN,curThread.getThiefID(),curThread.hasPainting(),curThread.getCurRoom());
+        outMessage = new Message(MessageType.HNDCAN,curThread.getThiefID(),curThread.getCurAP(),curThread.getCurRoom(),curThread.hasPainting());
         com.writeObject(outMessage);
 
         inMessage= (Message) com.readObject();
@@ -211,7 +211,6 @@ public class ControlCollectionSiteStub {
         ClientCom com;
 
         Message outMessage, inMessage;
-        mThief curThread = (mThief) Thread.currentThread();
 
 
         com = new ClientCom(serverHostName, serverPortNum);
@@ -228,7 +227,7 @@ public class ControlCollectionSiteStub {
 
         inMessage= (Message) com.readObject();
         if(inMessage.getMsgType() != MessageType.APSITREP){
-            GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
+            GenericIO.writelnString("Thread " + ((mThief) Thread.currentThread()).getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
         }
@@ -245,7 +244,6 @@ public class ControlCollectionSiteStub {
         ClientCom com;
 
         Message outMessage, inMessage;
-        mThief curThread = (mThief) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -256,12 +254,12 @@ public class ControlCollectionSiteStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.STARTOP,curThread.getID());
+        outMessage = new Message(MessageType.STARTOP);
         com.writeObject(outMessage);
 
         inMessage= (Message) com.readObject();
         if(inMessage.getMsgType() != MessageType.STARTOPREP){
-            GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
+            GenericIO.writelnString("Thread " + ((mThief) Thread.currentThread()).getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
         }
@@ -272,7 +270,7 @@ public class ControlCollectionSiteStub {
     /**
      * 
      */
-    public void sumResults(){
+    public void sumUpResults(){
 
         ClientCom com;
 
@@ -288,17 +286,47 @@ public class ControlCollectionSiteStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.SUMRES,curThread.getID());
+        outMessage = new Message(MessageType.SUMRES);
         com.writeObject(outMessage);
 
         inMessage= (Message) com.readObject();
         if(inMessage.getMsgType() != MessageType.SUMRESREP){
+            GenericIO.writelnString("Thread " + ((mThief) Thread.currentThread()).getID() + ": Invalid message type");
+            GenericIO.writelnString(inMessage.toString());
+            System.exit(1);
+        }
+
+        com.close();
+    }
+
+    public int getNextRoom(){
+
+        ClientCom com;
+
+        Message outMessage, inMessage;
+        mThief curThread = (mThief) Thread.currentThread();
+        com = new ClientCom(serverHostName, serverPortNum);
+
+        while(!com.open()){
+            try{
+                Thread.currentThread().sleep((long) (10));
+            }
+            catch(InterruptedException e){}
+        }
+
+        outMessage = new Message(MessageType.GETNRM,curThread.getID());
+        com.writeObject(outMessage);
+
+        inMessage= (Message) com.readObject();
+        if(inMessage.getMsgType() != MessageType.GETNRMREP){
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
         }
 
         com.close();
+
+        return inMessage.getoThRoom();
     }
  
 }

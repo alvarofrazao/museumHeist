@@ -58,12 +58,12 @@ public class MessageType {
     public static final int SUMRES = 11;
     
     /**
-     * Am I needed request int type, int id, boolean fc
+     * Am I needed request int type, int id, boolean fc, int ap
      */
     public static final int AIN = 12;
 
     /**
-     * Am I needed reply int type, boolean result
+     * Am I needed reply int type, boolean result, boolean fc
      */
     public static final int AINREP = 13;
     
@@ -103,7 +103,7 @@ public class MessageType {
     public static final int CRIN = 20;
    
     /**
-     * rollACanvas request int type, int id, int room
+     * rollACanvas request int type, int id, int ap, int room
      */
     public static final int ROLLCAN = 21;
     
@@ -113,7 +113,7 @@ public class MessageType {
     public static final int ROLLCANREP = 22;
 
     /**
-     * reverseDirection request int type, int id, (int ap), int partypos
+     * reverseDirection request int type, int id, int partypos
      */
     public static final int REVDIR = 23;
 
@@ -173,7 +173,7 @@ public class MessageType {
     public static final int SETTHPOS= 34;
 
     /**
-     * setThiefCanvas request int type, int ap, int id, boolean canvas
+     * setThiefCanvas request int type, int ap, int id, int canvas
      */
     public static final int SETTHCAN= 35;
 
@@ -198,42 +198,42 @@ public class MessageType {
     public static final int ACK = 40;
 
     /**
-     * handACanvas response int type, int id
+     * handACanvas response int type
      */
     public static final int HNDCANREP = 41;
 
     /**
-     * crawlIn response int type, int id, int state
+     * crawlIn response int type
      */
     public static final int CRINREP = 42;
 
     /**
-     * crawlOut response int type, int id, int state
+     * crawlOut response int type
      */
     public static final int CROUTREP = 43;
 
     /**
-     * reversideDirection response int type, int id, int state
+     * reversideDirection response int type
      */
     public static final int REVDIREP = 44;
 
     /**
-     * collectacanvas response int type, int id, int state
+     * collectacanvas response int type
      */
     public static final int COLCANREP = 45;
 
     /**
-     * startoperations response int type, int id, int state
+     * startoperations response int type
      */
     public static final int STARTOPREP = 46;
 
     /**
-     * sumresults response int type, int id, int state-
+     * sumresults response int type
      */
     public static final int SUMRESREP = 47;
 
     /**
-     * takearest response int type, int id, int state -
+     * takearest response int type
      */
     public static final int TKRESTREP = 48;
 
@@ -243,7 +243,7 @@ public class MessageType {
     public static final int SIGNDEPREP = 49;
 
     /**
-     * sendassaultparty response int type, int id, int state -
+     * sendassaultparty response int type
      */
     public static final int SNDPTYREP = 50;
 
@@ -251,4 +251,14 @@ public class MessageType {
      * setupparty response int type, int id
      */
     public static final int SETPREP = 51;
+
+    /**
+     * getNextRoom request int type
+     */
+    public static final int GETNRM = 52;
+
+    /**
+     * getNextRoom reply int type, int room
+     */
+    public static final int GETNRMREP = 52;
 }
