@@ -6,106 +6,102 @@ import src.infrastructure.MessageException;
 import src.infrastructure.ServerCom;
 import src.sharedRegions.*;
 
-public class ccsClientProxy extends Thread{
-    
-    /**
-   *  Number of instantiayed threads.
-   */
+public class ccsClientProxy extends Thread {
 
-   private static int nProxy = 0;
+     /**
+      * Number of instantiayed threads.
+      */
 
-   /**
-    *  Communication channel.
-    */
- 
-    private ServerCom sconi;
+     private static int nProxy = 0;
 
-    /**
-     * Control Site interface
-     */
-    private ConcentrationSiteInterface ccInter;
+     /**
+      * Communication channel.
+      */
 
-    /**
-     * thread id
-     */
-    private int thId;
+     private ServerCom sconi;
 
-    /**
-     * thread state
-     */
-    private int thState;
+     /**
+      * Control Site interface
+      */
+     private ConcentrationSiteInterface ccInter;
 
-    public ccsClientProxy(ServerCom sconi, ConcentrationSiteInterface ccInter){
-        super ("ccsClientProxy_" + ccsClientProxy.getProxyId());
-        this.sconi = sconi;
-        this.ccInter = ccInter;
-    }
+     /**
+      * thread id
+      */
+     private int thId;
 
-    /**
-   *  Generation of the instantiation identifier.
-   *
-   *     @return instantiation identifier
-   */
+     /**
+      * thread state
+      */
+     private int thState;
 
-   private static int getProxyId ()
-   {
-      Class<?> cl = null;                                            // representation of the BarberShopClientProxy object in JVM
-      int proxyId;                                                   // instantiation identifier
+     public ccsClientProxy(ServerCom sconi, ConcentrationSiteInterface ccInter) {
+          super("ccsClientProxy_" + ccsClientProxy.getProxyId());
+          this.sconi = sconi;
+          this.ccInter = ccInter;
+     }
 
-      try
-      { cl = Class.forName ("src.entities.ccsClientProxy");
-      }
-      catch (ClassNotFoundException e)
-      { GenericIO.writelnString ("Data type ccsClientProxy was not found!");
-        e.printStackTrace ();
-        System.exit (1);
-      }
-      synchronized (cl)
-      { proxyId = nProxy;
-        nProxy += 1;
-      }
-      return proxyId;
-   }
+     /**
+      * Generation of the instantiation identifier.
+      *
+      * @return instantiation identifier
+      */
 
-   public void setThId(int id){
-        thId = id;
-   }
+     private static int getProxyId() {
+          Class<?> cl = null; // representation of the BarberShopClientProxy object in JVM
+          int proxyId; // instantiation identifier
 
-   public int getThId(){
-        return thId;
-   }
+          try {
+               cl = Class.forName("src.entities.ccsClientProxy");
+          } catch (ClassNotFoundException e) {
+               GenericIO.writelnString("Data type ccsClientProxy was not found!");
+               e.printStackTrace();
+               System.exit(1);
+          }
+          synchronized (cl) {
+               proxyId = nProxy;
+               nProxy += 1;
+          }
+          return proxyId;
+     }
 
-   public void setThState(int state){
-        thState = state;
-   }
+     public void setThId(int id) {
+          thId = id;
+     }
 
-   public int getThState(){
-        return thState;
-   }
+     public int getThId() {
+          return thId;
+     }
 
-   /**
-   *  Life cycle of the service provider agent.
-   */
+     public void setThState(int state) {
+          thState = state;
+     }
 
-   @Override
-   public void run ()
-   {
-      Message inMessage = null,                                      // service request
-              outMessage = null;                                     // service reply
+     public int getThState() {
+          return thState;
+     }
 
-     /* service providing */
+     /**
+      * Life cycle of the service provider agent.
+      */
 
-      inMessage = (Message) sconi.readObject ();                     // get service request
-      try
-      { outMessage = ccInter.processAndReply (inMessage);         // process it
-      }
-      catch (MessageException e)
-      { GenericIO.writelnString ("Thread " + getThId() + ": " + e.getMessage () + "!");
-        GenericIO.writelnString (e.getMessageVal ().toString ());
-        System.exit (1);
-      }
-      sconi.writeObject (outMessage);                                // send service reply
-      sconi.close ();                                                // close the communication channel
-   }
+     @Override
+     public void run() {
+          Message inMessage = null, // service request
+                    outMessage = null; // service reply
+
+          /* service providing */
+
+          inMessage = (Message) sconi.readObject(); // get service request
+          try {
+               outMessage = ccInter.processAndReply(inMessage); // process it
+          } catch (MessageException e) {
+               GenericIO.writelnString("Thread " + getThId() + ": " + e.getMessage() + "!");
+               GenericIO.writelnString(e.getMessageVal().toString());
+               System.exit(1);
+          }
+          sconi.writeObject(outMessage); // send service reply
+          sconi.close(); // close the communication channel
+     }
 
 }

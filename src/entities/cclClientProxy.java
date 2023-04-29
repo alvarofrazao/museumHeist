@@ -6,159 +6,152 @@ import src.infrastructure.MessageException;
 import src.infrastructure.ServerCom;
 import src.sharedRegions.ConcentrationSiteInterface;
 
-public class cclClientProxy extends Thread{
-    
-   /**
-   *  Number of instantiayed threads.
-   */
+public class cclClientProxy extends Thread {
 
-   private static int nProxy = 0;
+     /**
+      * Number of instantiayed threads.
+      */
 
-   /**
-    *  Communication channel.
-    */
- 
-    private ServerCom sconi;
+     private static int nProxy = 0;
 
-    /**
-     * Control Site interface
-     */
-    private ConcentrationSiteInterface cclInter;
+     /**
+      * Communication channel.
+      */
 
-    /**
-     * thread id
-     */
-    private int thId;
+     private ServerCom sconi;
 
-    /**
-     * thread state
-     */
-    private int thState;
+     /**
+      * Control Site interface
+      */
+     private ConcentrationSiteInterface cclInter;
 
-    private int room;
+     /**
+      * thread id
+      */
+     private int thId;
 
-    private int thAP;
-    
-    private char pstate;
+     /**
+      * thread state
+      */
+     private int thState;
 
-    private boolean hasCanvas;
+     private int room;
 
-    private boolean fc;
+     private int thAP;
 
-    
+     private char pstate;
 
+     private boolean hasCanvas;
 
-    public cclClientProxy(ServerCom sconi, ConcentrationSiteInterface cclInter){
-        super ("cclClientProxy" + cclClientProxy.getProxyId());
-        this.sconi = sconi;
-        this.cclInter = cclInter;
-    }
+     private boolean fc;
 
-    /**
-   *  Generation of the instantiation identifier.
-   *
-   *     @return instantiation identifier
-   */
+     public cclClientProxy(ServerCom sconi, ConcentrationSiteInterface cclInter) {
+          super("cclClientProxy" + cclClientProxy.getProxyId());
+          this.sconi = sconi;
+          this.cclInter = cclInter;
+     }
 
-   private static int getProxyId ()
-   {
-      Class<?> cl = null;                                            // representation of the BarberShopClientProxy object in JVM
-      int proxyId;                                                   // instantiation identifier
+     /**
+      * Generation of the instantiation identifier.
+      *
+      * @return instantiation identifier
+      */
 
-      try
-      { cl = Class.forName ("src.entities.cclClientProxy");
-      }
-      catch (ClassNotFoundException e)
-      { GenericIO.writelnString ("Data type cclClientProxy was not found!");
-        e.printStackTrace ();
-        System.exit (1);
-      }
-      synchronized (cl)
-      { proxyId = nProxy;
-        nProxy += 1;
-      }
-      return proxyId;
-   }
+     private static int getProxyId() {
+          Class<?> cl = null; // representation of the BarberShopClientProxy object in JVM
+          int proxyId; // instantiation identifier
 
-   public void setThId(int id){
-        thId = id;
-   }
+          try {
+               cl = Class.forName("src.entities.cclClientProxy");
+          } catch (ClassNotFoundException e) {
+               GenericIO.writelnString("Data type cclClientProxy was not found!");
+               e.printStackTrace();
+               System.exit(1);
+          }
+          synchronized (cl) {
+               proxyId = nProxy;
+               nProxy += 1;
+          }
+          return proxyId;
+     }
 
-   public int getThId(){
-        return thId;
-   }
+     public void setThId(int id) {
+          thId = id;
+     }
 
-   public void setThState(int state){
-        thState = state;
-   }
+     public int getThId() {
+          return thId;
+     }
 
-   public int getThState(){
-        return thState;
-   }
+     public void setThState(int state) {
+          thState = state;
+     }
 
-   public void setRoom(int room){
-        this.room = room;
-   }
+     public int getThState() {
+          return thState;
+     }
 
-   public int getRoom(){
-        return room;
-   }
+     public void setRoom(int room) {
+          this.room = room;
+     }
 
-   public void setThAP(int ap){
-        this.thAP = ap;
-   }
+     public int getRoom() {
+          return room;
+     }
 
-   public int getAP(){
-        return thAP;
-   }
+     public void setThAP(int ap) {
+          this.thAP = ap;
+     }
 
-   public void setPS(char pstate){
-        this.pstate = pstate;
-   }
+     public int getAP() {
+          return thAP;
+     }
 
-   public char getPS(){
-        return pstate;
-   }
+     public void setPS(char pstate) {
+          this.pstate = pstate;
+     }
 
-   public void setFC(boolean fc){
-        this.fc = fc;
-   }
+     public char getPS() {
+          return pstate;
+     }
 
-   public boolean getFC(){
-        return fc;
-   }
+     public void setFC(boolean fc) {
+          this.fc = fc;
+     }
 
-   public void setHC(boolean hc){
-        this.hasCanvas = hc;
-   }
+     public boolean getFC() {
+          return fc;
+     }
 
-   public boolean getHC(){
-        return hasCanvas;
-   }
+     public void setHC(boolean hc) {
+          this.hasCanvas = hc;
+     }
 
-   /**
-   *  Life cycle of the service provider agent.
-   */
+     public boolean getHC() {
+          return hasCanvas;
+     }
 
-   @Override
-   public void run ()
-   {
-      Message inMessage = null,                                      // service request
-              outMessage = null;                                     // service reply
+     /**
+      * Life cycle of the service provider agent.
+      */
 
-     /* service providing */
+     @Override
+     public void run() {
+          Message inMessage = null, // service request
+                    outMessage = null; // service reply
 
-      inMessage = (Message) sconi.readObject ();                     // get service request
-      try
-      { outMessage = cclInter.processAndReply (inMessage);         // process it
-      }
-      catch (MessageException e)
-      { GenericIO.writelnString ("Thread " + getThId() + ": " + e.getMessage () + "!");
-        GenericIO.writelnString (e.getMessageVal ().toString ());
-        System.exit (1);
-      }
-      sconi.writeObject (outMessage);                                // send service reply
-      sconi.close ();                                                // close the communication channel
-   }
+          /* service providing */
+
+          inMessage = (Message) sconi.readObject(); // get service request
+          try {
+               outMessage = cclInter.processAndReply(inMessage); // process it
+          } catch (MessageException e) {
+               GenericIO.writelnString("Thread " + getThId() + ": " + e.getMessage() + "!");
+               GenericIO.writelnString(e.getMessageVal().toString());
+               System.exit(1);
+          }
+          sconi.writeObject(outMessage); // send service reply
+          sconi.close(); // close the communication channel
+     }
 
 }
