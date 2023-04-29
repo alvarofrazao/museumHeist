@@ -2,8 +2,8 @@ package src.infrastructure;
 
 public class MessageType {
 
-    /**---
-     * Start Operations request int type, int id
+    /**
+     * Start Operations request int type
      */
     public static final int STARTOP = 1;
 
@@ -28,42 +28,42 @@ public class MessageType {
     public static final int PREPAPREP = 5;
 
     /**
-     * Setup Party request int type
+     * Setup Party request int type, int roomid
      */
     public static final int SETP= 6;
 
     /**
-     * Send Assault party request int type, int id
+     * Send Assault party request int type
      */
     public static final int SNDPTY = 7;
       
     /**
-     * Signal departure request int type, int ap
+     * Signal departure request int type
      */
     public static final int SIGNDEP= 8;
        
     /**
-     * Take a rest request int type, int id
+     * Take a rest request int type
      */
     public static final int TKREST= 9;
 
     /**
-     * Collect a canvas request int type, int id
+     * Collect a canvas request int type
      */
     public static final int COLCANV = 10;
        
     /**
-     * Sum up results request int type, int id
+     * Sum up results request int type
      */
     public static final int SUMRES = 11;
     
     /**
-     * Am I needed request int type, int id, boolean fc, char pstate
+     * Am I needed request int type, int id, boolean fc
      */
     public static final int AIN = 12;
 
     /**
-     * Am I needed reply int type, boolean result, boolean fc
+     * Am I needed reply int type, boolean result
      */
     public static final int AINREP = 13;
     
@@ -78,7 +78,7 @@ public class MessageType {
     public static final int PREPEXREP = 15;
     
     /**
-     * addThief request int type, int id, int party
+     * addThief request int type, int id
      */
     public static final int ADDTH = 16;
     
@@ -98,7 +98,7 @@ public class MessageType {
     public static final int GETDISTREP= 19;
     
     /**
-     * crawlIn request int type, int id, int dist, int ap, int partypos
+     * crawlIn request int type, int id, int dist, (int ap), int partypos
      */
     public static final int CRIN = 20;
    
@@ -113,18 +113,17 @@ public class MessageType {
     public static final int ROLLCANREP = 22;
 
     /**
-     * reverseDirection request int type, int id, int ap, int partypos
+     * reverseDirection request int type, int id, (int ap), int partypos
      */
     public static final int REVDIR = 23;
 
     /**
-     * crawlOut request int type, int id, int ap, int dist, int partypos
+     * crawlOut request int type, int id, (int ap), int dist, int partypos
      */
     public static final int CROUT = 24;
 
-
     /**
-     * handACanvas request int type, int id, boolean canvas, int room
+     * handACanvas request int type, int id, int ap, int room, boolean canvas
      */
     public static final int HNDCAN = 25;
 
@@ -169,12 +168,12 @@ public class MessageType {
     public static final int REMTHAP = 33;
 
     /**
-     * setThiefPosition request int type, int id, int pos
+     * setThiefPosition request int type, int id, int ap, int pos
      */
     public static final int SETTHPOS= 34;
 
     /**
-     * setThiefCanvas request int type, int id, boolean canvas
+     * setThiefCanvas request int type, int ap, int id, boolean canvas
      */
     public static final int SETTHCAN= 35;
 
@@ -182,11 +181,6 @@ public class MessageType {
      * setNumPaintingsInRoom request int type, int room, int numpaint
      */
     public static final int SETPNTSRM = 36;
-
-    /**
-     * setRoomDistance request int type, int room, int roomdist
-     */
-    public static final int SETRMDIS = 37;
 
     /**
      * setRoomDistanceAndPaintings request int type, int room, int dist, int numpaint
@@ -204,57 +198,57 @@ public class MessageType {
     public static final int ACK = 40;
 
     /**
-     * handACanvas response
+     * handACanvas response int type, int id
      */
     public static final int HNDCANREP = 41;
 
     /**
-     * crawlIn response
+     * crawlIn response int type, int id, int state
      */
     public static final int CRINREP = 42;
 
     /**
-     * crawlOut response
+     * crawlOut response int type, int id, int state
      */
     public static final int CROUTREP = 43;
 
     /**
-     * reversideDirection response
+     * reversideDirection response int type, int id, int state
      */
     public static final int REVDIREP = 44;
 
     /**
-     * collectacanvas response
+     * collectacanvas response int type, int id, int state
      */
     public static final int COLCANREP = 45;
 
     /**
-     * startoperations response
+     * startoperations response int type, int id, int state
      */
     public static final int STARTOPREP = 46;
 
     /**
-     * sumresults response
+     * sumresults response int type, int id, int state-
      */
     public static final int SUMRESREP = 47;
 
     /**
-     * takearest response
+     * takearest response int type, int id, int state -
      */
     public static final int TKRESTREP = 48;
 
     /**
-     * signalDeparture response
+     * signalDeparture response int type, int id
      */
     public static final int SIGNDEPREP = 49;
 
     /**
-     * sendassaultparty response
+     * sendassaultparty response int type, int id, int state -
      */
     public static final int SNDPTYREP = 50;
 
     /**
-     * setupparty response
+     * setupparty response int type, int id
      */
     public static final int SETPREP = 51;
 }

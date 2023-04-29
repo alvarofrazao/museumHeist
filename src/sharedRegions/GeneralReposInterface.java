@@ -1,5 +1,7 @@
 package src.sharedRegions;
 
+import src.infrastructure.Message;
+
 public class GeneralReposInterface {
 
   /**

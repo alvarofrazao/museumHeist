@@ -1,5 +1,6 @@
 package src.sharedRegions;
 
+import src.entities.museumClientProxy;
 import src.infrastructure.Message;
 import src.infrastructure.MessageException;
 import src.infrastructure.MessageType;
@@ -48,10 +49,13 @@ public class MuseumInterface {
       }
     }
 
+    museumClientProxy curThread = (museumClientProxy)Thread.currentThread();
+
     /* processing */
 
     switch (inMessage.getMsgType()) {
       case MessageType.ROLLCAN:
+        (museumClientProxy) Thread.currentThread().
         break;
       case MessageType.GETDIST:
         break;

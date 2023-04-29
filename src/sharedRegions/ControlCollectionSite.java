@@ -207,9 +207,8 @@ public class ControlCollectionSite {
      * Controls the lifecycle of the Ordinary Thief threads
      * 
      * @return true or false, depending on the status of the heist
-     * @throws InterruptedException
      */
-    public boolean amINeeded() throws InterruptedException {
+    public boolean amINeeded() {
         lock.lock();
         availableThieves++;
         oThief curThread = (oThief) Thread.currentThread();
@@ -220,7 +219,10 @@ public class ControlCollectionSite {
             curThread.setFirstCycle(false);
         }
         readyCond.signal();
-        prepAssaultCond.await();
+        try {
+            prepAssaultCond.await();
+        } catch (InterruptedException e) {
+        }
         if (heistRun) {
             if (thiefSlots >= 0) {
                 signalCond.signal();

@@ -77,7 +77,15 @@ public class ControlCollectionSiteInterface {
  
       switch (inMessage.getMsgType ())
       { case MessageType.AIN:  
-                                   break;
+            ((cclClientProxy)Thread.currentThread()).setThId(inMessage.getThId());
+            ((cclClientProxy)Thread.currentThread()).setFC(inMessage.getoThFC());
+            ((cclClientProxy)Thread.currentThread()).setPS(inMessage.getoThSit());
+            if(ccl.amINeeded()){
+                outMessage = new Message(MessageType.AINREP, true, ((cclClientProxy)Thread.currentThread()).getFC());
+            }else{
+                outMessage = new Message(MessageType.AINREP, false, ((cclClientProxy)Thread.currentThread()).getFC());
+            }
+            break;
         case MessageType.PREPAP:    
                                    break;
         case MessageType.TKREST: 
