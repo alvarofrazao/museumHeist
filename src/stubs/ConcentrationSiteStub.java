@@ -52,7 +52,7 @@ public class ConcentrationSiteStub {
 
         inMessage = (Message) com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.ACK){
+        if(inMessage.getMsgType() != MessageType.SNDPTYREP){
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);

@@ -129,8 +129,8 @@ public class Message implements Serializable {
 
     /**
      * Type 3 Instantiation
-     * @param type Message type: PREPAPREP,ADDTH,ROLLCAN,SETOTSTT,SETTHMD,SETAPRM
-     *                           SETMTHSTT,ADDTHAP,REMTHAP,SETPNTSRM,SETRMDIS
+     * @param type Message type: PREPAPREP,ADDTH,ROLLCAN,SETOTSTT,SETTHMD,SETAPRM,CRINREP,REVDIREP,STARTOPREP,TKRESTREP,SNDPTYREP
+     *                           SETMTHSTT,ADDTHAP,REMTHAP,SETPNTSRM,SETRMDIS,HNDCANREP,CROUTREP,COLCANREP,SUMRESREP,SIGNDEPREP,SETPREP
      * @param id entity ID (room/thread/party)
      * @param val1 integer value
      */
@@ -174,6 +174,9 @@ public class Message implements Serializable {
                 this.oThAP = id;
                 this.oThRoom = val1;
                 break;
+            default:
+                this.thId = id;
+                this.thState = val1;
         }
     }
 

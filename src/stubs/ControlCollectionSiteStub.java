@@ -129,7 +129,7 @@ public class ControlCollectionSiteStub {
 
         inMessage = (Message) com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.ACK){
+        if(inMessage.getMsgType() != MessageType.TKRESTREP){
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
@@ -162,7 +162,7 @@ public class ControlCollectionSiteStub {
 
         inMessage = (Message) com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.ACK){
+        if(inMessage.getMsgType() != MessageType.COLCANREP){
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
@@ -193,7 +193,7 @@ public class ControlCollectionSiteStub {
         com.writeObject(outMessage);
 
         inMessage= (Message) com.readObject();
-        if(inMessage.getMsgType() != MessageType.ACK){
+        if(inMessage.getMsgType() != MessageType.HNDCANREP){
             GenericIO.writelnString("Thread " + curThread.getThiefID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
@@ -260,7 +260,7 @@ public class ControlCollectionSiteStub {
         com.writeObject(outMessage);
 
         inMessage= (Message) com.readObject();
-        if(inMessage.getMsgType() != MessageType.ACK){
+        if(inMessage.getMsgType() != MessageType.STARTOPREP){
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
@@ -292,7 +292,7 @@ public class ControlCollectionSiteStub {
         com.writeObject(outMessage);
 
         inMessage= (Message) com.readObject();
-        if(inMessage.getMsgType() != MessageType.ACK){
+        if(inMessage.getMsgType() != MessageType.SUMRESREP){
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);

@@ -202,4 +202,59 @@ public class MessageType {
      * Generic void Acknowledge int type,
      */
     public static final int ACK = 40;
+
+    /**
+     * handACanvas response
+     */
+    public static final int HNDCANREP = 41;
+
+    /**
+     * crawlIn response
+     */
+    public static final int CRINREP = 42;
+
+    /**
+     * crawlOut response
+     */
+    public static final int CROUTREP = 43;
+
+    /**
+     * reversideDirection response
+     */
+    public static final int REVDIREP = 44;
+
+    /**
+     * collectacanvas response
+     */
+    public static final int COLCANREP = 45;
+
+    /**
+     * startoperations response
+     */
+    public static final int STARTOPREP = 46;
+
+    /**
+     * sumresults response
+     */
+    public static final int SUMRESREP = 47;
+
+    /**
+     * takearest response
+     */
+    public static final int TKRESTREP = 48;
+
+    /**
+     * signalDeparture response
+     */
+    public static final int SIGNDEPREP = 49;
+
+    /**
+     * sendassaultparty response
+     */
+    public static final int SNDPTYREP = 50;
+
+    /**
+     * setupparty response
+     */
+    public static final int SETPREP = 51;
 }

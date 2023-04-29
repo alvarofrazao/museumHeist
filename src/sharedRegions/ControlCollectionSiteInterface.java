@@ -50,13 +50,9 @@ public class ControlCollectionSiteInterface {
                                     break;
          case MessageType.TKREST: if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
                                        throw new MessageException ("Invalid master thief id!", inMessage);
-                                       else if ((inMessage.getThState () < oStates.CONCENTRATION_SITE) || (inMessage.getThState () > oStates.COLLECTION_SITE))
-                                               throw new MessageException ("Invalid master thief state!", inMessage);
                                     break;
          case MessageType.COLCANV:   if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                                        throw new MessageException ("Invalid thief id!", inMessage);
-                                       else if ((inMessage.getThState() < oStates.CONCENTRATION_SITE) || (inMessage.getThState() > oStates.COLLECTION_SITE))
-                                               throw new MessageException ("Invalid thief state!", inMessage);
                                     break;
          case MessageType.HNDCAN:    if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                                        throw new MessageException ("Invalid thief id!", inMessage);
@@ -100,4 +96,5 @@ public class ControlCollectionSiteInterface {
       }
  
       return (outMessage);
+    }
 }

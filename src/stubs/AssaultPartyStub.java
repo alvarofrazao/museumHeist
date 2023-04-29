@@ -46,12 +46,12 @@ public class AssaultPartyStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.PREPAP,curThread.getID());
+        outMessage = new Message(MessageType.SETP,curThread.getID());
         com.writeObject(outMessage);
 
         inMessage = (Message)com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.PREPAPREP){
+        if(inMessage.getMsgType() != MessageType.SETPREP){
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
@@ -121,7 +121,7 @@ public class AssaultPartyStub {
 
         inMessage = (Message) com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.ACK){
+        if(inMessage.getMsgType() != MessageType.CRINREP){
             GenericIO.writelnString("Thread " + curThread.getThiefID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
@@ -152,7 +152,7 @@ public class AssaultPartyStub {
 
         inMessage = (Message) com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.AINREP){
+        if(inMessage.getMsgType() != MessageType.CROUTREP){
             GenericIO.writelnString("Thread " + curThread.getThiefID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
@@ -183,7 +183,7 @@ public class AssaultPartyStub {
 
         inMessage = (Message) com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.ACK){
+        if(inMessage.getMsgType() != MessageType.REVDIREP){
             GenericIO.writelnString("Thread " + curThread.getThiefID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
@@ -213,7 +213,7 @@ public class AssaultPartyStub {
 
         inMessage = (Message)com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.ACK){
+        if(inMessage.getMsgType() != MessageType.SIGNDEPREP){
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
