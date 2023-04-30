@@ -65,18 +65,34 @@ public class ccsClientProxy extends Thread {
           return proxyId;
      }
 
+     /**
+      * Set Thread ID - >=6 is mThief, [0,5] is oThief
+      * @param id
+      */
      public void setThId(int id) {
           thId = id;
      }
 
+     /**
+      * Get Thread ID - >=6 is mThief, [0,5] is oThief
+      * @return thread id
+      */
      public int getThId() {
           return thId;
      }
 
+     /**
+      * Set Thread state
+      * @param state
+      */
      public void setThState(int state) {
           thState = state;
      }
 
+     /**
+      * Get Thread State
+      * @return thread state
+      */
      public int getThState() {
           return thState;
      }

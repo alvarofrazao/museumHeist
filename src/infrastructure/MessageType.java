@@ -33,7 +33,7 @@ public class MessageType {
     public static final int SETP= 6;
 
     /**
-     * Send Assault party request int type
+     * Send Assault party request int type, int id
      */
     public static final int SNDPTY = 7;
       
@@ -43,12 +43,12 @@ public class MessageType {
     public static final int SIGNDEP= 8;
        
     /**
-     * Take a rest request int type
+     * Take a rest request int type, int id
      */
     public static final int TKREST= 9;
 
     /**
-     * Collect a canvas request int type
+     * Collect a canvas request int type, int id
      */
     public static final int COLCANV = 10;
        

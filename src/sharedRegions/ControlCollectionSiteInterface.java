@@ -56,7 +56,9 @@ public class ControlCollectionSiteInterface {
                                     break;
          case MessageType.HNDCAN:    if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                                        throw new MessageException ("Invalid thief id!", inMessage);
-                                       else if ((inMessage.getoThRoom() < 0) || (inMessage.getoThRoom() >= 5))
+                                       else if ((inMessage.getoThRoom() < 0) || (inMessage.getoThRoom() >= 5)){
+
+                                       }
                                     break;
          case MessageType.APSIT:  
                                     if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
@@ -86,21 +88,42 @@ public class ControlCollectionSiteInterface {
                 outMessage = new Message(MessageType.AINREP, false, ((cclClientProxy)Thread.currentThread()).getFC());
             }
             break;
-        case MessageType.PREPAP:    
-                                   break;
+        case MessageType.PREPAP:
+            ((cclClientProxy)Thread.currentThread()).setThId(inMessage.getThId());   
+            int nextParty = ccl.prepareAssaultParty();
+            outMessage = new Message(MessageType.PREPAPREP,inMessage.getThId(),nextParty);
+            break;
         case MessageType.TKREST: 
-                                   break;
+            ((cclClientProxy)Thread.currentThread()).setThId(inMessage.getThId());
+            ccl.takeARest(); 
+            outMessage = new Message(MessageType.TKRESTREP);
+            break;
         case MessageType.COLCANV:  
-                                   break;
-        case MessageType.HNDCAN:    
-                                   break;
-        case MessageType.APSIT:  
-                                   break;
-        case MessageType.STARTOP:  
-                                   break;
+            ((cclClientProxy)Thread.currentThread()).setThId(inMessage.getThId());
+            ccl.collectACanvas();
+            outMessage = new Message(MessageType.COLCANREP);
+            break;
+        case MessageType.HNDCAN: 
+            ((cclClientProxy)Thread.currentThread()).setThId(inMessage.getThId());
+            ((cclClientProxy)Thread.currentThread()).setThAP(inMessage.getoThAP());
+            ((cclClientProxy)Thread.currentThread()).setRoom(inMessage.getoThRoom());
+            ((cclClientProxy)Thread.currentThread()).setHC(inMessage.getoThCanvas());
+            ccl.handACanvas();
+            outMessage = new Message(MessageType.HNDCANREP);
+            break;
+        case MessageType.APSIT:
+            int result = ccl.appraiseSit();
+            outMessage = new Message(MessageType.APSITREP,result);
+            break;
+        case MessageType.STARTOP: 
+            ccl.startOperations();
+            outMessage = new Message(MessageType.STARTOPREP);
+            break;
         case MessageType.SUMRES:  
-                                   break;
-        default:                   throw new MessageException ("Invalid message type!", inMessage);
+            ccl.sumUpResults();
+            outMessage = new Message(MessageType.SUMRESREP);
+            break;
+        default: throw new MessageException ("Invalid message type!", inMessage);
       }
  
       return (outMessage);

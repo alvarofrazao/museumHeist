@@ -3,8 +3,8 @@ package src.sharedRegions;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import src.entities.oStates;
-import src.entities.oThief;
+import src.entities.*;
+import src.stubs.GeneralReposStub;
 
 public class AssaultParty {
 
@@ -39,10 +39,14 @@ public class AssaultParty {
     private Museum museum;
 
     /**
-     * Reference to the generalRepository shared region
+     * Reference to the General Repository shared region
      */
-    private final GeneralRepos repos;
+    //private final GeneralRepos repos;
 
+    /**
+     * Stub of the general repository
+     */
+    private final GeneralReposStub grStub;
     /**
      * Index of the room currently assigned to the party
      */
@@ -99,7 +103,7 @@ public class AssaultParty {
      * @param museum    Reference to the Museum shared memory region
      * @param repos     Reference to the GeneralRepository shared memory region
      */
-    public AssaultParty(int id, int partySize, int thiefMax, int S, Museum museum, GeneralRepos repos) {
+    public AssaultParty(int id, int partySize, int thiefMax, int S, Museum museum,  GeneralReposStub grStub /*GeneralRepos repos*/) {
         this.id = id;
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
@@ -110,7 +114,8 @@ public class AssaultParty {
         this.moveRestrictIn = new boolean[partySize];
         this.moveRestrictOut = new boolean[partySize];
         this.museum = museum;
-        this.repos = repos;
+        //this.repos = repos;
+        this.grStub = grStub;
         this.currentThiefNum = 0;
         this.hasArrived = 0;
         this.S = S;
@@ -169,15 +174,17 @@ public class AssaultParty {
             } catch (Exception e) {
             }
             int partyPos;
-            oThief curThread = (oThief) Thread.currentThread();
+            //oThief curThread = (oThief) Thread.currentThread();
+            aPClientProxy curThread = (aPClientProxy) Thread.currentThread();
 
             if (currentThiefNum >= 3) {
                 partyPos = 2;
             } else {
                 partyPos = currentThiefNum;
             }
-            curThread.setPartyPos(partyPos);
-            repos.addThiefToAssaultParty(curThread.getThiefID(), this.id, currentThiefNum);
+            curThread.setPpos(partyPos);
+            //repos.addThiefToAssaultParty(curThread.getThiefID(), this.id, currentThiefNum);
+            grStub.addThiefToAssaultParty(curThread.getThId(), this.id, currentThiefNum);
             thiefDist[partyPos] = 0;
             currentThiefNum++;
             moveRestrictIn[partyPos] = true;
@@ -189,7 +196,8 @@ public class AssaultParty {
                 } catch (Exception e) {
                 }
             }
-            repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
+            //repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_INWARDS);
+            grStub.setOrdinaryThiefState(curThread.getThId(), oStates.CRAWLING_INWARDS);
             return currentRoomID;
         } finally {
             /*
@@ -210,9 +218,10 @@ public class AssaultParty {
     public void crawlIn(int distance) {
         try {
             lock.lock();
-            oThief curThread = (oThief) Thread.currentThread();
+            //oThief curThread = (oThief) Thread.currentThread();
+            aPClientProxy curThread = (aPClientProxy) Thread.currentThread();
             int move = 1;
-            int curIdx = curThread.getPartyPos();
+            int curIdx = curThread.getPpos();
 
             int behindDist;
             int nextPos = 0;
@@ -226,7 +235,8 @@ public class AssaultParty {
                 if (!canMove) {
                     move--;
                     thiefDist[curIdx] += move;
-                    repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
+                    //repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
+                    grStub.setThiefPosition(curThread.getAp(), curThread.getThId(), thiefDist[curIdx]);
                     moveRestrictIn[curIdx] = true;
                     if ((curIdx + 1) >= 3) {
                         moveRestrictIn[0] = false;
@@ -241,7 +251,7 @@ public class AssaultParty {
                         }
                     }
                     canMove = true;
-                    curIdx = curThread.getPartyPos();
+                    curIdx = curThread.getPpos();
                     behindDist = thiefDist[curIdx];
                     move = 1;
                 }
@@ -251,8 +261,10 @@ public class AssaultParty {
                 // Arrival detection
                 if (nextPos >= roomDist) {
                     thiefDist[curIdx] = roomDist;
-                    repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
-                    repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.AT_A_ROOM);
+                    /* repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), roomDist);
+                    repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.AT_A_ROOM); */
+                    grStub.setThiefPosition(curThread.getAp(), curThread.getThId(), roomDist);
+                    grStub.setOrdinaryThiefState(curThread.getThId(), oStates.AT_A_ROOM);
                     hasArrived += 1;
                     moveRestrictIn[curIdx] = true;
                     if ((curIdx + 1) >= 3) {
@@ -308,9 +320,10 @@ public class AssaultParty {
     public void crawlOut(int distance) throws InterruptedException {
         try {
             lock.lock();
-            oThief curThread = (oThief) Thread.currentThread();
+            //oThief curThread = (oThief) Thread.currentThread();
+            aPClientProxy curThread = (aPClientProxy) Thread.currentThread();
             int move = 1;
-            int curIdx = curThread.getPartyPos();
+            int curIdx = curThread.getPpos();
             int behindDist;
             int nextPos = 0;
             // int roomDist = museum.getRoomDistance(curThread.getCurRoom());
@@ -323,7 +336,8 @@ public class AssaultParty {
                 if (!canMove) {
                     move--;
                     thiefDist[curIdx] -= move;
-                    repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
+                    //repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), thiefDist[curIdx]);
+                    grStub.setThiefPosition(curThread.getAp(), curThread.getThId(), thiefDist[curIdx]);
                     moveRestrictOut[curIdx] = true;
                     if ((curIdx + 1) >= 3) {
                         moveRestrictOut[0] = false;
@@ -345,8 +359,10 @@ public class AssaultParty {
                 // Arrival detection
                 if (nextPos <= 0) {
                     thiefDist[curIdx] = 0;
-                    repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
-                    repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.COLLECTION_SITE);
+                    /* repos.setThiefPosition(curThread.getCurAP(), curThread.getThiefID(), 0);
+                    repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.COLLECTION_SITE); */
+                    grStub.setThiefPosition(curThread.getAp(), curThread.getThId(), 0);
+                    grStub.setOrdinaryThiefState(curThread.getThId(), oStates.COLLECTION_SITE);
                     hasArrived++;
                     if (hasArrived == 3) {
                         isRunning = false;
@@ -408,7 +424,8 @@ public class AssaultParty {
     public void reverseDirection() throws InterruptedException {
         try {
             lock.lock();
-            oThief curThread = (oThief) Thread.currentThread();
+            //oThief curThread = (oThief) Thread.currentThread();
+            aPClientProxy curThread = (aPClientProxy) Thread.currentThread();
             hasArrived--;
             if (hasArrived <= 0) {
                 reverseCond.signalAll();
@@ -427,10 +444,11 @@ public class AssaultParty {
              */
             cond.signalAll();
 
-            while (moveRestrictOut[curThread.getPartyPos()]) {
+            while (moveRestrictOut[curThread.getPpos()]) {
                 reverseCond.await();
             }
-            repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_OUTWARDS);
+            //repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_OUTWARDS);
+            grStub.setOrdinaryThiefState(curThread.getThId(), oStates.CRAWLING_OUTWARDS);
             return;
         } finally {
             /*

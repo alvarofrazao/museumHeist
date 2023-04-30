@@ -30,6 +30,8 @@ public class museumClientProxy extends Thread {
 
   private int room;
 
+  private boolean canvas;
+
   public museumClientProxy(ServerCom sconi, MuseumInterface mInter) {
     super("museumClientProxy" + museumClientProxy.getProxyId());
     this.sconi = sconi;
@@ -90,6 +92,14 @@ public class museumClientProxy extends Thread {
 
   public int getRoom() {
     return room;
+  }
+
+  public void setCanvas(boolean hC){
+    this.canvas = hC;
+  }
+
+  public boolean getCanvas(){
+    return canvas;
   }
 
   @Override

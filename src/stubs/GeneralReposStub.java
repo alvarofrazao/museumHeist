@@ -349,6 +349,35 @@ public class GeneralReposStub{
         com.close();
     }
 
+    public void setNumPaintingsInRoom(int roomId, int num_paintings){
+        
+        ClientCom com;
+
+        Message outMessage, inMessage;
+
+        com = new ClientCom(serverHostName, serverPortNum);
+
+        while(!com.open()){
+            try{
+                Thread.currentThread().sleep((long) (10));
+            }
+            catch(InterruptedException e){}
+        }
+
+        outMessage = new Message(MessageType.SETPNTSRM, roomId, num_paintings);
+        com.writeObject(outMessage);
+
+        inMessage = (Message)com.readObject();
+
+        if(inMessage.getMsgType() != MessageType.ACK){
+            GenericIO.writelnString("Thread " + Thread.currentThread().getId() + ": Invalid message type");
+            GenericIO.writelnString(inMessage.toString());
+            System.exit(1);
+        }
+
+        com.close();
+    }
+
     public void finalResult(int total_paintings){
         ClientCom com;
 

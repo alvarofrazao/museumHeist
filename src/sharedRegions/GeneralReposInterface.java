@@ -1,6 +1,9 @@
 package src.sharedRegions;
 
+import src.entities.oStates;
 import src.infrastructure.Message;
+import src.infrastructure.MessageException;
+import src.infrastructure.MessageType;
 
 public class GeneralReposInterface {
 
@@ -21,28 +24,28 @@ public class GeneralReposInterface {
       /* validation of the incoming message */
  
        switch (inMessage.getMsgType ())
-       { case MessageType.ADDTH:  if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
+       { case MessageType.:  if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                                        throw new MessageException ("Invalid thief id!", inMessage);
                                        else if ((inMessage.getThState() < oStates.CONCENTRATION_SITE) || (inMessage.getThState() > oStates.COLLECTION_SITE))
                                                throw new MessageException ("Invalid thief state!", inMessage);
                                     break;
-         case MessageType.SETP:    if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
+         case MessageType.:    if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
                                        throw new MessageException ("Invalid master thief id!", inMessage);
                                     break;
-         case MessageType.CRIN: if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
+         case MessageType.: if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
                                        throw new MessageException ("Invalid master thief id!", inMessage);
                                        else if ((inMessage.getThState () < oStates.CONCENTRATION_SITE) || (inMessage.getThState () > oStates.COLLECTION_SITE))
                                                throw new MessageException ("Invalid master thief state!", inMessage);
                                     break;
-         case MessageType.CROUT:   if ((inMessage.getThId () < 0) || (inMessage.getThId () >= 6))
+         case MessageType.:   if ((inMessage.getThId () < 0) || (inMessage.getThId () >= 6))
                                        throw new MessageException ("Invalid thief id!", inMessage);
                                        else if ((inMessage.getThState() < oStates.CONCENTRATION_SITE) || (inMessage.getThState() > oStates.COLLECTION_SITE))
                                                throw new MessageException ("Invalid thief state!", inMessage);
                                     break;
-         case MessageType.REVDIR:    if ((inMessage.getThId () < 0) || (inMessage.getThId () >= 6))
+         case MessageType.:    if ((inMessage.getThId () < 0) || (inMessage.getThId () >= 6))
                                        throw new MessageException ("Invalid master thief id!", inMessage);
                                     break;
-         case MessageType.SIGNDEP:  
+         case MessageType.:  
                                     if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
                                         throw new MessageException ("Invalid master thief id!", inMessage);
                                     break;
@@ -52,17 +55,17 @@ public class GeneralReposInterface {
       /* processing */
  
       switch (inMessage.getMsgType ())
-      { case MessageType.ADDTH:  
+      { case MessageType.:  
                                    break;
-        case MessageType.SETP:    
+        case MessageType.:    
                                    break;
-        case MessageType.CRIN: 
+        case MessageType.: 
                                    break;
-        case MessageType.CROUT:  
+        case MessageType.:  
                                    break;
-        case MessageType.REVDIR:    
+        case MessageType.:    
                                    break;
-        case MessageType.SIGNDEP:  
+        case MessageType.:  
                                    break;
         default:                   throw new MessageException ("Invalid message type!", inMessage);
       }

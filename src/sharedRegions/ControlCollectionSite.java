@@ -3,11 +3,10 @@ package src.sharedRegions;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import src.entities.mStates;
-import src.entities.mThief;
-import src.entities.oStates;
-import src.entities.oThief;
+
+import src.entities.*;
 import src.infrastructure.*;
+import src.stubs.GeneralReposStub;
 
 public class ControlCollectionSite {
 
@@ -52,9 +51,14 @@ public class ControlCollectionSite {
     private AssaultParty[] aParties;
 
     /**
-     * Reference to the general Repository shared region
+     * Reference to the General Repository shared region
      */
-    private final GeneralRepos repos;
+    //private final GeneralRepos repos;
+
+    /**
+     * Stub of the general repository
+     */
+    private final GeneralReposStub grStub;
 
     /*
      * Array storing the status of all the rooms in the museum
@@ -134,7 +138,7 @@ public class ControlCollectionSite {
      * @throws MemException
      */
 
-    public ControlCollectionSite(AssaultParty[] aParties, GeneralRepos repos, int roomNumber, int thiefMax)
+    public ControlCollectionSite(AssaultParty[] aParties, GeneralReposStub grStub, int roomNumber, int thiefMax)
             throws MemException {
 
         this.lock = new ReentrantLock();
@@ -145,7 +149,7 @@ public class ControlCollectionSite {
         this.signalCond = lock.newCondition();
 
         this.aParties = aParties;
-        this.repos = repos;
+        this.grStub = grStub;
         this.emptyRooms = new boolean[roomNumber];
         this.partyRunStatus = new boolean[aParties.length];
 
@@ -211,12 +215,17 @@ public class ControlCollectionSite {
     public boolean amINeeded() {
         lock.lock();
         availableThieves++;
-        oThief curThread = (oThief) Thread.currentThread();
-        if (!curThread.isFirstCycle()) {
-            repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CONCENTRATION_SITE);
+        //oThief curThread = (oThief) Thread.currentThread();
+        cclClientProxy curThread = (cclClientProxy) Thread.currentThread();
+        //if (!curThread.isFirstCycle()) {
+        if(!curThread.getFC()){
+            /* repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CONCENTRATION_SITE);
             repos.setOrdinaryThiefPartyState(curThread.getThiefID(), 'W');
-            repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
-            curThread.setFirstCycle(false);
+            repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP()); */
+            grStub.setOrdinaryThiefState(curThread.getThId(), oStates.CONCENTRATION_SITE);
+            grStub.setOrdinaryThiefPartyState(curThread.getThId(), 'W');
+            grStub.removeThiefFromAssaultParty(curThread.getThId(), curThread.getAP());
+            curThread.setFC(false);
         }
         readyCond.signal();
         try {
@@ -243,25 +252,30 @@ public class ControlCollectionSite {
      * Ordinary Thief threads
      * 
      * @return
-     * @throws InterruptedException
      */
-    public int prepareAssaultParty() throws InterruptedException {
+    public int prepareAssaultParty(){
         lock.lock();
         nextParty++;
         if (nextParty > 1) {
             nextParty = 0;
         }
-        repos.setMasterThiefState(mStates.ASSEMBLING_A_GROUP);
+        //repos.setMasterThiefState(mStates.ASSEMBLING_A_GROUP);
+        grStub.setMasterThiefState(((cclClientProxy)Thread.currentThread()).getThId(),mStates.ASSEMBLING_A_GROUP);
         nextRoom = this.computeNextRoom();
         thiefSlots = 3;
         if (nextRoom == -1) {
             return -1;
         }
-        repos.setAssaultPartyRoom(nextParty, nextRoom + 1);
+        //repos.setAssaultPartyRoom(nextParty, nextRoom + 1);
+        grStub.setAssaultPartyRoom(nextParty, nextRoom + 1);
         for (int i = 0; i < 3; i++) {
             prepAssaultCond.signal();
             if (thiefSlots >= 0) {
-                signalCond.await();
+                try {
+                    signalCond.await();
+                } catch (Exception e) {
+                    // TODO: handle exception
+                }
             }
         }
         partyRunStatus[nextParty] = true;
@@ -274,10 +288,15 @@ public class ControlCollectionSite {
      * 
      * @throws InterruptedException
      */
-    public void takeARest() throws InterruptedException {
+    public void takeARest(){
         lock.lock();
-        repos.setMasterThiefState(mStates.WAITING_FOR_GROUP_ARRIVAL);
-        Thread.sleep(100);
+        //repos.setMasterThiefState(mStates.WAITING_FOR_GROUP_ARRIVAL);
+        grStub.setMasterThiefState(((cclClientProxy)Thread.currentThread()).getThId(),mStates.WAITING_FOR_GROUP_ARRIVAL);
+        try {
+            Thread.sleep(100);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
         lock.unlock();
         return;
     }
@@ -286,9 +305,8 @@ public class ControlCollectionSite {
      * Method for the retrieval of canvases from the Collection Site. Only one
      * canvas is processed in a method call
      * 
-     * @throws InterruptedException
      */
-    public void collectACanvas() throws InterruptedException {
+    public void collectACanvas() {
         lock.lock();
         int roomRead;
         boolean canvasRead;
@@ -310,10 +328,15 @@ public class ControlCollectionSite {
             } catch (MemException e) {
                 canvasCond.signalAll();
                 handIn = true;
-                canvasRecvCond.await();
+                try {
+                    canvasRecvCond.await();                    
+                } catch (Exception f) {
+                    // TODO: handle exception
+                }
             }
         }
-        repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
+        //repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
+        grStub.setMasterThiefState(((cclClientProxy)Thread.currentThread()).getThId(),mStates.DECIDING_WHAT_TO_DO);
 
         canvasCond.signalAll();
         lock.unlock();
@@ -322,25 +345,40 @@ public class ControlCollectionSite {
     /***
      * Method for the handing in of canvases
      * 
-     * @throws MemException
-     * @throws InterruptedException
      */
-    public void handACanvas() throws MemException, InterruptedException {
+    public void handACanvas(){
         lock.lock();
-        oThief curThread = (oThief) Thread.currentThread();
+        //oThief curThread = (oThief) Thread.currentThread();
+        cclClientProxy curThread = (cclClientProxy) Thread.currentThread();
         queueSize++;
 
         while (!handIn) {
             canvasRecvCond.signal();
-            canvasCond.await();
+            try {
+                canvasCond.await();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
         }
         handIn = false;
-        roomHandInQueue.write(curThread.getCurRoom());
-        canvasHandInQueue.write(curThread.hasPainting());
-        repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 0);
+        /* roomHandInQueue.write(curThread.getCurRoom());
+        canvasHandInQueue.write(curThread.hasPainting()); */
+        try {
+            roomHandInQueue.write(curThread.getRoom());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        try {
+            canvasHandInQueue.write(curThread.getHC());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        //repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 0);
+        grStub.setThiefCanvas(curThread.getAP(), curThread.getThId(), 0);
         canvasRecvCond.signal();
         // canvasCond.await();
-        repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
+        //repos.removeThiefFromAssaultParty(curThread.getThiefID(), curThread.getCurAP());
+        grStub.removeThiefFromAssaultParty(curThread.getThId(), curThread.getAP());
         lock.unlock();
     }
 
@@ -348,9 +386,8 @@ public class ControlCollectionSite {
      * Method for controlling the lifecycle of the Master Thief Thread
      * 
      * @return Integer value dependent on the current situation of the heist
-     * @throws InterruptedException
      */
-    public int appraiseSit() throws InterruptedException {
+    public int appraiseSit(){
         lock.lock();
 
         int emptyCounterSit = 0;
@@ -368,7 +405,11 @@ public class ControlCollectionSite {
                 return 1;
             }
             while (availableThieves < 6) {
-                readyCond.await();
+                try {
+                    readyCond.await();
+                } catch (Exception e) {
+                    // TODO: handle exception
+                }
             }
             this.heistRun = false;
 
@@ -393,7 +434,11 @@ public class ControlCollectionSite {
         }
 
         while (availableThieves < 3) {
-            readyCond.await();
+            try {
+                readyCond.await();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
         }
 
         returnValue = 0;
@@ -407,9 +452,11 @@ public class ControlCollectionSite {
     public void startOperations() {
         lock.lock();
         System.out.println("startOperations");
-        mThief curThread = (mThief) Thread.currentThread();
-        curThread.setState(mStates.DECIDING_WHAT_TO_DO);
-        repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
+        //mThief curThread = (mThief) Thread.currentThread();
+        cclClientProxy curThread = (cclClientProxy) Thread.currentThread();
+        curThread.setThState(mStates.DECIDING_WHAT_TO_DO);
+        //repos.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
+        grStub.setMasterThiefState(curThread.getThId(),mStates.DECIDING_WHAT_TO_DO);
         lock.unlock();
         return;
     }
@@ -421,8 +468,10 @@ public class ControlCollectionSite {
     public void sumUpResults() {
         lock.lock();
         System.out.println("sumResults");
-        repos.setMasterThiefState(mStates.PRESENTING_THE_REPORT);
-        repos.finalResult(this.totalPaintings);
+        /* repos.setMasterThiefState(mStates.PRESENTING_THE_REPORT);
+        repos.finalResult(this.totalPaintings); */
+        grStub.setMasterThiefState(((cclClientProxy)Thread.currentThread()).getThId(),mStates.PRESENTING_THE_REPORT);
+        grStub.finalResult(this.totalPaintings);
         prepAssaultCond.signalAll();
         lock.unlock();
     }

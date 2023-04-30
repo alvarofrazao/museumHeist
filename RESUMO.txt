@@ -17,3 +17,15 @@ A pior parte disto e mesmo as mensagens, dado que ha metodos dentro de metodos, 
 temos que nao so garantir que os construtores existem para aquelas combinaçoes de data types, mas tambem que esses dados sao postos nos campos corretos da mensagem
 
 Por fim, depois diz so se concordas com os campos que a mensagem vai ter.
+
+30/04
+Zonas alteradas para soluçao distribuida:
+ConcentrationSite
+ControlCollectionSite
+Museum
+AssaultParty
+
+Interfaces acabadas:
+Museum
+ControlCollectionSite
+ConcentrationSite

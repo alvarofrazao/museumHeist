@@ -47,7 +47,7 @@ public class ConcentrationSiteStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.SNDPTY);
+        outMessage = new Message(MessageType.SNDPTY, curThread.getID());
         com.writeObject(outMessage);
 
         inMessage = (Message) com.readObject();

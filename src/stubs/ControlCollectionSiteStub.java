@@ -124,7 +124,7 @@ public class ControlCollectionSiteStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.TKREST);
+        outMessage = new Message(MessageType.TKREST, curThread.getID());
         com.writeObject(outMessage);
 
         inMessage = (Message) com.readObject();

@@ -55,9 +55,17 @@ public class MuseumInterface {
 
     switch (inMessage.getMsgType()) {
       case MessageType.ROLLCAN:
-        (museumClientProxy) Thread.currentThread().
+        curThread.setId(inMessage.getThId());
+        curThread.setAp(inMessage.getoThAP());
+        if(museum.rollACanvas(inMessage.getoThRoom())){
+          outMessage = new Message(MessageType.ROLLCANREP,true);
+        }else{
+          outMessage = new Message(MessageType.ROLLCANREP,false);
+        }
         break;
       case MessageType.GETDIST:
+        int rDist = museum.getRoomDistance(inMessage.getoThRoom());
+        outMessage = new Message(MessageType.GETDISTREP, rDist);
         break;
       default:
         throw new MessageException("Invalid message type!", inMessage);

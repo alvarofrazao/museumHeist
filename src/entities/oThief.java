@@ -174,8 +174,6 @@ public class oThief extends Thread {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (MemException e) {
-            e.printStackTrace();
         }
     }
 }

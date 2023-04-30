@@ -2,13 +2,15 @@ package src.sharedRegions;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import src.entities.oThief;
+import src.entities.museumClientProxy;
+import src.stubs.GeneralReposStub;
 
 public class Museum {
 
     private int[] museumRoomsDistance;
     private int[] museumRoomsPaintings;
-    private final GeneralRepos repos;
+    //private final GeneralRepos repos;
+    private final GeneralReposStub grStub;
     private ReentrantLock lock;
 
     /***
@@ -23,18 +25,19 @@ public class Museum {
      *                      generation
      * @param repos         reference to a GeneralRepository shared memory region
      */
-    public Museum(int numberOfRooms, int MAX_D, int MIN_D, int MAX_P, int MIN_P, GeneralRepos repos) {
+    public Museum(int numberOfRooms, int MAX_D, int MIN_D, int MAX_P, int MIN_P, GeneralReposStub grStub/*GeneralRepos repos*/) {
         this.museumRoomsDistance = new int[numberOfRooms];
         this.museumRoomsPaintings = new int[numberOfRooms];
         this.lock = new ReentrantLock();
-        this.repos = repos;
+        this.grStub = grStub;
 
         for (int i = 0; i < numberOfRooms; i++) {
             museumRoomsDistance[i] = (int) ((Math.random() * (MAX_D - MIN_D)) + MIN_D);
             // System.out.println(museumRoomsDistance[i]+"\n");
             museumRoomsPaintings[i] = (int) ((Math.random() * (MAX_P - MIN_P)) + MIN_P);
             lock.lock();
-            repos.setRoomDistanceAndPaintings(i, museumRoomsDistance[i], museumRoomsPaintings[i]);
+            //repos.setRoomDistanceAndPaintings(i, museumRoomsDistance[i], museumRoomsPaintings[i]);
+            grStub.setRoomDistanceAndPaintings(i, museumRoomsDistance[i], museumRoomsPaintings[i]);
             lock.unlock();
         }
     }
@@ -56,12 +59,16 @@ public class Museum {
     public boolean rollACanvas(int roomID) {
 
         lock.lock();
-        oThief curThread = (oThief) Thread.currentThread();
+        //oThief curThread = (oThief) Thread.currentThread();
+        museumClientProxy curThread = (museumClientProxy) Thread.currentThread();
+
         if (museumRoomsPaintings[roomID] > 0) {
             museumRoomsPaintings[roomID] -= 1;
             curThread.setCanvas(true);
-            repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
-            repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1);
+            /* repos.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
+            repos.setThiefCanvas(curThread.getCurAP(), curThread.getThiefID(), 1); */
+            grStub.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
+            grStub.setThiefCanvas(curThread.getAp(), curThread.getThId(), 1);
             lock.unlock();
             return true;
         } else {
