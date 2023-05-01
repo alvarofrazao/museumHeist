@@ -154,10 +154,6 @@ public class Message implements Serializable {
                 this.thId = id;
                 this.oThMaxDist = val1;
                 break;
-            case MessageType.ADDTHAP:
-                this.oThAP = id;
-                this.oThRoom = val1;
-                break;
             case MessageType.REMTHAP:
                 this.thId = id;
                 this.oThAP = val1;
@@ -165,6 +161,10 @@ public class Message implements Serializable {
             case MessageType.SETAPRM:
                 this.oThAP = id;
                 this.oThRoom = val1;
+                break;
+            case MessageType.SETPNTSRM:
+                this.oThRoom = id;
+                this.retValInt1 = val1;
                 break;
             default:
                 this.thId = id;
@@ -220,6 +220,10 @@ public class Message implements Serializable {
             case MessageType.CROUT:
                 this.thId = id;
                 this.retValInt1 = val1;
+                this.oThPartyPos = val2;
+            case MessageType.ADDTHAP:
+                this.thId = id;
+                this.oThAP = val1;
                 this.oThPartyPos = val2;
         }
     }

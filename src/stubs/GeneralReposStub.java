@@ -220,7 +220,7 @@ public class GeneralReposStub{
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.ADDTHAP, ap, pos);
+        outMessage = new Message(MessageType.ADDTHAP, thief, ap, pos);
         com.writeObject(outMessage);
 
         inMessage = (Message)com.readObject();

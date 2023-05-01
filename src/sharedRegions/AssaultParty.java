@@ -317,7 +317,7 @@ public class AssaultParty {
      * @throws InterruptedException
      */
 
-    public void crawlOut(int distance) throws InterruptedException {
+    public void crawlOut(int distance){
         try {
             lock.lock();
             //oThief curThread = (oThief) Thread.currentThread();
@@ -346,7 +346,11 @@ public class AssaultParty {
                     }
                     reverseCond.signalAll();
                     while (moveRestrictOut[curIdx]) {
-                        reverseCond.await();
+                        try {
+                            reverseCond.await();
+                        } catch (Exception e) {
+                            // TODO: handle exception
+                        }
                     }
 
                     canMove = true;
@@ -418,10 +422,9 @@ public class AssaultParty {
      * the last thread to call the method signals one other thread waiting on the
      * condition to initiate the movement
      * 
-     * @throws InterruptedException
      */
 
-    public void reverseDirection() throws InterruptedException {
+    public void reverseDirection(){
         try {
             lock.lock();
             //oThief curThread = (oThief) Thread.currentThread();
@@ -445,7 +448,11 @@ public class AssaultParty {
             cond.signalAll();
 
             while (moveRestrictOut[curThread.getPpos()]) {
-                reverseCond.await();
+                try {
+                    reverseCond.await();
+                } catch (Exception e) {
+                    // TODO: handle exception
+                }
             }
             //repos.setOrdinaryThiefState(curThread.getThiefID(), oStates.CRAWLING_OUTWARDS);
             grStub.setOrdinaryThiefState(curThread.getThId(), oStates.CRAWLING_OUTWARDS);
@@ -467,7 +474,7 @@ public class AssaultParty {
      * @throws InterruptedException
      */
 
-    public void signalDeparture() throws InterruptedException {
+    public void signalDeparture(){
         try {
             lock.lock();
             isRunning = true;

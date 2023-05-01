@@ -158,7 +158,7 @@ public class MessageType {
     public static final int SETAPRM = 31;
 
      /**
-      * Addthief to assault party request int type, int ap, int ppos
+      * Addthief to assault party request int type, int id, int ap, int ppos
       */
     public static final int ADDTHAP = 32;
 
@@ -173,7 +173,7 @@ public class MessageType {
     public static final int SETTHPOS= 34;
 
     /**
-     * setThiefCanvas request int type, int ap, int id, int canvas
+     * setThiefCanvas request int type, int id, int ap, int canvas
      */
     public static final int SETTHCAN= 35;
 
@@ -238,7 +238,7 @@ public class MessageType {
     public static final int TKRESTREP = 48;
 
     /**
-     * signalDeparture response int type, int id
+     * signalDeparture response int type
      */
     public static final int SIGNDEPREP = 49;
 

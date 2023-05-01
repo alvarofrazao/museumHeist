@@ -3,6 +3,8 @@ package src.sharedRegions;
 import src.infrastructure.Message;
 import src.infrastructure.MessageException;
 import src.infrastructure.MessageType;
+
+
 import src.entities.*;
 
 public class AssaultPartyInterface {
@@ -43,54 +45,79 @@ public class AssaultPartyInterface {
          case MessageType.ADDTH:
             if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                throw new MessageException("Invalid thief id!", inMessage);
-            else if ((inMessage.getThState() < oStates.CONCENTRATION_SITE)
-                  || (inMessage.getThState() > oStates.COLLECTION_SITE))
-               throw new MessageException("Invalid thief state!", inMessage);
             break;
          case MessageType.SETP:
-            if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
+            if (inMessage.getThId() != 6)
                throw new MessageException("Invalid master thief id!", inMessage);
             break;
          case MessageType.CRIN:
-            if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
+            if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                throw new MessageException("Invalid master thief id!", inMessage);
-            else if ((inMessage.getThState() < oStates.CONCENTRATION_SITE)
-                  || (inMessage.getThState() > oStates.COLLECTION_SITE))
-               throw new MessageException("Invalid master thief state!", inMessage);
+            else if ((inMessage.getroomDist() < 15) || (inMessage.getThState() >= 31))
+               throw new MessageException("Invalid room distance value!", inMessage);
+            else if ((inMessage.getoThAP() < 0) || (inMessage.getoThAP() >= 2))
+               throw new MessageException("Invalid assault party id!", inMessage);
+            else if ((inMessage.getoThPartyPos() < 0) || (inMessage.getoThPartyPos() >= 3))
+            throw new MessageException("Invalid party position!", inMessage);
             break;
          case MessageType.CROUT:
             if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
-               throw new MessageException("Invalid thief id!", inMessage);
-            else if ((inMessage.getThState() < oStates.CONCENTRATION_SITE)
-                  || (inMessage.getThState() > oStates.COLLECTION_SITE))
-               throw new MessageException("Invalid thief state!", inMessage);
+               throw new MessageException("Invalid master thief id!", inMessage);
+            else if ((inMessage.getroomDist() < 15) || (inMessage.getThState() >= 31))
+               throw new MessageException("Invalid room distance value!", inMessage);
+            else if ((inMessage.getoThAP() < 0) || (inMessage.getoThAP() >= 2))
+               throw new MessageException("Invalid assault party id!", inMessage);
+            else if ((inMessage.getoThPartyPos() < 0) || (inMessage.getoThPartyPos() >= 3))
+               throw new MessageException("Invalid party position!", inMessage);
             break;
          case MessageType.REVDIR:
             if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                throw new MessageException("Invalid master thief id!", inMessage);
+            else if ((inMessage.getoThPartyPos() < 0) || (inMessage.getoThPartyPos() >= 3))
+               throw new MessageException("Invalid party position!", inMessage);
             break;
          case MessageType.SIGNDEP:
-            if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
-               throw new MessageException("Invalid master thief id!", inMessage);
+            // doesn't check for anything
             break;
          default:
             throw new MessageException("Invalid message type!", inMessage);
       }
 
       /* processing */
-
+      aPClientProxy curThread = (aPClientProxy) Thread.currentThread();
       switch (inMessage.getMsgType()) {
          case MessageType.ADDTH:
+            curThread.setId(inMessage.getThId());
+            int room = aParty.addThief();
+            outMessage = new Message(MessageType.ADDTHREP,curThread.getThId(),curThread.getPpos(),room);
             break;
          case MessageType.SETP:
+            aParty.setupParty(inMessage.getoThRoom());
+            outMessage = new Message(MessageType.SETPREP);
             break;
          case MessageType.CRIN:
+            curThread.setId(inMessage.getThId());
+            curThread.setAp(inMessage.getoThAP());
+            curThread.setPpos(inMessage.getoThPartyPos());
+            aParty.crawlIn(inMessage.getroomDist());
+            outMessage = new Message(MessageType.CRINREP);
             break;
          case MessageType.CROUT:
+            curThread.setId(inMessage.getThId());
+            curThread.setAp(inMessage.getoThAP());
+            curThread.setPpos(inMessage.getoThPartyPos());
+            aParty.crawlOut(inMessage.getroomDist());
+            outMessage = new Message(MessageType.CROUTREP);
             break;
          case MessageType.REVDIR:
+            curThread.setId(inMessage.getThId());
+            curThread.setPpos(inMessage.getoThPartyPos());
+            aParty.reverseDirection();
+            outMessage = new Message(MessageType.REVDIREP);
             break;
          case MessageType.SIGNDEP:
+            aParty.signalDeparture();
+            outMessage = new Message(MessageType.SIGNDEPREP);
             break;
          default:
             throw new MessageException("Invalid message type!", inMessage);
