@@ -71,7 +71,9 @@ public class ControlCollectionSiteInterface {
          case MessageType.SUMRES:
                                     if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7)){
                                         throw new MessageException ("Invalid master thief id!", inMessage);}
-                                    break;  
+                                    break;
+         case MessageType.SHUTDOWN:
+                                    break;
          default:                   throw new MessageException ("Invalid message type!", inMessage);
        }
  
@@ -123,6 +125,9 @@ public class ControlCollectionSiteInterface {
             ccl.sumUpResults();
             outMessage = new Message(MessageType.SUMRESREP);
             break;
+        case MessageType.SHUTDOWN:
+            ccl.shutdown();
+            outMessage = new Message(MessageType.SHUTDONE);
         default: throw new MessageException ("Invalid message type!", inMessage);
       }
  

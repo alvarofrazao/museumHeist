@@ -261,4 +261,14 @@ public class MessageType {
      * getNextRoom reply int type, int room
      */
     public static final int GETNRMREP = 52;
+
+    /**
+     * Shutdown Message type
+     */
+    public static final int SHUTDOWN = 99;
+
+    /**
+     * Shutdown reply type
+     */
+    public static final int SHUTDONE = 100;
 }

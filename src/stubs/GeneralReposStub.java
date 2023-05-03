@@ -1,7 +1,7 @@
 package src.stubs;
 
 import genclass.GenericIO;
-import src.entities.mThief;
+import src.entities.mClient;
 import src.entities.oThief;
 import src.infrastructure.ClientCom;
 import src.infrastructure.Message;
@@ -35,7 +35,7 @@ public class GeneralReposStub{
         ClientCom com;
 
         Message outMessage, inMessage;
-        mThief curThread = (mThief) Thread.currentThread();
+        mClient curThread = (mClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -151,7 +151,7 @@ public class GeneralReposStub{
         ClientCom com;
 
         Message outMessage, inMessage;
-        mThief curThread = (mThief) Thread.currentThread();
+        mClient curThread = (mClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -180,7 +180,7 @@ public class GeneralReposStub{
         ClientCom com;
 
         Message outMessage, inMessage;
-        mThief curThread = (mThief) Thread.currentThread();
+        mClient curThread = (mClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -382,7 +382,7 @@ public class GeneralReposStub{
         ClientCom com;
 
         Message outMessage, inMessage;
-        mThief curThread = (mThief) Thread.currentThread();
+        mClient curThread = (mClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -400,6 +400,34 @@ public class GeneralReposStub{
 
         if(inMessage.getMsgType() != MessageType.ACK){
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
+            GenericIO.writelnString(inMessage.toString());
+            System.exit(1);
+        }
+
+        com.close();
+    }
+
+    public void shutdown(){
+        ClientCom com;
+
+        Message outMessage, inMessage;
+
+        com = new ClientCom(serverHostName, serverPortNum);
+
+        while(!com.open()){
+            try{
+                Thread.currentThread().sleep((long) (10));
+            }
+            catch(InterruptedException e){}
+        }
+
+        outMessage = new Message(MessageType.SHUTDOWN);
+        com.writeObject(outMessage);
+
+        inMessage = (Message)com.readObject();
+
+        if(inMessage.getMsgType() != MessageType.SHUTDONE){
+            GenericIO.writelnString("Thread " + Thread.currentThread().getId() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
         }

@@ -1,6 +1,8 @@
 package src.entities;
 
 import genclass.GenericIO;
+import src.infrastructure.Message;
+import src.infrastructure.MessageException;
 import src.infrastructure.ServerCom;
 import src.sharedRegions.GeneralReposInterface;
 
@@ -62,4 +64,27 @@ public class GeneralReposClientProxy extends Thread {
     }
     return proxyId;
   }
+
+   /**
+      * Life cycle of the service provider agent.
+      */
+
+      @Override
+      public void run() {
+           Message inMessage = null, // service request
+                     outMessage = null; // service reply
+ 
+           /* service providing */
+ 
+           inMessage = (Message) sconi.readObject(); // get service request
+           try {
+                outMessage = gInter.processAndReply(inMessage); // process it
+           } catch (MessageException e) {
+                GenericIO.writelnString("Thread " + currentThread().getId() + ": " + e.getMessage() + "!");
+                GenericIO.writelnString(e.getMessageVal().toString());
+                System.exit(1);
+           }
+           sconi.writeObject(outMessage); // send service reply
+           sconi.close(); // close the communication channel
+      }
 }

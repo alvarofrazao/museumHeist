@@ -4,6 +4,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import genclass.GenericIO;
 import genclass.TextFile;
+import src.main.ServerGeneralRepos;
 
 /**
  * General Repository.
@@ -22,7 +23,7 @@ public class GeneralRepos {
     /**
      * Name of the logging file.
      */
-    private final String logFileName;
+    private String logFileName;
 
     private final int[] oState;
     private final char[] oParty;
@@ -42,8 +43,7 @@ public class GeneralRepos {
      * 
      * @param logPath name of the logging file
      */
-    public GeneralRepos(String logPath) {
-        this.logFileName = logPath;
+    public GeneralRepos() {
         oState = new int[6];
         oParty = new char[6];
         oMD = new int[6];
@@ -55,7 +55,6 @@ public class GeneralRepos {
             oParty[i] = 'W';
         }
         this.lock = new ReentrantLock();
-        logInit();
     }
 
     /**
@@ -64,7 +63,8 @@ public class GeneralRepos {
      * concentrarion area
      * Internal operation.
      */
-    private void logInit() {
+    public void logInit(String logPath) {
+        this.logFileName = logPath;
         TextFile log = new TextFile();
 
         if (!log.openForWriting(".", logFileName)) {
@@ -364,6 +364,15 @@ public class GeneralRepos {
             System.exit(1);
         }
 
+    }
+
+    public void shutdown(){
+        try {
+            lock.lock();
+            ServerGeneralRepos.waitConnection = false;
+        }finally{
+            lock.unlock();
+        }
     }
 
     /*

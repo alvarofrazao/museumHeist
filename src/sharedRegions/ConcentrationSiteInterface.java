@@ -47,6 +47,8 @@ public class ConcentrationSiteInterface {
             if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                throw new MessageException("Invalid thief id!", inMessage);
             break;
+         case MessageType.SHUTDOWN:
+            break;
 
          default:
             throw new MessageException("Invalid message type!", inMessage);
@@ -63,7 +65,9 @@ public class ConcentrationSiteInterface {
             int nextParty = cc.prepareExcursion();
             outMessage = new Message(MessageType.PREPEXREP,nextParty);
             break;
-
+         case MessageType.SHUTDOWN:
+            cc.shutdown();
+            break;
          default:
             throw new MessageException("Invalid message type!", inMessage);
       }

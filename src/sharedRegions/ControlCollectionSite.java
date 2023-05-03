@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import src.entities.*;
 import src.infrastructure.*;
+import src.main.ServerCollectionSite;
 import src.stubs.GeneralReposStub;
 
 public class ControlCollectionSite {
@@ -138,8 +139,7 @@ public class ControlCollectionSite {
      * @throws MemException
      */
 
-    public ControlCollectionSite(AssaultParty[] aParties, GeneralReposStub grStub, int roomNumber, int thiefMax)
-            throws MemException {
+    public ControlCollectionSite(/*AssaultParty[] aParties,*/ GeneralReposStub grStub, int roomNumber, int thiefMax){
 
         this.lock = new ReentrantLock();
         this.canvasCond = lock.newCondition();
@@ -148,7 +148,7 @@ public class ControlCollectionSite {
         this.canvasRecvCond = lock.newCondition();
         this.signalCond = lock.newCondition();
 
-        this.aParties = aParties;
+        //this.aParties = aParties;
         this.grStub = grStub;
         this.emptyRooms = new boolean[roomNumber];
         this.partyRunStatus = new boolean[aParties.length];
@@ -452,6 +452,7 @@ public class ControlCollectionSite {
     public void startOperations() {
         lock.lock();
         System.out.println("startOperations");
+        grStub.logInit(ExecParameters.logName);
         //mThief curThread = (mThief) Thread.currentThread();
         cclClientProxy curThread = (cclClientProxy) Thread.currentThread();
         curThread.setThState(mStates.DECIDING_WHAT_TO_DO);
@@ -472,7 +473,17 @@ public class ControlCollectionSite {
         repos.finalResult(this.totalPaintings); */
         grStub.setMasterThiefState(((cclClientProxy)Thread.currentThread()).getThId(),mStates.PRESENTING_THE_REPORT);
         grStub.finalResult(this.totalPaintings);
+        grStub.shutdown();
         prepAssaultCond.signalAll();
         lock.unlock();
+    }
+
+    public void shutdown(){
+        try{
+            lock.lock();
+            ServerCollectionSite.waitConnection = false;
+        }finally{
+            lock.unlock();
+        }
     }
 }

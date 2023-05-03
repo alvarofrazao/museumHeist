@@ -39,7 +39,7 @@ public class MuseumInterface {
 
     /* validation of the incoming message */
 
-    if ((inMessage.getMsgType() != MessageType.ROLLCAN) || (inMessage.getMsgType() != MessageType.GETDIST)) {
+    if ((inMessage.getMsgType() != MessageType.ROLLCAN) && (inMessage.getMsgType() != MessageType.GETDIST) && (inMessage.getMsgType() != MessageType.SHUTDOWN)) {
       throw new MessageException("Invalid message type!", inMessage);
     } else {
       if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6)) {
@@ -67,6 +67,9 @@ public class MuseumInterface {
         int rDist = museum.getRoomDistance(inMessage.getoThRoom());
         outMessage = new Message(MessageType.GETDISTREP, rDist);
         break;
+      case MessageType.SHUTDOWN:
+        museum.shutdown();
+        outMessage = new Message(MessageType.SHUTDONE);
       default:
         throw new MessageException("Invalid message type!", inMessage);
     }

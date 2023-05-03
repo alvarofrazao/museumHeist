@@ -3,6 +3,7 @@ package src.sharedRegions;
 import java.util.concurrent.locks.ReentrantLock;
 
 import src.entities.museumClientProxy;
+import src.main.ServerMuseum;
 import src.stubs.GeneralReposStub;
 
 public class Museum {
@@ -75,6 +76,15 @@ public class Museum {
             curThread.setCanvas(false);
             lock.unlock();
             return false;
+        }
+    }
+
+    public void shutdown(){
+        try{
+            lock.lock();
+            ServerMuseum.waitConnection = false;
+        }finally{
+            lock.unlock();
         }
     }
 

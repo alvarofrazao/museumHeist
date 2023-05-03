@@ -1,6 +1,5 @@
 package src.sharedRegions;
 
-import src.entities.GeneralReposClientProxy;
 import src.entities.mStates;
 import src.entities.oStates;
 import src.infrastructure.Message;
@@ -104,6 +103,8 @@ public class GeneralReposInterface {
         case MessageType.FINRES:
           //checks nothing
           break;
+        case MessageType.SHUTDOWN:
+          break;
         default: throw new MessageException ("Invalid message type!", inMessage);
 
       }
@@ -162,6 +163,9 @@ public class GeneralReposInterface {
           gr.finalResult(inMessage.getRI1());
           outMessage = new Message(MessageType.ACK);
           break;
+        case MessageType.SHUTDOWN:
+          gr.shutdown();
+          outMessage = new Message(MessageType.SHUTDONE);
         default: throw new MessageException ("Invalid message type!", inMessage);
       }
  

@@ -90,4 +90,32 @@ public class MuseumStub {
         com.close();
         return inMessage.getRB();
     }
+
+    public void shutdown(){
+        ClientCom com;
+
+        Message outMessage, inMessage;
+
+        com = new ClientCom(serverHostName, serverPortNum);
+
+        while(!com.open()){
+            try{
+                Thread.currentThread().sleep((long) (10));
+            }
+            catch(InterruptedException e){}
+        }
+
+        outMessage = new Message(MessageType.SHUTDOWN);
+        com.writeObject(outMessage);
+
+        inMessage = (Message)com.readObject();
+
+        if(inMessage.getMsgType() != MessageType.SHUTDONE){
+            GenericIO.writelnString("Thread " + Thread.currentThread().getId() + ": Invalid message type");
+            GenericIO.writelnString(inMessage.toString());
+            System.exit(1);
+        }
+
+        com.close();
+    }
 }

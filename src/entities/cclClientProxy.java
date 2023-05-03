@@ -4,7 +4,7 @@ import genclass.GenericIO;
 import src.infrastructure.Message;
 import src.infrastructure.MessageException;
 import src.infrastructure.ServerCom;
-import src.sharedRegions.ConcentrationSiteInterface;
+import src.sharedRegions.ControlCollectionSiteInterface;
 
 public class cclClientProxy extends Thread {
 
@@ -23,7 +23,7 @@ public class cclClientProxy extends Thread {
      /**
       * Control Site interface
       */
-     private ConcentrationSiteInterface cclInter;
+     private ControlCollectionSiteInterface cclInter;
 
      /**
       * thread id
@@ -45,7 +45,7 @@ public class cclClientProxy extends Thread {
 
      private boolean fc;
 
-     public cclClientProxy(ServerCom sconi, ConcentrationSiteInterface cclInter) {
+     public cclClientProxy(ServerCom sconi, ControlCollectionSiteInterface cclInter) {
           super("cclClientProxy" + cclClientProxy.getProxyId());
           this.sconi = sconi;
           this.cclInter = cclInter;

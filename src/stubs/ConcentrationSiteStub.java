@@ -91,4 +91,33 @@ public class ConcentrationSiteStub {
         com.close();
         return inMessage.getRI1();
     }
+
+    public void shutdown(){
+        ClientCom com;
+
+        Message outMessage, inMessage;
+        mThief curThread = (mThief) Thread.currentThread();
+
+        com = new ClientCom(serverHostName, serverPortNum);
+
+        while(!com.open()){
+            try{
+                Thread.currentThread().sleep((long) (10));
+            }
+            catch(InterruptedException e){}
+        }
+
+        outMessage = new Message(MessageType.SHUTDOWN);
+        com.writeObject(outMessage);
+
+        inMessage = (Message)com.readObject();
+
+        if(inMessage.getMsgType() != MessageType.SHUTDONE){
+            GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
+            GenericIO.writelnString(inMessage.toString());
+            System.exit(1);
+        }
+
+        com.close();
+    }
 }

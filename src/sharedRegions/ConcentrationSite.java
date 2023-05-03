@@ -5,6 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import src.entities.*;
 import src.infrastructure.MemException;
+import src.main.ServerConcentrationSite;
 import src.stubs.GeneralReposStub;
 
 public class ConcentrationSite {
@@ -47,7 +48,7 @@ public class ConcentrationSite {
      * @param repos    reference to GeneralRepository shared memory region
      */
 
-    public ConcentrationSite(AssaultParty[] aParties, GeneralReposStub grStub) {
+    public ConcentrationSite(/*AssaultParty[] aParties,*/ GeneralReposStub grStub) {
         this.lock = new ReentrantLock();
         this.partyRdyCond = lock.newCondition();
         //this.repos = repos;
@@ -100,5 +101,14 @@ public class ConcentrationSite {
         partyRdyCond.signal();
         lock.unlock();
         return nextParty;
+    }
+
+    public void shutdown(){
+        try{
+            lock.lock();
+            ServerConcentrationSite.waitConnection = false;
+        }finally{
+            lock.unlock();
+        }
     }
 }

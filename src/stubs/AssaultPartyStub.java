@@ -1,8 +1,8 @@
 package src.stubs;
 
 import genclass.GenericIO;
-import src.entities.mThief;
-import src.entities.oThief;
+import src.entities.mClient;
+import src.entities.oClient;
 import src.infrastructure.ClientCom;
 import src.infrastructure.Message;
 import src.infrastructure.MessageType;
@@ -35,7 +35,7 @@ public class AssaultPartyStub {
         ClientCom com;
 
         Message outMessage, inMessage;
-        mThief curThread = (mThief) Thread.currentThread();
+        mClient curThread = (mClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -66,7 +66,7 @@ public class AssaultPartyStub {
 
         Message outMessage, inMessage;
         
-        oThief curThread = (oThief) Thread.currentThread();
+        oClient curThread = (oClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -99,7 +99,7 @@ public class AssaultPartyStub {
 
         Message outMessage, inMessage;
         
-        oThief curThread = (oThief) Thread.currentThread();
+        oClient curThread = (oClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -130,7 +130,7 @@ public class AssaultPartyStub {
 
         Message outMessage, inMessage;
         
-        oThief curThread = (oThief) Thread.currentThread();
+        oClient curThread = (oClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -161,7 +161,7 @@ public class AssaultPartyStub {
 
         Message outMessage, inMessage;
         
-        oThief curThread = (oThief) Thread.currentThread();
+        oClient curThread = (oClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -191,7 +191,7 @@ public class AssaultPartyStub {
         ClientCom com;
 
         Message outMessage, inMessage;
-        mThief curThread = (mThief) Thread.currentThread();
+        mClient curThread = (mClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -208,6 +208,35 @@ public class AssaultPartyStub {
         inMessage = (Message)com.readObject();
 
         if(inMessage.getMsgType() != MessageType.SIGNDEPREP){
+            GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
+            GenericIO.writelnString(inMessage.toString());
+            System.exit(1);
+        }
+
+        com.close();
+    }
+
+    public void shutdown(){
+        ClientCom com;
+
+        Message outMessage, inMessage;
+        mClient curThread = (mClient) Thread.currentThread();
+
+        com = new ClientCom(serverHostName, serverPortNum);
+
+        while(!com.open()){
+            try{
+                Thread.currentThread().sleep((long) (10));
+            }
+            catch(InterruptedException e){}
+        }
+
+        outMessage = new Message(MessageType.SHUTDOWN);
+        com.writeObject(outMessage);
+
+        inMessage = (Message)com.readObject();
+
+        if(inMessage.getMsgType() != MessageType.SHUTDONE){
             GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);

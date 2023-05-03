@@ -3,14 +3,14 @@ package src.main;
 import java.net.SocketTimeoutException;
 
 import genclass.GenericIO;
-import src.entities.museumClientProxy;
+import src.entities.ccsClientProxy;
 import src.infrastructure.ExecParameters;
 import src.infrastructure.ServerCom;
-import src.sharedRegions.Museum;
-import src.sharedRegions.MuseumInterface;
+import src.sharedRegions.ConcentrationSite;
+import src.sharedRegions.ConcentrationSiteInterface;
 import src.stubs.GeneralReposStub;
 
-public class ServerMuseum {
+public class ServerConcentrationSite {
     
     /**
      * 
@@ -22,21 +22,21 @@ public class ServerMuseum {
         ServerCom scon, sconi;
         GeneralReposStub gReposStub = new GeneralReposStub(ExecParameters.gReposHostName, ExecParameters.gReposPortNum);
         int portNumb = ExecParameters.ccsPortNum;
-        Museum museum = new Museum(5, 30, 15, 16, 8,gReposStub);
-        MuseumInterface mInter = new MuseumInterface(museum);
+        ConcentrationSite cs = new ConcentrationSite(gReposStub);
+        ConcentrationSiteInterface csInter = new ConcentrationSiteInterface(cs);
 
         scon = new ServerCom(portNumb);
         scon.start();
         GenericIO.writelnString ("Service is established!");
         GenericIO.writelnString ("Server is listening for service requests.");
 
-        museumClientProxy clientProxy;
+        ccsClientProxy clientProxy;
 
         waitConnection = true;
         while(waitConnection){
             try{ 
                 sconi = scon.accept ();                                    
-                clientProxy = new museumClientProxy (sconi, mInter);    
+                clientProxy = new ccsClientProxy (sconi, csInter);    
                 clientProxy.start ();                                        
             }
             catch (SocketTimeoutException e) {}
@@ -44,4 +44,4 @@ public class ServerMuseum {
         scon.end ();
         GenericIO.writelnString ("Server was shutdown.");
     } 
-}
+} 

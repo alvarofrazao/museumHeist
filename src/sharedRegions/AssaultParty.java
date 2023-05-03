@@ -5,6 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import src.entities.*;
 import src.stubs.GeneralReposStub;
+import src.main.ServerAssaultParty;
 
 public class AssaultParty {
 
@@ -36,7 +37,7 @@ public class AssaultParty {
     /**
      * Reference to the Museum shared region
      */
-    private Museum museum;
+    //private Museum museum;
 
     /**
      * Reference to the General Repository shared region
@@ -103,7 +104,7 @@ public class AssaultParty {
      * @param museum    Reference to the Museum shared memory region
      * @param repos     Reference to the GeneralRepository shared memory region
      */
-    public AssaultParty(int id, int partySize, int thiefMax, int S, Museum museum,  GeneralReposStub grStub /*GeneralRepos repos*/) {
+    public AssaultParty(int id, int partySize, int thiefMax, int S/* , Museum museum*/,  GeneralReposStub grStub /*GeneralRepos repos*/) {
         this.id = id;
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
@@ -113,7 +114,7 @@ public class AssaultParty {
         this.thiefDist = new int[partySize];
         this.moveRestrictIn = new boolean[partySize];
         this.moveRestrictOut = new boolean[partySize];
-        this.museum = museum;
+        //this.museum = museum;
         //this.repos = repos;
         this.grStub = grStub;
         this.currentThiefNum = 0;
@@ -487,6 +488,15 @@ public class AssaultParty {
              * lock.unlock();
              * }
              */
+            lock.unlock();
+        }
+    }
+
+    public void shutdown(){
+        try{
+            lock.lock();
+            ServerAssaultParty.waitConnection = false;
+        }finally{
             lock.unlock();
         }
     }

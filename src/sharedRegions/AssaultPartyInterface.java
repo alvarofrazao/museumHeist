@@ -79,6 +79,8 @@ public class AssaultPartyInterface {
          case MessageType.SIGNDEP:
             // doesn't check for anything
             break;
+         case MessageType.SHUTDOWN:
+            break;
          default:
             throw new MessageException("Invalid message type!", inMessage);
       }
@@ -118,6 +120,10 @@ public class AssaultPartyInterface {
          case MessageType.SIGNDEP:
             aParty.signalDeparture();
             outMessage = new Message(MessageType.SIGNDEPREP);
+            break;
+         case MessageType.SHUTDOWN:
+            aParty.shutdown();
+            outMessage = new Message(MessageType.SHUTDONE);
             break;
          default:
             throw new MessageException("Invalid message type!", inMessage);
