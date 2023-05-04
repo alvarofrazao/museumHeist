@@ -2,9 +2,9 @@ package serverSide.sharedRegions;
 
 import serverSide.entities.mStates;
 import serverSide.entities.oStates;
-import serverSide.infrastructure.Message;
-import serverSide.infrastructure.MessageException;
-import serverSide.infrastructure.MessageType;
+import infrastructure.Message;
+import infrastructure.MessageException;
+import infrastructure.MessageType;
 
 public class GeneralReposInterface {
 

@@ -3,7 +3,7 @@ package serverSide.main;
 import serverSide.sharedRegions.*;
 import serverSide.entities.*;
 import serverSide.stubs.GeneralReposStub;
-import serverSide.infrastructure.*;
+import infrastructure.*;
 
 import java.net.SocketTimeoutException;
 

@@ -4,7 +4,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import serverSide.entities.*;
-import serverSide.infrastructure.MemException;
+import infrastructure.MemException;
 import serverSide.main.ServerConcentrationSite;
 import serverSide.stubs.GeneralReposStub;
 

@@ -2,9 +2,9 @@ package clientSide.stubs;
 
 import genclass.GenericIO;
 import clientSide.entities.oClient;
-import clientSide.infrastructure.ClientCom;
-import clientSide.infrastructure.Message;
-import clientSide.infrastructure.MessageType;
+import infrastructure.ClientCom;
+import infrastructure.Message;
+import infrastructure.MessageType;
 
 public class MuseumStub {
     

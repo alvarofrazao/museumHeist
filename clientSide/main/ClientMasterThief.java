@@ -5,7 +5,7 @@ import clientSide.entities.*;
 import clientSide.stubs.AssaultPartyStub;
 import clientSide.stubs.ConcentrationSiteStub;
 import clientSide.stubs.ControlCollectionSiteStub;
-import clientSide.infrastructure.*;
+import infrastructure.*;
 
 public class ClientMasterThief {
     

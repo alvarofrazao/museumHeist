@@ -1,4 +1,4 @@
-package clientSide.infrastructure;
+package infrastructure;
 
 /**
  *    Memory exception.

@@ -4,8 +4,8 @@ import java.net.SocketTimeoutException;
 
 import genclass.GenericIO;
 import serverSide.entities.ccsClientProxy;
-import serverSide.infrastructure.ExecParameters;
-import serverSide.infrastructure.ServerCom;
+import infrastructure.ExecParameters;
+import infrastructure.ServerCom;
 import serverSide.sharedRegions.ConcentrationSite;
 import serverSide.sharedRegions.ConcentrationSiteInterface;
 import serverSide.stubs.GeneralReposStub;

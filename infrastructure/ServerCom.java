@@ -1,11 +1,11 @@
-package serverSide.infrastructure;
+package infrastructure;
 
 import genclass.GenericIO;
 import java.io.*;
 import java.net.*;
 
 /**
- *   Communication manager - client side.
+ *   Communication manager - server side.
  *
  *   Communication is based on message passing over sockets using the TCP protocol.
  *   It supposes the setup of a communication channel between the two end points before data transfer can take place.
@@ -13,19 +13,19 @@ import java.net.*;
  *   input streams, respectively.
  */
 
-public class ClientCom
+public class ServerCom
 {
+  /**
+   *  Listening socket.
+   */
+
+   private ServerSocket listeningSocket = null;
+
   /**
    *  Communication socket.
    */
 
    private Socket commSocket = null;
-
-  /**
-   *  Name of the computational system where the server is located.
-   */
-
-   private String serverHostName;
 
   /**
    *  Number of the listening port at the computational system where the server is located.
@@ -46,90 +46,120 @@ public class ClientCom
    private ObjectOutputStream out = null;
 
   /**
-   *  Instantiation of a communication channel.
+   *  Instantiation of a communication channel (form 1).
    *
-   *    @param hostName name of the computational system where the server is located
    *    @param portNumb number of the listening port at the computational system where the server is located
    */
 
-   public ClientCom (String hostName, int portNumb)
+   public ServerCom (int portNumb)
    {
-      serverHostName = hostName;
       serverPortNumb = portNumb;
    }
 
   /**
-   *  Open the communication channel.
+   *  Instantiation of a communication channel (form 2).
    *
-   *  Instantiation of the communication socket and its binding to the server address.
-   *  The socket input and output streams are opened.
-   *
-   *    @return true, if the communication channel is opened -
-   *            false, otherwise
+   *    @param portNumb number of the listening port at the computational system where the server is located
+   *    @param lSocket listening socket
    */
 
-   public boolean open ()
+   public ServerCom (int portNumb, ServerSocket lSocket)
    {
-      boolean success = true;                                                                      // flag signaling
-                                                                                                   // success on opening the communication channel
-      SocketAddress serverAddress = new InetSocketAddress (serverHostName, serverPortNumb);        // inet address
+      serverPortNumb = portNumb;
+      listeningSocket = lSocket;
+   }
 
+  /**
+   *  Service setup.
+   *
+   *  Instantiation of the listening socket, its binding to the public server address and port number and
+   *  fixing a listening timeout.
+   */
+
+   public void start ()
+   {
       try
-      { commSocket = new Socket();
-        commSocket.connect (serverAddress);
+      { listeningSocket = new ServerSocket (serverPortNumb);
+        listeningSocket.setSoTimeout (1000);                                   // fixing a 1 s time out in listening to a connection request
       }
-      catch (UnknownHostException e)
+      catch (BindException e)                              // fatal error --- port already in use
       { GenericIO.writelnString (Thread.currentThread ().getName () +
-                                 " - the name of the computational system where the server is located, is unknown: " +
-                                 serverHostName + "!");
+                                 " - it was not possible the association of the listening socket to the port: " +
+                                 serverPortNumb + "!");
         e.printStackTrace ();
         System.exit (1);
       }
-      catch (NoRouteToHostException e)
+      catch (SocketException e)
       { GenericIO.writelnString (Thread.currentThread ().getName () +
-                                 " - the name of the computational system where the server is located, is unreachable: " +
-                                 serverHostName + "!");
+                                 " - an error has occurred on fixing a listening timeout!");
         e.printStackTrace ();
         System.exit (1);
-      }
-      catch (ConnectException e)
-      { GenericIO.writelnString (Thread.currentThread ().getName () +
-                                 " - the server does not respond at: " + serverHostName + "." + serverPortNumb + "!");
-        if (e.getMessage ().equals ("Connection refused"))
-           success = false;
-           else { GenericIO.writelnString (e.getMessage () + "!");
-                  e.printStackTrace ();
-                  System.exit (1);
-                }
-      }
-      catch (SocketTimeoutException e)
-      { GenericIO.writelnString (Thread.currentThread ().getName () +
-                                 " - time out has occurred in establishing the connection at: " +
-                                 serverHostName + "." + serverPortNumb + "!");
-        success = false;
       }
       catch (IOException e)                                // fatal error --- other reasons
       { GenericIO.writelnString (Thread.currentThread ().getName () +
                                  " - an indeterminate error has occurred in establishing the connection at: " +
-                                 serverHostName + "." + serverPortNumb + "!");
+                                 serverPortNumb + "!");
         e.printStackTrace ();
         System.exit (1);
       }
+   }
 
-      if (!success) return (success);
+  /**
+   *  Service shutdown.
+   *
+   *  The listening socket is closed.
+   */
 
+   public void end ()
+   {
       try
-      { out = new ObjectOutputStream (commSocket.getOutputStream ());
+      { listeningSocket.close ();
       }
       catch (IOException e)
       { GenericIO.writelnString (Thread.currentThread ().getName () +
-                                 " - it was not possible to open the output stream!");
+                                 " - it was not possible to close the listening socket!");
+        e.printStackTrace ();
+        System.exit (1);
+      }
+   }
+
+  /**
+   *  Listening process.
+   *
+   *  Instantiation of a communication channel for a pending request.
+   *  Instantiation of the communication socket and its binding to the client address.
+   *  The socket input and output streams are opened.
+   *
+   *    @return reference to the commmunication channel
+   *    @throws SocketTimeoutException when a timeout is reached on the listening process
+   */
+
+   public ServerCom accept () throws SocketTimeoutException
+   {
+      ServerCom scon;                                      // communication channel
+
+      scon = new ServerCom(serverPortNumb, listeningSocket);
+      try
+      { scon.commSocket = listeningSocket.accept();
+      }
+      catch (SocketTimeoutException e)
+      { throw new SocketTimeoutException ("Listening timeout!");
+      }
+      catch (SocketException e)
+      { GenericIO.writelnString (Thread.currentThread ().getName () +
+                                 " - the listening socket was closed during the listening process!");
+        e.printStackTrace ();
+        System.exit (1);
+      }
+      catch (IOException e)
+      { GenericIO.writelnString (Thread.currentThread ().getName () +
+                                 " - it was not possible to instantiate a communication channel for the pending request!");
         e.printStackTrace ();
         System.exit (1);
       }
 
       try
-      { in = new ObjectInputStream (commSocket.getInputStream ());
+      { scon.in = new ObjectInputStream (scon.commSocket.getInputStream ());
       }
       catch (IOException e)
       { GenericIO.writelnString (Thread.currentThread ().getName () +
@@ -138,7 +168,17 @@ public class ClientCom
         System.exit (1);
       }
 
-      return (success);
+      try
+      { scon.out = new ObjectOutputStream (scon.commSocket.getOutputStream ());
+      }
+      catch (IOException e)
+      { GenericIO.writelnString (Thread.currentThread ().getName () +
+                                 " - it was not possible to open the output stream!");
+        e.printStackTrace ();
+        System.exit (1);
+      }
+
+      return scon;
    }
 
   /**
@@ -151,21 +191,21 @@ public class ClientCom
    public void close ()
    {
       try
-      { out.close();
-      }
-      catch (IOException e)
-      { GenericIO.writelnString (Thread.currentThread ().getName () +
-                                 " - it was not possible to close the output stream!!");
-        e.printStackTrace ();
-        System.exit (1);
-      }
-
-      try
       { in.close();
       }
       catch (IOException e)
       { GenericIO.writelnString (Thread.currentThread ().getName () +
                                  " - it was not possible to close the input stream!");
+        e.printStackTrace ();
+        System.exit (1);
+      }
+
+      try
+      { out.close();
+      }
+      catch (IOException e)
+      { GenericIO.writelnString (Thread.currentThread ().getName () +
+                                 " - it was not possible to close the output stream!");
         e.printStackTrace ();
         System.exit (1);
       }
@@ -189,10 +229,10 @@ public class ClientCom
 
    public Object readObject ()
    {
-      Object fromServer = null;                            // object that is read
+      Object fromClient = null;;                           // object that is read
 
       try
-      { fromServer = in.readObject ();
+      { fromClient = in.readObject ();
       }
       catch (InvalidClassException e)
       { GenericIO.writelnString (Thread.currentThread ().getName () +
@@ -213,19 +253,19 @@ public class ClientCom
         System.exit (1);
       }
 
-      return fromServer;
+      return fromClient;
    }
 
   /**
    *  Object write to the communication channel.
    *
-   *    @param toServer reference to the object to be written
+   *    @param toClient reference to the object to be written
    */
 
-   public void writeObject (Object toServer)
+   public void writeObject (Object toClient)
    {
       try
-      { out.writeObject (toServer);
+      { out.writeObject (toClient);
       }
       catch (InvalidClassException e)
       { GenericIO.writelnString (Thread.currentThread ().getName () +

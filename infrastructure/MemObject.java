@@ -1,4 +1,4 @@
-package serverSide.infrastructure;
+package infrastructure;
 
 /**
  *    Parametric memory.

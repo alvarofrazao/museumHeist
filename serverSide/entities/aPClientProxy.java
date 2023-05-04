@@ -1,9 +1,9 @@
 package serverSide.entities;
 
 import genclass.GenericIO;
-import serverSide.infrastructure.Message;
-import serverSide.infrastructure.MessageException;
-import serverSide.infrastructure.ServerCom;
+import infrastructure.Message;
+import infrastructure.MessageException;
+import infrastructure.ServerCom;
 import serverSide.sharedRegions.AssaultPartyInterface;
 
 public class aPClientProxy extends Thread {

@@ -1,9 +1,9 @@
 package serverSide.stubs;
 
 import genclass.GenericIO;
-import serverSide.infrastructure.ClientCom;
-import serverSide.infrastructure.Message;
-import serverSide.infrastructure.MessageType;
+import infrastructure.ClientCom;
+import infrastructure.Message;
+import infrastructure.MessageType;
 
 public class GeneralReposStub{
     

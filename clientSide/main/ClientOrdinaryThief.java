@@ -4,7 +4,7 @@ import clientSide.stubs.AssaultPartyStub;
 import clientSide.stubs.ConcentrationSiteStub;
 import clientSide.stubs.ControlCollectionSiteStub;
 import clientSide.stubs.MuseumStub;
-import clientSide.infrastructure.ExecParameters;
+import infrastructure.ExecParameters;
 import genclass.GenericIO;
 import clientSide.entities.oClient;
 

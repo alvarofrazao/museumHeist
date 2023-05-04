@@ -1,4 +1,4 @@
-package clientSide.infrastructure;
+package infrastructure;
 
 /**
  *    Parametric FIFO derived from a parametric memory.

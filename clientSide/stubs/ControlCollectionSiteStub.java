@@ -1,7 +1,7 @@
 package clientSide.stubs;
 
 import clientSide.entities.*;
-import clientSide.infrastructure.*;
+import infrastructure.*;
 import genclass.GenericIO;
 
 public class ControlCollectionSiteStub {

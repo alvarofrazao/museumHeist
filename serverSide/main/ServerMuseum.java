@@ -4,8 +4,8 @@ import java.net.SocketTimeoutException;
 
 import genclass.GenericIO;
 import serverSide.entities.museumClientProxy;
-import serverSide.infrastructure.ExecParameters;
-import serverSide.infrastructure.ServerCom;
+import infrastructure.ExecParameters;
+import infrastructure.ServerCom;
 import serverSide.sharedRegions.Museum;
 import serverSide.sharedRegions.MuseumInterface;
 import serverSide.stubs.GeneralReposStub;

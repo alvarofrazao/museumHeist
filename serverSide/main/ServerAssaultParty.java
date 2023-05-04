@@ -4,8 +4,8 @@ import java.net.SocketTimeoutException;
 
 import genclass.GenericIO;
 import serverSide.entities.aPClientProxy;
-import serverSide.infrastructure.ExecParameters;
-import serverSide.infrastructure.ServerCom;
+import infrastructure.ExecParameters;
+import infrastructure.ServerCom;
 import serverSide.sharedRegions.AssaultParty;
 import serverSide.sharedRegions.AssaultPartyInterface;
 import serverSide.stubs.GeneralReposStub;
