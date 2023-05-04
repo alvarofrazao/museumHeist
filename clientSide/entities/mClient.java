@@ -61,16 +61,23 @@ public class mClient extends Thread{
         while (heistRun){
                 switch(controlSite.appraiseSit()){
                     case 0:
+                        System.out.println("prepap");
                         party = controlSite.prepareAssaultParty();         
+                        System.out.println("setup-ap");
                         assaultParties[party].setupParty(controlSite.getNextRoom());
+                        System.out.println("sendap");
                         concentrationSite.sendAssaultParty();
+                        System.out.println("signdep");
                         assaultParties[party].signalDeparture();
                         break;
                     case 1:
+                        System.out.println("tkrst");
                         controlSite.takeARest();
+                        System.out.println("colcanv");
                         controlSite.collectACanvas();
                         break;
                     case 2:
+                        System.out.println("sumupres");
                         controlSite.sumUpResults();
                         heistRun = false;
                         break;

@@ -88,7 +88,7 @@ public class GeneralReposInterface {
             throw new MessageException("Invalid assault party id!", inMessage);
           break;
         case MessageType.SETRDISTPNTS:
-          if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
+          if ((inMessage.getoThRoom() < 0) || (inMessage.getoThRoom() >= 6))
             throw new MessageException("Invalid room id!", inMessage);
           break;
         case MessageType.SETPNTSRM:

@@ -34,7 +34,9 @@ public class Museum {
 
         for (int i = 0; i < numberOfRooms; i++) {
             museumRoomsDistance[i] = (int) ((Math.random() * (MAX_D - MIN_D)) + MIN_D);
-            // System.out.println(museumRoomsDistance[i]+"\n");
+            System.out.println("Room Id" + i+"\n");
+            System.out.println("Room distance" + museumRoomsDistance[i]+"\n");
+            System.out.println("Room paintings" + museumRoomsDistance[i]+"\n");
             museumRoomsPaintings[i] = (int) ((Math.random() * (MAX_P - MIN_P)) + MIN_P);
             lock.lock();
             //repos.setRoomDistanceAndPaintings(i, museumRoomsDistance[i], museumRoomsPaintings[i]);

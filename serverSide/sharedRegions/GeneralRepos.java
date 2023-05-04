@@ -334,7 +334,7 @@ public class GeneralRepos {
         lock.lock();
         this.museumDetails[room][0] = num_paintings;
         this.museumDetails[room][1] = distance;
-        logState();
+        //logState();
         lock.unlock();
     }
 
