@@ -21,7 +21,7 @@ public class ServerMuseum {
 
         ServerCom scon, sconi;
         GeneralReposStub gReposStub = new GeneralReposStub(ExecParameters.gReposHostName, ExecParameters.gReposPortNum);
-        int portNumb = ExecParameters.ccsPortNum;
+        int portNumb = ExecParameters.museumPortNum;
         Museum museum = new Museum(5, 30, 15, 16, 8,gReposStub);
         MuseumInterface mInter = new MuseumInterface(museum);
 

@@ -4,6 +4,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import genclass.GenericIO;
 import genclass.TextFile;
+import infrastructure.ExecParameters;
 import serverSide.main.ServerGeneralRepos;
 
 /**
@@ -28,7 +29,7 @@ public class GeneralRepos {
     private final int[] oState;
     private final char[] oParty;
     private final int[] oMD;
-
+    
     private final int[] apRoom;
     private final int[][][] apDetails;
 
@@ -50,7 +51,7 @@ public class GeneralRepos {
         apRoom = new int[2];
         apDetails = new int[2][3][3];
         museumDetails = new int[5][2];
-
+        logFileName = ExecParameters.logName;
         for (int i = 0; i < 6; i++) {
             oParty[i] = 'W';
         }
@@ -63,8 +64,7 @@ public class GeneralRepos {
      * concentrarion area
      * Internal operation.
      */
-    public void logInit(String logPath) {
-        this.logFileName = logPath;
+    public void logInit() {
         TextFile log = new TextFile();
 
         if (!log.openForWriting(".", logFileName)) {

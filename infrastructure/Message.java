@@ -1,4 +1,4 @@
-package src.infrastructure;
+package infrastructure;
 
 import java.io.Serializable;
 
@@ -99,7 +99,7 @@ public class Message implements Serializable {
 
     /**
      * Type 2 instantiation
-     * @param type Message type: STARTOP,APSITREP,SNDPTY,SIGNDEP,TKREST,PREPAP
+     * @param type Message type: APSITREP,SNDPTY,SIGNDEP,TKREST,PREPAP
      *                           COLCANV,SUMRES,PREPEX,PREPEXREP,GETDIST,GETDISTREP
      * @param id entity ID or integer value 
      */
@@ -259,7 +259,7 @@ public class Message implements Serializable {
     
     /**
      * Type 7 Instantiation
-     * @param type Message type: LOGINIT
+     * @param type Message type: LOGINIT/STARTOP
      * @param fname
      */
     public Message(int type, String fname){

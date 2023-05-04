@@ -33,9 +33,6 @@ public class GeneralReposInterface {
  
        switch (inMessage.getMsgType ()){ 
         case MessageType.LOGINIT:  
-          if (inMessage.getLogName() == null)
-              throw new MessageException ("Logfile name not present!", inMessage);
-                                      
           break;
         case MessageType.SETOTSTT:    
           if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
@@ -114,6 +111,7 @@ public class GeneralReposInterface {
       switch (inMessage.getMsgType ()){
         case MessageType.LOGINIT:
           //gr.logInit(inMessage.getLogName()); <- corrigir a funçao
+          outMessage = new Message(MessageType.ACK);
           break;
         case MessageType.SETOTSTT:
           gr.setOrdinaryThiefState(inMessage.getThId(), inMessage.getThState());

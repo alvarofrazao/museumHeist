@@ -18,6 +18,7 @@ public class ServerGeneralRepos {
         ServerCom scon, sconi;
         int portNumb = ExecParameters.gReposPortNum;
         GeneralRepos gRepos = new GeneralRepos();
+        gRepos.logInit();
         GeneralReposInterface gReposInter = new GeneralReposInterface(gRepos);
 
         scon = new ServerCom(portNumb);

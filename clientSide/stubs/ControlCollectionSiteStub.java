@@ -222,7 +222,7 @@ public class ControlCollectionSiteStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.APSIT);
+        outMessage = new Message(MessageType.APSIT,((mClient) Thread.currentThread()).getID());
         com.writeObject(outMessage);
 
         inMessage= (Message) com.readObject();

@@ -452,7 +452,7 @@ public class ControlCollectionSite {
     public void startOperations() {
         lock.lock();
         System.out.println("startOperations");
-        grStub.logInit(ExecParameters.logName);
+        //grStub.logInit();
         //mThief curThread = (mThief) Thread.currentThread();
         cclClientProxy curThread = (cclClientProxy) Thread.currentThread();
         curThread.setThState(mStates.DECIDING_WHAT_TO_DO);

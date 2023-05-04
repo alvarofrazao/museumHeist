@@ -12,7 +12,7 @@ public class ExecParameters {
 
     public static final String ccsHostName = "localhost";
 
-    public static final int ccsPortNum = 22500;
+    public static final int ccsPortNum = 22520;
 
     public static final String cclHostName = "localhost";
 

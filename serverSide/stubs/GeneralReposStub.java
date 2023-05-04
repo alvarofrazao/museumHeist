@@ -28,7 +28,7 @@ public class GeneralReposStub{
         this.serverPortNum = serverPortNum;
     }
 
-    public void logInit(String filename){
+    public void logInit(){
         
         ClientCom com;
 
@@ -43,7 +43,7 @@ public class GeneralReposStub{
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.LOGINIT,filename);
+        outMessage = new Message(MessageType.LOGINIT);
         com.writeObject(outMessage);
 
         inMessage = (Message)com.readObject();
