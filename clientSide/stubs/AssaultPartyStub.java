@@ -89,8 +89,8 @@ public class AssaultPartyStub {
         }
 
         com.close();
-        curThread.setPartyPos(inMessage.getRI1());
-        return inMessage.getRI2();
+        curThread.setPartyPos(inMessage.getoThPartyPos());
+        return inMessage.getoThRoom();
     }
 
     public void crawlIn(int dist){
@@ -177,7 +177,7 @@ public class AssaultPartyStub {
 
         inMessage = (Message) com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.REVDIREP){
+        if(inMessage.getMsgType() != MessageType.REVDIRREP){
             GenericIO.writelnString("Thread " + curThread.getThiefID() + ": Invalid message type");
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
@@ -220,7 +220,6 @@ public class AssaultPartyStub {
         ClientCom com;
 
         Message outMessage, inMessage;
-        mClient curThread = (mClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -236,11 +235,6 @@ public class AssaultPartyStub {
 
         inMessage = (Message)com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.SHUTDONE){
-            GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
-            GenericIO.writelnString(inMessage.toString());
-            System.exit(1);
-        }
 
         com.close();
     }

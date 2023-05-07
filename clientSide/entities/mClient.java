@@ -59,10 +59,12 @@ public class mClient extends Thread{
         boolean heistRun = true;
         int party;
         while (heistRun){
+                System.out.println("apsit");
                 switch(controlSite.appraiseSit()){
                     case 0:
                         System.out.println("prepap");
                         party = controlSite.prepareAssaultParty();         
+                        System.out.println("party: " + party);
                         System.out.println("setup-ap");
                         assaultParties[party].setupParty(controlSite.getNextRoom());
                         System.out.println("sendap");

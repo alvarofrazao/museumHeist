@@ -25,16 +25,6 @@ public class GeneralReposClientProxy extends Thread {
    */
   private GeneralReposInterface gInter;
 
-  /**
-   * thread id
-   */
-  private int thId;
-
-  /**
-   * thread state
-   */
-  private int thState;
-
   public GeneralReposClientProxy(ServerCom sconi, GeneralReposInterface gInter) {
     super("GeneralReposClientProxy" + GeneralReposClientProxy.getProxyId());
     this.sconi = sconi;
@@ -52,9 +42,9 @@ public class GeneralReposClientProxy extends Thread {
     int proxyId; // instantiation identifier
 
     try {
-      cl = Class.forName("serverSide.entities.ccsClientProxy");
+      cl = Class.forName("serverSide.entities.GeneralReposClientProxy");
     } catch (ClassNotFoundException e) {
-      GenericIO.writelnString("Data type ccsClientProxy was not found!");
+      GenericIO.writelnString("Data type GeneralReposClientProxy was not found!");
       e.printStackTrace();
       System.exit(1);
     }

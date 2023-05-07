@@ -47,7 +47,7 @@ public class AssaultPartyInterface {
                throw new MessageException("Invalid thief id!", inMessage);
             break;
          case MessageType.SETP:
-            if (inMessage.getThId() != 6)
+            if ((inMessage.getoThRoom() < 0) || (inMessage.getoThRoom() >= 5)) 
                throw new MessageException("Invalid master thief id!", inMessage);
             break;
          case MessageType.CRIN:
@@ -55,18 +55,14 @@ public class AssaultPartyInterface {
                throw new MessageException("Invalid master thief id!", inMessage);
             else if ((inMessage.getroomDist() < 15) || (inMessage.getThState() >= 31))
                throw new MessageException("Invalid room distance value!", inMessage);
-            else if ((inMessage.getoThAP() < 0) || (inMessage.getoThAP() >= 2))
-               throw new MessageException("Invalid assault party id!", inMessage);
             else if ((inMessage.getoThPartyPos() < 0) || (inMessage.getoThPartyPos() >= 3))
             throw new MessageException("Invalid party position!", inMessage);
             break;
          case MessageType.CROUT:
             if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                throw new MessageException("Invalid master thief id!", inMessage);
-            else if ((inMessage.getroomDist() < 15) || (inMessage.getThState() >= 31))
+            else if ((inMessage.getroomDist() < 15) || (inMessage.getroomDist() >= 31))
                throw new MessageException("Invalid room distance value!", inMessage);
-            else if ((inMessage.getoThAP() < 0) || (inMessage.getoThAP() >= 2))
-               throw new MessageException("Invalid assault party id!", inMessage);
             else if ((inMessage.getoThPartyPos() < 0) || (inMessage.getoThPartyPos() >= 3))
                throw new MessageException("Invalid party position!", inMessage);
             break;
@@ -91,7 +87,8 @@ public class AssaultPartyInterface {
          case MessageType.ADDTH:
             curThread.setId(inMessage.getThId());
             int room = aParty.addThief();
-            outMessage = new Message(MessageType.ADDTHREP,curThread.getThId(),curThread.getPpos(),room);
+            System.out.println("Thread id: " + curThread.getThId() + " Ppos: " + curThread.getPpos());
+            outMessage = new Message(MessageType.ADDTHREP,curThread.getPpos(),room);
             break;
          case MessageType.SETP:
             aParty.setupParty(inMessage.getoThRoom());
@@ -115,7 +112,7 @@ public class AssaultPartyInterface {
             curThread.setId(inMessage.getThId());
             curThread.setPpos(inMessage.getoThPartyPos());
             aParty.reverseDirection();
-            outMessage = new Message(MessageType.REVDIREP);
+            outMessage = new Message(MessageType.REVDIRREP);
             break;
          case MessageType.SIGNDEP:
             aParty.signalDeparture();

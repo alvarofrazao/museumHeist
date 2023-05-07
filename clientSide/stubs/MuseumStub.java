@@ -110,12 +110,6 @@ public class MuseumStub {
 
         inMessage = (Message)com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.SHUTDONE){
-            GenericIO.writelnString("Thread " + Thread.currentThread().getId() + ": Invalid message type");
-            GenericIO.writelnString(inMessage.toString());
-            System.exit(1);
-        }
-
         com.close();
     }
 }

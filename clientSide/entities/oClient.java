@@ -152,15 +152,25 @@ public class oClient extends Thread{
      */
     @Override
     public void run()  {
+            System.out.println(thiefID + " AIN");
             while(controlSite.amINeeded()){
+                System.out.println(thiefID + " PREPEX");
                 curAP = concentSite.prepareExcursion();
+                System.out.println(thiefID + " ADDTH");
                 currentRoomID = arrayAP[curAP].addThief();
+                System.out.println(thiefID + " GETRDIST");
                 dist = museum.getRoomDistance(currentRoomID);
+                System.out.println(thiefID + " CRIN");
                 arrayAP[curAP].crawlIn(dist);
+                System.out.println(thiefID + " ROLLCAN");
                 carryingCanvas = museum.rollACanvas(currentRoomID);
+                System.out.println(thiefID + " CRIN");
                 arrayAP[curAP].reverseDirection();
+                System.out.println(thiefID + " CROUT");
                 arrayAP[curAP].crawlOut(dist);
+                System.out.println(thiefID + " HNDCAN");
                 controlSite.handACanvas();
+                System.out.println(thiefID + " AIN");
             }
     }
 }

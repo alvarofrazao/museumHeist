@@ -41,45 +41,42 @@ public class ControlCollectionSiteInterface {
 
         switch (inMessage.getMsgType()) {
             case MessageType.AIN:
-                System.out.println("Thread id " + inMessage.getThId() + "\n");
                 if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                     throw new MessageException("Invalid thief id!", inMessage);
+                else if (!inMessage.getoThFC()) {
+                    if ((inMessage.getoThAP() < 0) || (inMessage.getoThAP() >= 2))
+                        throw new MessageException("Invalid AP id!", inMessage);
+                }
                 break;
             case MessageType.PREPAP:
-                System.out.println("Thread id " + inMessage.getThId() + "\n");
                 if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
                     throw new MessageException("Invalid master thief id!", inMessage);
                 break;
             case MessageType.TKREST:
-                System.out.println("Thread id " + inMessage.getThId() + "\n");
                 if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
                     throw new MessageException("Invalid master thief id!", inMessage);
                 break;
-            case MessageType.COLCANV:
-                System.out.println("Thread id " + inMessage.getThId() + "\n");
-                if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
-                    throw new MessageException("Invalid thief id!", inMessage);
+            case MessageType.COLCAN:
+                if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
+                    throw new MessageException("Invalid master thief id!", inMessage);
                 break;
             case MessageType.HNDCAN:
-                System.out.println("Thread id " + inMessage.getThId() + "\n");
                 if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
                     throw new MessageException("Invalid thief id!", inMessage);
                 else if ((inMessage.getoThRoom() < 0) || (inMessage.getoThRoom() >= 5)) {
                     throw new MessageException("Invalid room id", inMessage);
-                }
+                } else if ((inMessage.getoThAP() < 0) || (inMessage.getoThAP() >= 2))
+                    throw new MessageException("Invalid AP id!", inMessage);
                 break;
             case MessageType.APSIT:
-                System.out.println("Thread id " + inMessage.getThId() + "\n");
                 if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
                     throw new MessageException("Invalid master thief id!", inMessage);
+                break;
+            case MessageType.GETNRM:
                 break;
             case MessageType.STARTOP:
                 break;
             case MessageType.SUMRES:
-                System.out.println("Thread id " + inMessage.getThId() + "\n");
-                if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7)) {
-                    throw new MessageException("Invalid master thief id!", inMessage);
-                }
                 break;
             case MessageType.SHUTDOWN:
                 break;
@@ -94,25 +91,28 @@ public class ControlCollectionSiteInterface {
                 ((cclClientProxy) Thread.currentThread()).setThId(inMessage.getThId());
                 ((cclClientProxy) Thread.currentThread()).setFC(inMessage.getoThFC());
                 ((cclClientProxy) Thread.currentThread()).setPS(inMessage.getoThSit());
+                if (!inMessage.getoThFC()) {
+                    ((cclClientProxy) Thread.currentThread()).setThAP(inMessage.getoThAP());
+                }
                 if (ccl.amINeeded()) {
-                    outMessage = new Message(MessageType.AINREP, true,
-                            ((cclClientProxy) Thread.currentThread()).getFC());
+                    outMessage = new Message(MessageType.AINREP,
+                            ((cclClientProxy) Thread.currentThread()).getFC(), true);
                 } else {
-                    outMessage = new Message(MessageType.AINREP, false,
-                            ((cclClientProxy) Thread.currentThread()).getFC());
+                    outMessage = new Message(MessageType.AINREP,
+                            ((cclClientProxy) Thread.currentThread()).getFC(), false);
                 }
                 break;
             case MessageType.PREPAP:
                 ((cclClientProxy) Thread.currentThread()).setThId(inMessage.getThId());
                 int nextParty = ccl.prepareAssaultParty();
-                outMessage = new Message(MessageType.PREPAPREP, inMessage.getThId(), nextParty);
+                outMessage = new Message(MessageType.PREPAPREP,nextParty);
                 break;
             case MessageType.TKREST:
                 ((cclClientProxy) Thread.currentThread()).setThId(inMessage.getThId());
                 ccl.takeARest();
                 outMessage = new Message(MessageType.TKRESTREP);
                 break;
-            case MessageType.COLCANV:
+            case MessageType.COLCAN:
                 ((cclClientProxy) Thread.currentThread()).setThId(inMessage.getThId());
                 ccl.collectACanvas();
                 outMessage = new Message(MessageType.COLCANREP);
@@ -129,6 +129,10 @@ public class ControlCollectionSiteInterface {
                 int result = ccl.appraiseSit();
                 outMessage = new Message(MessageType.APSITREP, result);
                 break;
+            case MessageType.GETNRM:
+                int nextRoom = ccl.getNextRoom();
+                outMessage = new Message(MessageType.GETNRMREP,nextRoom);
+                break;
             case MessageType.STARTOP:
                 ccl.startOperations();
                 outMessage = new Message(MessageType.STARTOPREP);
@@ -140,6 +144,7 @@ public class ControlCollectionSiteInterface {
             case MessageType.SHUTDOWN:
                 ccl.shutdown();
                 outMessage = new Message(MessageType.SHUTDONE);
+                break;
             default:
                 throw new MessageException("Invalid message type!", inMessage);
         }

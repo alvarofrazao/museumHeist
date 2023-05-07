@@ -1,0 +1,63 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "ClientMasterThief",
+            "request": "launch",
+            "mainClass": "clientSide.main.ClientMasterThief",
+            "projectName": "museumHeist_bd131a60"
+        },
+        {
+            "type": "java",
+            "name": "ClientOrdinaryThief",
+            "request": "launch",
+            "mainClass": "clientSide.main.ClientOrdinaryThief",
+            "projectName": "museumHeist_bd131a60"
+        },
+        {
+            "type": "java",
+            "name": "ServerAssaultParty",
+            "request": "launch",
+            "mainClass": "serverSide.main.ServerAssaultParty",
+            "projectName": "museumHeist_bd131a60"
+        },
+        {
+            "type": "java",
+            "name": "ServerCollectionSite",
+            "request": "launch",
+            "mainClass": "serverSide.main.ServerCollectionSite",
+            "projectName": "museumHeist_bd131a60"
+        },
+        {
+            "type": "java",
+            "name": "ServerConcentrationSite",
+            "request": "launch",
+            "mainClass": "serverSide.main.ServerConcentrationSite",
+            "projectName": "museumHeist_bd131a60"
+        },
+        {
+            "type": "java",
+            "name": "ServerGeneralRepos",
+            "request": "launch",
+            "mainClass": "serverSide.main.ServerGeneralRepos",
+            "projectName": "museumHeist_bd131a60"
+        },
+        {
+            "type": "java",
+            "name": "ServerMuseum",
+            "request": "launch",
+            "mainClass": "serverSide.main.ServerMuseum",
+            "projectName": "museumHeist_bd131a60"
+        }
+    ]
+}

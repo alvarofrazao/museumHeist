@@ -3,264 +3,265 @@ package infrastructure;
 public class MessageType {
 
     /**
-     * Start Operations request int type
+     * amINeeded request: int type, int id, boolean fc, int ap ////////
      */
-    public static final int STARTOP = 1;
+    public static final int AIN = 1;
 
     /**
-     * Appraise Situation request int type
+     * amINeeded reply: int type, boolean fc, boolean result \\\\\\\\\\
      */
-    public static final int APSIT= 2;
+    public static final int AINREP = 2;
 
     /**
-     * Appraise Situation reply int type, int return
+     * prepareAssaultParty request: int type, int id
      */
-    public static final int APSITREP= 3;
+    public static final int PREPAP = 3;
 
     /**
-     * Prepare Assault Party request int type, int id
+     * prepareAssaultParty reply: int type, int ap-----------
      */
-    public static final int PREPAP= 4;
+    public static final int PREPAPREP = 4;
 
     /**
-     * Prepare Assault Party reply int type, int id, int ap
+     * takeARest request: int type, int id
      */
-    public static final int PREPAPREP = 5;
+    public static final int TKREST = 5;
 
     /**
-     * Setup Party request int type, int roomid
+     * takeARestreply: int type
      */
-    public static final int SETP= 6;
+    public static final int TKRESTREP = 6;
 
     /**
-     * Send Assault party request int type, int id
+     * collectACanvas request: int type, int id
      */
-    public static final int SNDPTY = 7;
-      
-    /**
-     * Signal departure request int type
-     */
-    public static final int SIGNDEP= 8;
-       
-    /**
-     * Take a rest request int type, int id
-     */
-    public static final int TKREST= 9;
+    public static final int COLCAN = 7;
 
     /**
-     * Collect a canvas request int type, int id
+     * collectACanvas reply: int type
      */
-    public static final int COLCANV = 10;
-       
-    /**
-     * Sum up results request int type
-     */
-    public static final int SUMRES = 11;
-    
-    /**
-     * Am I needed request int type, int id, boolean fc, int ap
-     */
-    public static final int AIN = 12;
+    public static final int COLCANREP = 8;
 
     /**
-     * Am I needed reply int type, boolean result, boolean fc
+     * HNDCAN request: int type, int id, int ap, int room, boolean hasPainting &&&&&&
      */
-    public static final int AINREP = 13;
-    
-    /**
-     * Prepare excursion request int type, int id
-     */
-    public static final int PREPEX = 14;
-    
-    /**
-     * Prepare excursion reply int type, int nextparty
-     */
-    public static final int PREPEXREP = 15;
-    
-    /**
-     * addThief request int type, int id
-     */
-    public static final int ADDTH = 16;
-    
-    /**
-     * addThief reply int type, int id, int partypos, int room
-     */
-    public static final int ADDTHREP = 17;
-    
-    /**
-     * getRoomDistance request int type, int room
-     */
-    public static final int GETDIST = 18;
-    
-    /**
-     * getRoomDistance reply int type, int dist
-     */
-    public static final int GETDISTREP= 19;
-    
-    /**
-     * crawlIn request int type, int id, int dist, (int ap), int partypos
-     */
-    public static final int CRIN = 20;
-   
-    /**
-     * rollACanvas request int type, int id, int ap, int room
-     */
-    public static final int ROLLCAN = 21;
-    
-    /**
-     * rollACanvas reply int type, boolean result
-     */
-    public static final int ROLLCANREP = 22;
+    public static final int HNDCAN = 9;
 
     /**
-     * reverseDirection request int type, int id, int partypos
+     * HNDCAN reply: int type
      */
-    public static final int REVDIR = 23;
+    public static final int HNDCANREP = 10;
 
     /**
-     * crawlOut request int type, int id, (int ap), int dist, int partypos
+     * appraiseSit request: int type, int id
      */
-    public static final int CROUT = 24;
+    public static final int APSIT = 11;
 
     /**
-     * handACanvas request int type, int id, int ap, int room, boolean canvas
+     * appraiseSit reply: int type, int ri1--------------
      */
-    public static final int HNDCAN = 25;
+    public static final int APSITREP = 12;
 
     /**
-     * Logfile initialization request int type, string fname
+     * startOperations request: int type
      */
-    public static final int LOGINIT = 26;
+    public static final int STARTOP = 13;
 
     /**
-     * setOrdinaryThiefState request int type, int id, int state
+     * startOperations reply: int type
      */
-    public static final int SETOTSTT = 27;
+    public static final int STARTOPREP = 14;
 
     /**
-     * setOrdinaryThiefPartyState request int type, int id, char state
+     * sumUpResults request: int type
      */
-    public static final int SETOTPSTT= 28;
+    public static final int SUMRES = 15;
 
     /**
-     * setOrdinaryThiefMD request int type, int id, int md
+     * sumUpResults reply: int type
      */
-    public static final int SETTHMD = 29;
+    public static final int SUMRESREP = 16;
 
     /**
-     * setMasterThiefState request int type, int id, int state
+     * getNextRoom request: int type
      */
-    public static final int SETMTHSTT= 30;
+    public static final int GETNRM = 17;
 
     /**
-     * setAssaultPartyRoom request int type, int ap, int room
+     * getNextRoom reply: int type, int room--------------
      */
-    public static final int SETAPRM = 31;
-
-     /**
-      * Addthief to assault party request int type, int id, int ap, int ppos
-      */
-    public static final int ADDTHAP = 32;
+    public static final int GETNRMREP = 18;
 
     /**
-     * removeThiefFromAssaultParty request int type, int id, int ap
+     * sendAssaultParty request: int type, int id
      */
-    public static final int REMTHAP = 33;
+    public static final int SNDPTY = 19;
 
     /**
-     * setThiefPosition request int type, int id, int ap, int pos
+     * sendAssaultParty reply: int type
      */
-    public static final int SETTHPOS= 34;
+    public static final int SNDPTYREP = 20;
 
     /**
-     * setThiefCanvas request int type, int id, int ap, int canvas
+     * prepareExcursion request: int type, int id
      */
-    public static final int SETTHCAN= 35;
+    public static final int PREPEX = 21;
 
     /**
-     * setNumPaintingsInRoom request int type, int room, int numpaint
+     * prepareExcursion reply: int type, int ap-------------
      */
-    public static final int SETPNTSRM = 36;
+    public static final int PREPEXREP = 22;
 
     /**
-     * setRoomDistanceAndPaintings request int type, int room, int dist, int numpaint
+     * setupParty request: int type, int room----------------
      */
-    public static final int SETRDISTPNTS = 38;
+    public static final int SETP = 23;
 
     /**
-     * finalResult request int type
+     * setupParty reply: int type
      */
-    public static final int FINRES = 39;
+    public static final int SETPREP = 24;
 
     /**
-     * Generic void Acknowledge int type,
+     * addThief request: int type, int id
      */
-    public static final int ACK = 40;
+    public static final int ADDTH = 25;
 
     /**
-     * handACanvas response int type
+     * addThief reply: int type, int ppos, int room++++++
      */
-    public static final int HNDCANREP = 41;
+    public static final int ADDTHREP = 26;
 
     /**
-     * crawlIn response int type
+     * crawlIn request: int type, int id, int roomDist, int ppos ?????
      */
-    public static final int CRINREP = 42;
+    public static final int CRIN = 27;
 
     /**
-     * crawlOut response int type
+     * crawlIn reply: int type
      */
-    public static final int CROUTREP = 43;
+    public static final int CRINREP = 28;
 
     /**
-     * reversideDirection response int type
+     * crawlOut request: int type, int id, int roomDist, int ppos ??????
      */
-    public static final int REVDIREP = 44;
+    public static final int CROUT = 29;
 
     /**
-     * collectacanvas response int type
+     * crawlOut reply: int type
      */
-    public static final int COLCANREP = 45;
+    public static final int CROUTREP = 30;
 
     /**
-     * startoperations response int type
+     * reverseDirection request: int type, int id, int ppos+++++++++
      */
-    public static final int STARTOPREP = 46;
+    public static final int REVDIR = 31;
 
     /**
-     * sumresults response int type
+     * reverseDirection reply: int type
      */
-    public static final int SUMRESREP = 47;
+    public static final int REVDIRREP = 32;
 
     /**
-     * takearest response int type
+     * signalDeparture request: int type
      */
-    public static final int TKRESTREP = 48;
+    public static final int SIGNDEP = 33;
 
     /**
-     * signalDeparture response int type
+     * signalDeparture reply: int type
      */
-    public static final int SIGNDEPREP = 49;
+    public static final int SIGNDEPREP = 34;
 
     /**
-     * sendassaultparty response int type
+     * getDistance request: int type, int id
      */
-    public static final int SNDPTYREP = 50;
+    public static final int GETDIST = 35;
 
     /**
-     * setupparty response int type, int id
+     * getDistance reply: int type, int ri1(dist)---------------
      */
-    public static final int SETPREP = 51;
+    public static final int GETDISTREP = 36;
 
     /**
-     * getNextRoom request int type
+     * rollCanvas request: int type, int id, int ap, int room ??????
      */
-    public static final int GETNRM = 52;
+    public static final int ROLLCAN =37;
 
     /**
-     * getNextRoom reply int type, int room
+     * rollCanvas reply: int type boolean rb(hasCanvas) !!!!!
      */
-    public static final int GETNRMREP = 52;
+    public static final int ROLLCANREP = 38;
+
+    /**
+     * request: int type
+     */
+    public static final int LOGINIT = 39;
+
+    /**
+     * request: int type, int id, int state++++++++++++++
+     */
+    public static final int SETOTSTT = 41;
+
+    /**
+     * request: int type, int id, char pstate $$$$$$
+     */
+    public static final int SETOTPSTT =43;
+
+    /**
+     * request: int type, int id, int md+++++++++
+     */
+    public static final int SETTHMD =45;
+
+    /**
+     * request: int type, int id, in state+++++++++++++
+     */
+    public static final int SETMTHSTT =47;
+
+    /**
+     * request: int type, int ap, int room++++++++++++++
+     */
+    public static final int SETAPRM =48;
+
+    /**
+     * request: int type, int id, in ap, int ppos ??????
+     */
+    public static final int ADDTHAP =49;
+
+    /**
+     * request: int type, int id, int ap+++++++++++++
+     */
+    public static final int REMTHAP =50;
+
+    /**
+     * request: int type, int id, int ap, int pos ??????
+     */
+    public static final int SETTHPOS =51;
+
+    /**
+     * request: int type, int id, int ap, int canvas ??????
+     */
+    public static final int SETTHCAN =52;
+
+    /**
+     * request: int type, int id, int dist, int ri1(num_pnts) ??????
+     */
+    public static final int SETRDISTPNTS=53;
+
+    /**
+     * request: int type, int id, in num_pnts+++++++++++++
+     */
+    public static final int SETPNTSRM =54;
+
+    /**
+     * request: int type, int total_pnts------------
+     */
+    public static final int FINRES =55;
+
+    /**
+     * generalRepos acknowledge
+     */
+    public static final int ACK = 56;
+
 
     /**
      * Shutdown Message type

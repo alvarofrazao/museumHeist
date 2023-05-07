@@ -94,15 +94,8 @@ public class ControlCollectionSiteStub {
             GenericIO.writelnString(inMessage.toString());
             System.exit(1);
         }
-
-        if(inMessage.getThId() != curThread.getID()){
-            GenericIO.writelnString ("Thread " + curThread.getID () + ": Invalid Thief id!");
-           GenericIO.writelnString (inMessage.toString ());
-           System.exit (1);
-        }
-
         com.close();
-        return outMessage.getoThAP();
+        return inMessage.getoThAP();
     }
     
     /**
@@ -157,7 +150,7 @@ public class ControlCollectionSiteStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.COLCANV,curThread.getID());
+        outMessage = new Message(MessageType.COLCAN,curThread.getID());
         com.writeObject(outMessage);
 
         inMessage = (Message) com.readObject();
@@ -275,7 +268,6 @@ public class ControlCollectionSiteStub {
         ClientCom com;
 
         Message outMessage, inMessage;
-        mClient curThread = (mClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -314,7 +306,7 @@ public class ControlCollectionSiteStub {
             catch(InterruptedException e){}
         }
 
-        outMessage = new Message(MessageType.GETNRM,curThread.getID());
+        outMessage = new Message(MessageType.GETNRM);
         com.writeObject(outMessage);
 
         inMessage= (Message) com.readObject();
@@ -333,7 +325,6 @@ public class ControlCollectionSiteStub {
         ClientCom com;
 
         Message outMessage, inMessage;
-        mClient curThread = (mClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -349,11 +340,7 @@ public class ControlCollectionSiteStub {
 
         inMessage = (Message)com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.SHUTDONE){
-            GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
-            GenericIO.writelnString(inMessage.toString());
-            System.exit(1);
-        }
+
 
         com.close();
     }

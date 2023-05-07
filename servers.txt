@@ -1,0 +1,10 @@
+grepos-sd206@l040101-ws03.ua.pt
+ccl-sd206@l040101-ws06.ua.pt-
+ccs-sd206@l040101-ws07.ua.pt-
+ap1-sd206@l040101-ws01.ua.pt
+ap2-sd206@l040101-ws02.ua.pt
+museum-sd206@l040101-ws05.ua.pt
+mclient-sd206@l040101-ws08.ua.pt
+oclient-sd206@l040101-ws09.ua.pt
+
+sshpass -f password ssh sd206@l040101-ws01.ua.pt 'killall -9 java'

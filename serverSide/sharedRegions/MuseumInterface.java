@@ -39,17 +39,39 @@ public class MuseumInterface {
 
     /* validation of the incoming message */
 
-    if ((inMessage.getMsgType() != MessageType.ROLLCAN) && (inMessage.getMsgType() != MessageType.GETDIST) && (inMessage.getMsgType() != MessageType.SHUTDOWN)) {
+    /* if ((inMessage.getMsgType() != MessageType.ROLLCAN) && (inMessage.getMsgType() != MessageType.GETDIST)
+        && (inMessage.getMsgType() != MessageType.SHUTDOWN)) {
       throw new MessageException("Invalid message type!", inMessage);
     } else {
       if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6)) {
         throw new MessageException("Invalid thief id!", inMessage);
       } else if ((inMessage.getoThRoom() < 0) || (inMessage.getoThRoom() >= 5)) {
         throw new MessageException("Invalid room id!", inMessage);
+      } else if ((inMessage.getoThAP() < 0) || (inMessage.getoThAP() >= 2)) {
+        throw new MessageException("Invalid AP id!", inMessage);
       }
+    } */
+
+    switch (inMessage.getMsgType()) {
+      case MessageType.ROLLCAN:
+        if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6)) {
+          throw new MessageException("Invalid thief id!", inMessage);
+        } else if ((inMessage.getoThRoom() < 0) || (inMessage.getoThRoom() >= 5)) {
+          throw new MessageException("Invalid room id!", inMessage);
+        } else if ((inMessage.getoThAP() < 0) || (inMessage.getoThAP() >= 2)) {
+          throw new MessageException("Invalid AP id!", inMessage);
+        }
+        break;
+      case MessageType.GETDIST:
+        if ((inMessage.getoThRoom() < 0) || (inMessage.getoThRoom() >= 5)) {
+          throw new MessageException("Invalid room id!", inMessage);
+        }
+        break;
+      case MessageType.SHUTDOWN:
+        break;
     }
 
-    museumClientProxy curThread = (museumClientProxy)Thread.currentThread();
+    museumClientProxy curThread = (museumClientProxy) Thread.currentThread();
 
     /* processing */
 
@@ -57,10 +79,10 @@ public class MuseumInterface {
       case MessageType.ROLLCAN:
         curThread.setId(inMessage.getThId());
         curThread.setAp(inMessage.getoThAP());
-        if(museum.rollACanvas(inMessage.getoThRoom())){
-          outMessage = new Message(MessageType.ROLLCANREP,true);
-        }else{
-          outMessage = new Message(MessageType.ROLLCANREP,false);
+        if (museum.rollACanvas(inMessage.getoThRoom())) {
+          outMessage = new Message(MessageType.ROLLCANREP, true);
+        } else {
+          outMessage = new Message(MessageType.ROLLCANREP, false);
         }
         break;
       case MessageType.GETDIST:
@@ -70,6 +92,7 @@ public class MuseumInterface {
       case MessageType.SHUTDOWN:
         museum.shutdown();
         outMessage = new Message(MessageType.SHUTDONE);
+        break;
       default:
         throw new MessageException("Invalid message type!", inMessage);
     }

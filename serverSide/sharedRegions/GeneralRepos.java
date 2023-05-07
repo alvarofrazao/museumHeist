@@ -209,9 +209,6 @@ public class GeneralRepos {
     public void addThiefToAssaultParty(int thief, int ap, int pos) {
         lock.lock();
         if (this.apDetails[ap][pos][0] != 0) {
-            // GenericIO.writelnString(String.format("---------------------------------replaced
-            // thief %d in assault party %d by thief %d---------------------------------",
-            // this.apDetails[ap][pos][0]-1, ap, thief));
             this.apDetails[ap][pos][2] = 0;
         }
         this.apDetails[ap][pos][0] = thief + 1;
@@ -237,10 +234,6 @@ public class GeneralRepos {
             }
         }
         if (!removedThief) {
-            // GenericIO.writelnString("The operation of removing thief "+ thief +" from
-            // party "+ ap+" has failed! Check that thieves are being added correctly or
-            // that thief is in this party. Maybe it was replaced?");
-            // System.exit (1);
         }
         logState();
         lock.unlock();
@@ -265,10 +258,7 @@ public class GeneralRepos {
                 return;
             }
         }
-        // GenericIO.writelnString(String.format("The operation of updating thief %d of
-        // assault party %d position went wrong! Couldnt find thief in assault party",
-        // thief, ap));
-        // System.exit (1);
+
         lock.unlock();
     }
 
@@ -290,9 +280,7 @@ public class GeneralRepos {
                 return;
             }
         }
-        // GenericIO.writelnString(String.format("The operation of updating thief's
-        // canvas went wrong! Couldnt find thief %d in assault party %d, maybe it was
-        // replaced?", thief, ap));
+
         lock.unlock();
         // System.exit (1);
     }
@@ -334,7 +322,6 @@ public class GeneralRepos {
         lock.lock();
         this.museumDetails[room][0] = num_paintings;
         this.museumDetails[room][1] = distance;
-        //logState();
         lock.unlock();
     }
 

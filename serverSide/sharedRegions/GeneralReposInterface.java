@@ -35,7 +35,7 @@ public class GeneralReposInterface {
         case MessageType.LOGINIT:  
           break;
         case MessageType.SETOTSTT:    
-          if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
+          if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
             throw new MessageException ("Invalid ordinary thief id!", inMessage);
           else if ((inMessage.getThState() < oStates.CONCENTRATION_SITE) || (inMessage.getThState() > oStates.COLLECTION_SITE))
             throw new MessageException ("Invalid ordinary thief state!", inMessage);
@@ -43,7 +43,7 @@ public class GeneralReposInterface {
         case MessageType.SETOTPSTT: 
           if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
             throw new MessageException ("Invalid ordinary thief id!", inMessage);
-          else if ((inMessage.getoThSit() != 'W') && (inMessage.getThState () != 'P'))
+          else if ((inMessage.getoThSit() != 'W') && (inMessage.getoThSit () != 'P'))
             throw new MessageException ("Invalid ordinary thief party state!", inMessage);
           break;
         case MessageType.SETTHMD:   
@@ -53,17 +53,15 @@ public class GeneralReposInterface {
             throw new MessageException ("Invalid value for MD!", inMessage);
           break;
         case MessageType.SETMTHSTT:    
-          if ((inMessage.getThId () < 0) || (inMessage.getThId () >= 6))
-            throw new MessageException ("Invalid master thief id!", inMessage);
-          else if ((inMessage.getThState() < mStates.PLANNING_THE_HEIST) || (inMessage.getThState() > mStates.PRESENTING_THE_REPORT))
+          if ((inMessage.getThState() < mStates.PLANNING_THE_HEIST) || (inMessage.getThState() > mStates.PRESENTING_THE_REPORT))
             throw new MessageException ("Invalid master thief state!", inMessage);
           break;
         case MessageType.ADDTHAP:  
-          if ((inMessage.getThId() < 6) || (inMessage.getThId() >= 7))
+          if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
             throw new MessageException ("Invalid master thief id!", inMessage);
-          else if ((inMessage.getoThAP() < 0) || (inMessage.getoThAP() > 1))
+          else if ((inMessage.getoThAP() < 0) || (inMessage.getoThAP() >= 2))
             throw new MessageException ("Invalid assault party id!", inMessage);
-          else if ((inMessage.getoThPartyPos() < 0) || (inMessage.getoThPartyPos() > 2))
+          else if ((inMessage.getoThPartyPos() < 0) || (inMessage.getoThPartyPos() >= 3))
             throw new MessageException ("Invalid assault party position!", inMessage);
           break;
         case MessageType.REMTHAP:
@@ -89,18 +87,20 @@ public class GeneralReposInterface {
             throw new MessageException("Invalid room id!", inMessage);
           break;
         case MessageType.SETPNTSRM:
-          if ((inMessage.getThId() < 0) || (inMessage.getThId() >= 6))
+          if ((inMessage.getoThRoom() < 0) || (inMessage.getoThRoom() >= 6))
             throw new MessageException("Invalid room id!", inMessage);
           break;
         case MessageType.SETAPRM:
           if ((inMessage.getoThAP() < 0)|| (inMessage.getoThAP() >= 2))
             throw new MessageException("Invalid assault party id!", inMessage);
-          else if ((inMessage.getoThRoom() < 0) || (inMessage.getoThRoom() >= 5))
+          else if ((inMessage.getoThRoom() <= 0) || (inMessage.getoThRoom() >= 6))
             throw new MessageException("Invalid room id!", inMessage);
+          break;
         case MessageType.FINRES:
           //checks nothing
           break;
         case MessageType.SHUTDOWN:
+          System.out.println("Validated shutdown type");
           break;
         default: throw new MessageException ("Invalid message type!", inMessage);
 
@@ -138,11 +138,11 @@ public class GeneralReposInterface {
           outMessage = new Message(MessageType.ACK);
           break;
         case MessageType.SETTHPOS:  
-          gr.setThiefPosition(inMessage.getThId(),inMessage.getoThAP(),inMessage.getoThPartyPos());
+          gr.setThiefPosition(inMessage.getoThAP(),inMessage.getThId(),inMessage.getRI1());
           outMessage = new Message(MessageType.ACK);
           break;
         case MessageType.SETTHCAN:  
-          gr.setThiefCanvas(inMessage.getThId(),inMessage.getoThAP(),inMessage.getRI1());
+          gr.setThiefCanvas(inMessage.getoThAP(),inMessage.getThId(),inMessage.getRI1());
           outMessage = new Message(MessageType.ACK);
           break;
         case MessageType.SETRDISTPNTS:
@@ -164,6 +164,7 @@ public class GeneralReposInterface {
         case MessageType.SHUTDOWN:
           gr.shutdown();
           outMessage = new Message(MessageType.SHUTDONE);
+          break;
         default: throw new MessageException ("Invalid message type!", inMessage);
       }
  

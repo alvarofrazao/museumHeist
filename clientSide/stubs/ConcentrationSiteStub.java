@@ -89,14 +89,13 @@ public class ConcentrationSiteStub {
         }
 
         com.close();
-        return inMessage.getRI1();
+        return inMessage.getoThAP();
     }
 
     public void shutdown(){
         ClientCom com;
 
         Message outMessage, inMessage;
-        mClient curThread = (mClient) Thread.currentThread();
 
         com = new ClientCom(serverHostName, serverPortNum);
 
@@ -112,11 +111,7 @@ public class ConcentrationSiteStub {
 
         inMessage = (Message)com.readObject();
 
-        if(inMessage.getMsgType() != MessageType.SHUTDONE){
-            GenericIO.writelnString("Thread " + curThread.getID() + ": Invalid message type");
-            GenericIO.writelnString(inMessage.toString());
-            System.exit(1);
-        }
+
 
         com.close();
     }
