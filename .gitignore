@@ -15,5 +15,7 @@ dirGenRepos.zip
 dirMuseum.zip
 dirMClient.zip
 dirOClient.zip
+clientSide_msg/
+serverSide_msg/
 
 
