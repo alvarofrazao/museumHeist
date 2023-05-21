@@ -8,7 +8,7 @@ public interface CCLInterface extends Remote{
 
     public ReturnBoolean getHeistStatus() throws RemoteException;
 
-    public ReturnBoolean amINeeded() throws RemoteException;
+    public ReturnBoolean amINeeded(int thid,boolean fc, int ap) throws RemoteException;
 
     public ReturnInt prepareAssaultParty() throws RemoteException;
 
@@ -16,7 +16,7 @@ public interface CCLInterface extends Remote{
 
     public void collectACanvas() throws RemoteException;
 
-    public void handACanvas() throws RemoteException;
+    public void handACanvas(int thid, boolean canvas, int ap, int room) throws RemoteException;
 
     public ReturnInt appraiseSit() throws RemoteException;
 

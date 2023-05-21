@@ -180,7 +180,7 @@ public class oClient extends Thread {
         ReturnBoolean ret = null; // return value
 
         try {
-            ret = controlSite.amINeeded();
+            ret = controlSite.amINeeded(this.thiefID,this.firstCycle,this.curAP);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on amINeeded: " + e.getMessage());
             System.exit(1);
@@ -193,7 +193,7 @@ public class oClient extends Thread {
         ReturnInt ret = null;
 
         try {
-            ret = concentSite.prepareExcursion();
+            ret = concentSite.prepareExcursion(this.thiefID);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on prepareExcursion: " + e.getMessage());
             System.exit(1);
@@ -206,11 +206,13 @@ public class oClient extends Thread {
         ReturnInt ret = null;
 
         try {
-            ret = arrayAP[partyid].addThief();
+            ret = arrayAP[partyid].addThief(this.thiefID);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on addThief: " + e.getMessage());
             System.exit(1);
         }
+
+        this.setPartyPos(ret.getIntStateVal());
         return ret.getIntVal();
     }
 
@@ -229,7 +231,7 @@ public class oClient extends Thread {
 
     private void crawlIn(int dist) {
         try {
-            arrayAP[curAP].crawlIn(dist);
+            arrayAP[curAP].crawlIn(dist, this.thiefID, this.partyPos);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on crawlIn: " + e.getMessage());
             System.exit(1);
@@ -239,7 +241,7 @@ public class oClient extends Thread {
     private void crawlOut(int dist) {
 
         try {
-            arrayAP[curAP].crawlOut(dist);
+            arrayAP[curAP].crawlOut(dist, this.thiefID, this.partyPos);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on crawlOut: " + e.getMessage());
             System.exit(1);
@@ -261,7 +263,7 @@ public class oClient extends Thread {
 
     private void handACanvas() {
         try {
-            controlSite.handACanvas();
+            controlSite.handACanvas(this.thiefID,this.carryingCanvas,this.curAP,this.currentRoomID);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on handACanvas: " + e.getMessage());
             System.exit(1);
@@ -270,7 +272,7 @@ public class oClient extends Thread {
 
     private void reverseDirection(){
         try {
-            arrayAP[curAP].reverseDirection();
+            arrayAP[curAP].reverseDirection(this.thiefID,this.partyPos);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on reverseDirection: " + e.getMessage());
             System.exit(1);

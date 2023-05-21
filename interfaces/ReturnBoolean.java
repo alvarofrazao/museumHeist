@@ -26,7 +26,7 @@ public class ReturnBoolean implements Serializable
    *  Integer state value.
    */
 
-   private int state;
+   private boolean state;
 
   /**
    *  ReturnBoolean instantiation.
@@ -35,7 +35,7 @@ public class ReturnBoolean implements Serializable
    *     @param state integer state value
    */
 
-   public ReturnBoolean (boolean val, int state)
+   public ReturnBoolean (boolean val, boolean state)
    {
       this.val = val;
       this.state = state;
@@ -58,7 +58,7 @@ public class ReturnBoolean implements Serializable
    *     @return integer state value
    */
 
-   public int getIntStateVal ()
+   public boolean getIntStateVal ()
    {
       return (state);
    }

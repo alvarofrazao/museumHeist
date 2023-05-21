@@ -1,13 +1,13 @@
-package serverSide_msg.sharedRegions;
+package serverSide.objects;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import serverSide_msg.entities.*;
-import serverSide_msg.main.ServerAssaultParty;
-import serverSide_msg.stubs.GeneralReposStub;
+import genclass.GenericIO;
+import interfaces.*;
+import serverSide.entities.*;
 
-public class AssaultParty {
+public class AssaultParty implements APInterface{
 
     /**
      * Main monitor object
@@ -37,7 +37,7 @@ public class AssaultParty {
     /**
      * Stub of the general repository
      */
-    private final GeneralReposStub grStub;
+    private final GeneralReposInterface grStub;
     /**
      * Index of the room currently assigned to the party
      */
@@ -94,7 +94,7 @@ public class AssaultParty {
      * @param museum    Reference to the Museum shared memory region
      * @param repos     Reference to the GeneralRepository shared memory region
      */
-    public AssaultParty(int id, int partySize, int thiefMax, int S/* , Museum museum*/,  GeneralReposStub grStub /*GeneralRepos repos*/) {
+    public AssaultParty(int id, int partySize, int thiefMax, int S,  GeneralReposInterface grStub) {
         this.id = id;
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
@@ -111,12 +111,14 @@ public class AssaultParty {
         this.isRunning = false;
     }
 
-    public boolean getStatus() {
-        return isRunning;
+    public ReturnBoolean getStatus() {
+        ReturnBoolean ret = new ReturnBoolean(isRunning, false);
+        return ret;
     }
 
-    public int getRoomID() {
-        return currentRoomID;
+    public ReturnInt getRoomID() {
+        ReturnInt ret =  new ReturnInt(currentRoomID, 0);
+        return ret;
     }
 
     /***
@@ -149,8 +151,9 @@ public class AssaultParty {
      * 
      * @return Room index that was assigned to the party
      */
-    public int addThief() {
+    public ReturnInt addThief(int thid) {
         try {
+            ReturnInt ret;
             lock.lock();
             partyFullCond.signalAll();
             try {
@@ -158,15 +161,18 @@ public class AssaultParty {
             } catch (Exception e) {
             }
             int partyPos;
-            aPClientProxy curThread = (aPClientProxy) Thread.currentThread();
 
             if (currentThiefNum >= 3) {
                 partyPos = 2;
             } else {
                 partyPos = currentThiefNum;
             }
-            curThread.setPpos(partyPos);
-            grStub.addThiefToAssaultParty(curThread.getThId(), this.id, currentThiefNum);
+            try {
+                grStub.addThiefToAssaultParty(thid, this.id, currentThiefNum);
+            } catch (Exception e) {
+                GenericIO.writelnString("Thief " + thid + "remote exception on addThieftoAssaultParty" + e.getMessage());
+                System.exit(1);
+            }
             thiefDist[partyPos] = 0;
             currentThiefNum++;
             moveRestrictIn[partyPos] = true;
@@ -178,8 +184,14 @@ public class AssaultParty {
                 } catch (Exception e) {
                 }
             }
-            grStub.setOrdinaryThiefState(curThread.getThId(), oStates.CRAWLING_INWARDS);
-            return currentRoomID;
+            try {
+                grStub.setOrdinaryThiefState(thid, oStates.CRAWLING_INWARDS);                
+            } catch (Exception e) {
+                GenericIO.writelnString("Thief " + thid + "remote exception on setOrdinaryThiefState" + e.getMessage());
+                System.exit(1);
+            }
+            ret = new ReturnInt(currentRoomID, partyPos);
+            return ret;
         } finally {
             lock.unlock();
         }
@@ -191,12 +203,11 @@ public class AssaultParty {
      * repeating the process until all three arrive at the Museum Room
      * 
      */
-    public void crawlIn(int distance) {
+    public void crawlIn(int distance, int thid, int ppos) {
         try {
             lock.lock();
-            aPClientProxy curThread = (aPClientProxy) Thread.currentThread();
             int move = 1;
-            int curIdx = curThread.getPpos();
+            int curIdx = ppos;
 
             int behindDist;
             int nextPos = 0;
@@ -209,7 +220,11 @@ public class AssaultParty {
                 if (!canMove) {
                     move--;
                     thiefDist[curIdx] += move;
-                    grStub.setThiefPosition(this.id, curThread.getThId(), thiefDist[curIdx]);
+                    try {
+                        grStub.setThiefPosition(this.id, thid, thiefDist[curIdx]);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
                     moveRestrictIn[curIdx] = true;
                     if ((curIdx + 1) >= 3) {
                         moveRestrictIn[0] = false;
@@ -224,7 +239,7 @@ public class AssaultParty {
                         }
                     }
                     canMove = true;
-                    curIdx = curThread.getPpos();
+                    curIdx = ppos;
                     behindDist = thiefDist[curIdx];
                     move = 1;
                 }
@@ -234,8 +249,17 @@ public class AssaultParty {
                 // Arrival detection
                 if (nextPos >= roomDist) {
                     thiefDist[curIdx] = roomDist;
-                    grStub.setThiefPosition(this.id, curThread.getThId(), roomDist);
-                    grStub.setOrdinaryThiefState(curThread.getThId(), oStates.AT_A_ROOM);
+                    try {
+                        grStub.setThiefPosition(this.id, thid, roomDist);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
+                    
+                    try {
+                        grStub.setOrdinaryThiefState(thid, oStates.AT_A_ROOM);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
                     hasArrived += 1;
                     moveRestrictIn[curIdx] = true;
                     if ((curIdx + 1) >= 3) {
@@ -283,12 +307,11 @@ public class AssaultParty {
      * @throws InterruptedException
      */
 
-    public void crawlOut(int distance){
+    public void crawlOut(int distance, int thid, int ppos){
         try {
             lock.lock();
-            aPClientProxy curThread = (aPClientProxy) Thread.currentThread();
             int move = 1;
-            int curIdx = curThread.getPpos();
+            int curIdx = ppos;
             int behindDist;
             int nextPos = 0;
             int roomDist = distance;
@@ -300,7 +323,11 @@ public class AssaultParty {
                 if (!canMove) {
                     move--;
                     thiefDist[curIdx] -= move;
-                    grStub.setThiefPosition(this.id, curThread.getThId(), thiefDist[curIdx]);
+                    try {
+                        grStub.setThiefPosition(this.id, thid, thiefDist[curIdx]);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
                     moveRestrictOut[curIdx] = true;
                     if ((curIdx + 1) >= 3) {
                         moveRestrictOut[0] = false;
@@ -325,8 +352,16 @@ public class AssaultParty {
                 // Arrival detection
                 if (nextPos <= 0) {
                     thiefDist[curIdx] = 0;
-                    grStub.setThiefPosition(this.id, curThread.getThId(), 0);
-                    grStub.setOrdinaryThiefState(curThread.getThId(), oStates.COLLECTION_SITE);
+                    try {
+                        grStub.setThiefPosition(this.id, thid, 0);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
+                    try {
+                        grStub.setOrdinaryThiefState(thid, oStates.COLLECTION_SITE);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
                     hasArrived++;
                     if (hasArrived == 3) {
                         isRunning = false;
@@ -379,10 +414,9 @@ public class AssaultParty {
      * 
      */
 
-    public void reverseDirection(){
+    public void reverseDirection(int thid, int ppos){
         try {
             lock.lock();
-            aPClientProxy curThread = (aPClientProxy) Thread.currentThread();
             hasArrived--;
             if (hasArrived <= 0) {
                 reverseCond.signalAll();
@@ -391,13 +425,17 @@ public class AssaultParty {
             
             cond.signalAll();
 
-            while (moveRestrictOut[curThread.getPpos()]) {
+            while (moveRestrictOut[ppos]) {
                 try {
                     reverseCond.await();
                 } catch (Exception e) {
                 }
             }
-            grStub.setOrdinaryThiefState(curThread.getThId(), oStates.CRAWLING_OUTWARDS);
+            try {
+                grStub.setOrdinaryThiefState(thid, oStates.CRAWLING_OUTWARDS);                
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
             return;
         } finally {
 
@@ -428,7 +466,7 @@ public class AssaultParty {
     public void shutdown(){
         try{
             lock.lock();
-            ServerAssaultParty.waitConnection = false;
+            //ServerAssaultParty.waitConnection = false;
         }finally{
             lock.unlock();
         }

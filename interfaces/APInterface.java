@@ -11,13 +11,13 @@ public interface APInterface extends Remote {
 
     public void setupParty(int roomID) throws RemoteException;
 
-    public ReturnInt addThief() throws RemoteException;
+    public ReturnInt addThief(int thid) throws RemoteException;
 
-    public void crawlIn(int dist) throws RemoteException;
+    public void crawlIn(int dist, int thid, int ppos) throws RemoteException;
 
-    public void crawlOut(int dist) throws RemoteException;
+    public void crawlOut(int dist, int thid, int ppos) throws RemoteException;
 
-    public void reverseDirection() throws RemoteException;
+    public void reverseDirection(int thid, int ppos) throws RemoteException;
 
     public void signalDeparture() throws RemoteException;
 

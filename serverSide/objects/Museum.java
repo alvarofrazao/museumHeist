@@ -5,8 +5,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import genclass.GenericIO;
 import interfaces.GeneralReposInterface;
+import interfaces.MuseumInterface;
+import interfaces.ReturnBoolean;
+import interfaces.ReturnInt;
 
-public class Museum {
+public class Museum implements MuseumInterface{
 
     private int[] museumRoomsDistance;
     private int[] museumRoomsPaintings;
@@ -47,12 +50,14 @@ public class Museum {
         }
     }
 
-    public int getRoomDistance(int roomID) {
-        return museumRoomsDistance[roomID];
+    public ReturnInt getRoomDistance(int roomID) {
+        ReturnInt ret = new ReturnInt(museumRoomsDistance[roomID], 99);
+        return ret;
     }
 
-    public int getPaintsInRoom(int roomID) {
-        return museumRoomsPaintings[roomID];
+    public ReturnInt getPaintsInRoom(int roomID) {
+        ReturnInt ret = new ReturnInt(museumRoomsPaintings[roomID], 99);
+        return ret;
     }
 
     /**
@@ -61,21 +66,21 @@ public class Museum {
      * @param roomID
      * @return Whether or not the thief thread managed to get a canvas
      */
-    public boolean rollACanvas(int roomID) {
+    public ReturnBoolean rollACanvas(int roomID,int thid, int ap) {
         try {
             lock.lock();
-            museumClientProxy curThread = (museumClientProxy) Thread.currentThread();
-
+            boolean result;
+            ReturnBoolean ret;
             if (museumRoomsPaintings[roomID] > 0) {
                 museumRoomsPaintings[roomID] -= 1;
-                curThread.setCanvas(true);
+                result = true;
                 setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
-                setThiefCanvas(curThread.getAp(), curThread.getThId(), 1);
-                return true;
+                setThiefCanvas(ap, thid, 1);
             } else {
-                curThread.setCanvas(false);
-                return false;
+                result = false;
             }
+            ret = new ReturnBoolean(result, false);
+            return ret;
         } finally {
             lock.unlock();
         }
@@ -85,7 +90,7 @@ public class Museum {
     public void shutdown() {
         try {
             lock.lock();
-            ServerMuseum.waitConnection = false;
+            //ServerMuseum.waitConnection = false;
         } finally {
             lock.unlock();
         }
