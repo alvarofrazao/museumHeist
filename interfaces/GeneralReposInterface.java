@@ -2,7 +2,7 @@ package interfaces;
 
 import java.rmi.*;
 
-public interface GeneralRepossInterface extends Remote{
+public interface GeneralReposInterface extends Remote{
     
     public void logInit() throws RemoteException;
 
