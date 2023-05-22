@@ -248,12 +248,12 @@ public class oClient extends Thread {
         }
     }
 
-    private boolean rollACanvas(int roomId) {
+    private boolean rollACanvas(int room) {
 
         ReturnBoolean ret = null; // return value
 
         try {
-            ret = museum.rollACanvas(roomId);
+            ret = museum.rollACanvas(room,this.thiefID,curAP);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on rollACanvas: " + e.getMessage());
             System.exit(1);

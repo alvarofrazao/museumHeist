@@ -8,7 +8,7 @@ public interface MuseumInterface extends Remote {
 
     public ReturnInt getPaintsInRoom(int roomID) throws RemoteException;
 
-    public ReturnBoolean rollACanvas(int roomID)throws RemoteException;
+    public ReturnBoolean rollACanvas(int roomID, int thid, int ap)throws RemoteException;
 
     public void shutdown() throws RemoteException;
 }

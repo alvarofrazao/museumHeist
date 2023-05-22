@@ -30,5 +30,25 @@ public class ExecParameters {
 
     public static final String mThiefHostName = "l040101-ws08.ua.pt";
 
+    public static final String RegistryHostName = "";
+
+    public static final int registryPortNum = 9999;
+
+    public static final int registerPortNum = 9989;
+
+    public static final String nameEntryAssaultParty0  = "AssaultParty0";
+
+    public static final String nameEntryAssaultParty1 = "AssaultParty1";
+
+    public static final String nameEntryConcentrationSite = "ConcentrationSite";
+
+    public static final String nameEntryControlSite = "ControlSite";
+
+    public static final String nameEntryGeneralRepos = "GeneralRepos";
+
+    public static final String nameEntryMuseum = "Museum";
+
+    public static final String nameEntryRegisterObject = "RegisterHandler" ;
+
     public static final String logName = "logfile.txt";
 }

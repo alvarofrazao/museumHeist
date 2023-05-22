@@ -45,7 +45,11 @@ public class Museum implements MuseumInterface{
             lock.lock();
             // repos.setRoomDistanceAndPaintings(i, museumRoomsDistance[i],
             // museumRoomsPaintings[i]);
-            setRoomDistanceAndPaintings(i, museumRoomsDistance[i], museumRoomsPaintings[i]);
+            try {
+                grStub.setRoomDistanceAndPaintings(i, museumRoomsDistance[i], museumRoomsPaintings[i]);
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
             lock.unlock();
         }
     }
@@ -74,8 +78,17 @@ public class Museum implements MuseumInterface{
             if (museumRoomsPaintings[roomID] > 0) {
                 museumRoomsPaintings[roomID] -= 1;
                 result = true;
-                setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
-                setThiefCanvas(ap, thid, 1);
+                try {
+                    grStub.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
+                } catch (RemoteException e) {
+                    GenericIO.writelnString("Thief " + thid + " remote exception on reverseDirection: " + e.getMessage());
+                    System.exit(1);
+                }
+                try {
+                    grStub.setThiefCanvas(ap, thid, 1);
+                } catch (Exception e) {
+                    // TODO: handle exception
+                }
             } else {
                 result = false;
             }
@@ -93,34 +106,6 @@ public class Museum implements MuseumInterface{
             //ServerMuseum.waitConnection = false;
         } finally {
             lock.unlock();
-        }
-    }
-
-    private void setThiefCanvas(int ap, int id, int val){
-        try {
-            grStub.setThiefCanvas();
-        } catch (RemoteException e) {
-            GenericIO.writelnString("Thief " + thiefID + " remote exception on reverseDirection: " + e.getMessage());
-            System.exit(1);
-        }
-    }
-
-
-    private void setNumPaintingsInRoom(int roomId, int numpaints){
-        try {
-            grStub.reverseDirection();
-        } catch (RemoteException e) {
-            GenericIO.writelnString("Thief " + thiefID + " remote exception on reverseDirection: " + e.getMessage());
-            System.exit(1);
-        }
-    }
-
-    private void setRoomDistanceAndPaintings(int roomId, int dist, int paints){
-        try {
-            grStub.reverseDirection();
-        } catch (RemoteException e) {
-            GenericIO.writelnString("Thief " + thiefID + " remote exception on reverseDirection: " + e.getMessage());
-            System.exit(1);
         }
     }
 }

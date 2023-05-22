@@ -26,6 +26,8 @@ public interface GeneralReposInterface extends Remote{
 
     public void setRoomDistance(int room, int distance) throws RemoteException;
 
+    public void setNumPaintingsInRoom(int room, int paints) throws RemoteException;
+
     public void setRoomDistanceAndPaintings(int room, int distance, int num_paintings) throws RemoteException;
 
     public void finalResult(int total_paintings) throws RemoteException;

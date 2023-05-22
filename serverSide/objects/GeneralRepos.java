@@ -5,6 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import genclass.GenericIO;
 import genclass.TextFile;
 import infrastructure.ExecParameters;
+import interfaces.GeneralReposInterface;
 import serverSide_msg.main.ServerGeneralRepos;
 
 /**
@@ -20,7 +21,7 @@ import serverSide_msg.main.ServerGeneralRepos;
  * Variables that are but shouldnt be hardcoded: number of thieves, number of
  * rooms, number of thieves in party, number of assault parties
  */
-public class GeneralRepos {
+public class GeneralRepos implements GeneralReposInterface{
     /**
      * Name of the logging file.
      */
