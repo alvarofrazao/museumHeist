@@ -8,8 +8,9 @@ import interfaces.GeneralReposInterface;
 import interfaces.MuseumInterface;
 import interfaces.ReturnBoolean;
 import interfaces.ReturnInt;
+import serverSide.main.ServerMuseum;
 
-public class Museum implements MuseumInterface{
+public class Museum implements MuseumInterface {
 
     private int[] museumRoomsDistance;
     private int[] museumRoomsPaintings;
@@ -30,9 +31,9 @@ public class Museum implements MuseumInterface{
      * @param repos         reference to a GeneralRepository shared memory region
      */
     public Museum(int numberOfRooms, int MAX_D, int MIN_D, int MAX_P, int MIN_P, GeneralReposInterface grStub/*
-                                                                                                         * GeneralRepos
-                                                                                                         * repos
-                                                                                                         */) {
+                                                                                                              * GeneralRepos
+                                                                                                              * repos
+                                                                                                              */) {
         this.museumRoomsDistance = new int[numberOfRooms];
         this.museumRoomsPaintings = new int[numberOfRooms];
         this.lock = new ReentrantLock();
@@ -70,7 +71,7 @@ public class Museum implements MuseumInterface{
      * @param roomID
      * @return Whether or not the thief thread managed to get a canvas
      */
-    public ReturnBoolean rollACanvas(int roomID,int thid, int ap) {
+    public ReturnBoolean rollACanvas(int roomID, int thid, int ap) {
         try {
             lock.lock();
             boolean result;
@@ -81,7 +82,8 @@ public class Museum implements MuseumInterface{
                 try {
                     grStub.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
                 } catch (RemoteException e) {
-                    GenericIO.writelnString("Thief " + thid + " remote exception on reverseDirection: " + e.getMessage());
+                    GenericIO.writelnString(
+                            "Thief " + thid + " remote exception on reverseDirection: " + e.getMessage());
                     System.exit(1);
                 }
                 try {
@@ -101,11 +103,6 @@ public class Museum implements MuseumInterface{
     }
 
     public void shutdown() {
-        try {
-            lock.lock();
-            //ServerMuseum.waitConnection = false;
-        } finally {
-            lock.unlock();
-        }
+        ServerMuseum.shutdown();
     }
 }

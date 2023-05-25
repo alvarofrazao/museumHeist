@@ -4,7 +4,6 @@ import java.rmi.registry.*;
 import java.rmi.*;
 import java.rmi.server.*;
 
-import clientSide_msg.stubs.MuseumStub;
 import serverSide.objects.*;
 import interfaces.*;
 import infrastructure.ExecParameters;
@@ -72,19 +71,19 @@ public class ServerMuseum {
       try {
         reg.bind(ExecParameters.nameEntryMuseum, museumStub);
       } catch (RemoteException e) {
-        GenericIO.writelnString("General Repository registration exception: " + e.getMessage());
+        GenericIO.writelnString("Museum registration exception: " + e.getMessage());
         e.printStackTrace();
         System.exit(1);
       } catch (AlreadyBoundException e) {
-        GenericIO.writelnString("General Repository already bound exception: " + e.getMessage());
+        GenericIO.writelnString("Museum already bound exception: " + e.getMessage());
         e.printStackTrace();
         System.exit(1);
       }
-      GenericIO.writelnString("General Repository object was registered!");
+      GenericIO.writelnString("Museum object was registered!");
   
       /* wait for the end of operations */
   
-      GenericIO.writelnString("General Repository is in operation!");
+      GenericIO.writelnString("Museum is in operation!");
   
       try {
         while (runFlag)
@@ -106,28 +105,28 @@ public class ServerMuseum {
       boolean shutdownDone = false; // flag signalling the shutdown of the general repository service
   
       try {
-        reg.unbind(ExecParameters.nameEntryGeneralRepos);
+        reg.unbind(ExecParameters.nameEntryMuseum);
       } catch (RemoteException e) {
-        GenericIO.writelnString("General Repository deregistration exception: " + e.getMessage());
+        GenericIO.writelnString("Museum deregistration exception: " + e.getMessage());
         e.printStackTrace();
         System.exit(1);
       } catch (NotBoundException e) {
-        GenericIO.writelnString("General Repository not bound exception: " + e.getMessage());
+        GenericIO.writelnString("Museum not bound exception: " + e.getMessage());
         e.printStackTrace();
         System.exit(1);
       }
-      GenericIO.writelnString("General Repository was deregistered!");
+      GenericIO.writelnString("Museum was deregistered!");
   
       try {
         shutdownDone = UnicastRemoteObject.unexportObject(gRepos, true);
       } catch (NoSuchObjectException e) {
-        GenericIO.writelnString("General Repository unexport exception: " + e.getMessage());
+        GenericIO.writelnString("Museum unexport exception: " + e.getMessage());
         e.printStackTrace();
         System.exit(1);
       }
   
       if (shutdownDone)
-        GenericIO.writelnString("General Repository was shutdown!");
+        GenericIO.writelnString("Museum was shutdown!");
     }
 
   public static void shutdown() {
