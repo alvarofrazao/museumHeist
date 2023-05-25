@@ -32,9 +32,9 @@ public class ExecParameters {
 
     public static final String RegistryHostName = "";
 
-    public static final int registryPortNum = 9999;
+    public static final int registryPortNum = 22253;
 
-    public static final int registerPortNum = 9989;
+    public static final int registerPortNum = 22254;
 
     public static final String nameEntryAssaultParty0  = "AssaultParty0";
 
