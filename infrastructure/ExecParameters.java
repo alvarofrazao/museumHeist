@@ -30,7 +30,7 @@ public class ExecParameters {
 
     public static final String mThiefHostName = "l040101-ws08.ua.pt";
 
-    public static final String RegistryHostName = "";
+    public static final String RegistryHostName = "l040101-ws10.ua.pt";
 
     public static final int registryPortNum = 22253;
 
