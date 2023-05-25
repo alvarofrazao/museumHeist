@@ -6,7 +6,7 @@ import genclass.GenericIO;
 import genclass.TextFile;
 import infrastructure.ExecParameters;
 import interfaces.GeneralReposInterface;
-import serverSide_msg.main.ServerGeneralRepos;
+import serverSide.main.ServerGeneralRepos;
 
 /**
  * General Repository.
@@ -355,12 +355,7 @@ public class GeneralRepos implements GeneralReposInterface{
     }
 
     public void shutdown(){
-        try {
-            lock.lock();
-            ServerGeneralRepos.waitConnection = false;
-        }finally{
-            lock.unlock();
-        }
+        ServerGeneralRepos.shutdown ();
     }
 
     /*

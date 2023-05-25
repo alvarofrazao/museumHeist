@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import infrastructure.MemException;
 import interfaces.*;
 import serverSide.entities.*;
+import serverSide.main.ServerConcentrationSite;
 
 public class ConcentrationSite implements CCSInterface{
 
@@ -112,11 +113,6 @@ public class ConcentrationSite implements CCSInterface{
     }
 
     public void shutdown() {
-        try {
-            lock.lock();
-            //ServerConcentrationSite.waitConnection = false;
-        } finally {
-            lock.unlock();
-        }
+        ServerConcentrationSite.shutdown();
     }
 }
