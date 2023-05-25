@@ -118,7 +118,7 @@ public class ServerMuseum {
       GenericIO.writelnString("Museum was deregistered!");
   
       try {
-        shutdownDone = UnicastRemoteObject.unexportObject(gRepos, true);
+        shutdownDone = UnicastRemoteObject.unexportObject(museum, true);
       } catch (NoSuchObjectException e) {
         GenericIO.writelnString("Museum unexport exception: " + e.getMessage());
         e.printStackTrace();

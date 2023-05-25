@@ -5,6 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import infrastructure.*;
 import serverSide.entities.*;
+import serverSide.main.ServerControlSite;
 import interfaces.*;
 
 public class ControlCollectionSite implements CCLInterface {
@@ -527,11 +528,6 @@ public class ControlCollectionSite implements CCLInterface {
     }
 
     public void shutdown() {
-        try {
-            lock.lock();
-            //ServerCollectionSite.waitConnection = false;
-        } finally {
-            lock.unlock();
-        }
+        ServerControlSite.shutdown();
     }
 }

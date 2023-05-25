@@ -6,8 +6,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import genclass.GenericIO;
 import interfaces.*;
 import serverSide.entities.*;
+import serverSide.main.ServerAssaultParty;
 
-public class AssaultParty implements APInterface{
+public class AssaultParty implements APInterface {
 
     /**
      * Main monitor object
@@ -94,7 +95,7 @@ public class AssaultParty implements APInterface{
      * @param museum    Reference to the Museum shared memory region
      * @param repos     Reference to the GeneralRepository shared memory region
      */
-    public AssaultParty(int id, int partySize, int thiefMax, int S,  GeneralReposInterface grStub) {
+    public AssaultParty(int id, int partySize, int thiefMax, int S, GeneralReposInterface grStub) {
         this.id = id;
         this.lock = new ReentrantLock();
         this.cond = lock.newCondition();
@@ -117,7 +118,7 @@ public class AssaultParty implements APInterface{
     }
 
     public ReturnInt getRoomID() {
-        ReturnInt ret =  new ReturnInt(currentRoomID, 0);
+        ReturnInt ret = new ReturnInt(currentRoomID, 0);
         return ret;
     }
 
@@ -170,7 +171,8 @@ public class AssaultParty implements APInterface{
             try {
                 grStub.addThiefToAssaultParty(thid, this.id, currentThiefNum);
             } catch (Exception e) {
-                GenericIO.writelnString("Thief " + thid + "remote exception on addThieftoAssaultParty" + e.getMessage());
+                GenericIO
+                        .writelnString("Thief " + thid + "remote exception on addThieftoAssaultParty" + e.getMessage());
                 System.exit(1);
             }
             thiefDist[partyPos] = 0;
@@ -185,7 +187,7 @@ public class AssaultParty implements APInterface{
                 }
             }
             try {
-                grStub.setOrdinaryThiefState(thid, oStates.CRAWLING_INWARDS);                
+                grStub.setOrdinaryThiefState(thid, oStates.CRAWLING_INWARDS);
             } catch (Exception e) {
                 GenericIO.writelnString("Thief " + thid + "remote exception on setOrdinaryThiefState" + e.getMessage());
                 System.exit(1);
@@ -254,7 +256,7 @@ public class AssaultParty implements APInterface{
                     } catch (Exception e) {
                         // TODO: handle exception
                     }
-                    
+
                     try {
                         grStub.setOrdinaryThiefState(thid, oStates.AT_A_ROOM);
                     } catch (Exception e) {
@@ -307,7 +309,7 @@ public class AssaultParty implements APInterface{
      * @throws InterruptedException
      */
 
-    public void crawlOut(int distance, int thid, int ppos){
+    public void crawlOut(int distance, int thid, int ppos) {
         try {
             lock.lock();
             int move = 1;
@@ -402,7 +404,7 @@ public class AssaultParty implements APInterface{
                 }
             }
 
-        }finally{
+        } finally {
             lock.unlock();
         }
     }
@@ -414,7 +416,7 @@ public class AssaultParty implements APInterface{
      * 
      */
 
-    public void reverseDirection(int thid, int ppos){
+    public void reverseDirection(int thid, int ppos) {
         try {
             lock.lock();
             hasArrived--;
@@ -422,7 +424,7 @@ public class AssaultParty implements APInterface{
                 reverseCond.signalAll();
                 moveRestrictOut[0] = false;
             }
-            
+
             cond.signalAll();
 
             while (moveRestrictOut[ppos]) {
@@ -432,7 +434,7 @@ public class AssaultParty implements APInterface{
                 }
             }
             try {
-                grStub.setOrdinaryThiefState(thid, oStates.CRAWLING_OUTWARDS);                
+                grStub.setOrdinaryThiefState(thid, oStates.CRAWLING_OUTWARDS);
             } catch (Exception e) {
                 // TODO: handle exception
             }
@@ -450,7 +452,7 @@ public class AssaultParty implements APInterface{
      * @throws InterruptedException
      */
 
-    public void signalDeparture(){
+    public void signalDeparture() {
         try {
             lock.lock();
             isRunning = true;
@@ -463,12 +465,7 @@ public class AssaultParty implements APInterface{
         }
     }
 
-    public void shutdown(){
-        try{
-            lock.lock();
-            //ServerAssaultParty.waitConnection = false;
-        }finally{
-            lock.unlock();
-        }
+    public void shutdown() {
+        ServerAssaultParty.shutdown();
     }
 }
