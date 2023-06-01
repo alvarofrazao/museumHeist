@@ -32,9 +32,12 @@ public class ExecParameters {
 
     public static final String RegistryHostName = "l040101-ws10.ua.pt";
 
+    public static final String RMIRegistryHostName = "l040101-ws10.ua.pt";
+
     public static final int registryPortNum = 22253;
 
     public static final int registerPortNum = 22254;
+    public static final int RMIregisterPortNum = 22254;
 
     public static final String nameEntryAssaultParty0  = "AssaultParty0";
 
