@@ -83,7 +83,7 @@ public class Museum implements MuseumInterface {
                     grStub.setNumPaintingsInRoom(roomID, museumRoomsPaintings[roomID]);
                 } catch (RemoteException e) {
                     GenericIO.writelnString(
-                            "Thief " + thid + " remote exception on reverseDirection: " + e.getMessage());
+                            "Thief " + thid + " remote exception on rollACanvas: " + e.getMessage());
                     System.exit(1);
                 }
                 try {

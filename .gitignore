@@ -8,6 +8,8 @@ dirGenRepos
 dirMuseum
 dirMClient
 dirOClient
+dirRegistry
+dirRMIRegistry
 dirAP.zip
 dirCCL.zip
 dirCCS.zip
@@ -15,6 +17,8 @@ dirGenRepos.zip
 dirMuseum.zip
 dirMClient.zip
 dirOClient.zip
+dirRegistry.zip
+dirRMIRegistry.zip
 clientSide_msg/
 serverSide_msg/
 

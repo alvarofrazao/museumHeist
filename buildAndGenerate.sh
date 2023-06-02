@@ -4,90 +4,103 @@ rm */*.class */*/*.class
 echo "Compiling source code."
 javac -cp genclass.jar:infrastructure */*.java */*/*.java
 echo "Distributing intermediate code to the different execution environments."
+echo " RMI Registry"
+rm -rf dirRMIRegistry
+mkdir dirRMIRegistry dirRMIRegistry/interfaces
+cp interfaces/*.class dirRMIRegistry/interfaces
+
+echo " Register Remote Objects"
+rm -rf dirRegistry
+mkdir dirRegistry dirRegistry/serverSide dirRegistry/serverSide/main dirRegistry/serverSide/objects \
+      dirRegistry/interfaces dirRegistry/infrastructure
+cp serverSide/main/ServerRegisterRemoteObject.class dirRegistry/serverSide/main
+cp serverSide/objects/RegisterRemoteObject.class dirRegistry/serverSide/objects
+cp interfaces/Register.class dirRegistry/interfaces
+cp infrastructure/ExecParameters.class dirRegistry/infrastructure
+cp genclass.jar dirRegistry 
+
 echo "	General Repository of Information"
 rm -rf dirGenRepos
-mkdir -p dirGenRepos dirGenRepos/serverSide dirGenRepos/serverSide/main dirGenRepos/serverSide/entities dirGenRepos/serverSide/sharedRegions \
-         dirGenRepos/serverSide/stubs dirGenRepos/infrastructure
+mkdir -p dirGenRepos dirGenRepos/serverSide dirGenRepos/serverSide/main dirGenRepos/serverSide/entities dirGenRepos/serverSide/objects \
+         dirGenRepos/infrastructure dirGenRepos/interfaces
 cp serverSide/main/ServerGeneralRepos.class dirGenRepos/serverSide/main
-cp serverSide/entities/GeneralReposClientProxy.class dirGenRepos/serverSide/entities
-cp serverSide/sharedRegions/GeneralReposInterface.class serverSide/sharedRegions/GeneralRepos.class dirGenRepos/serverSide/sharedRegions
-cp serverSide/entities/mStates.class serverSide/entities/oStates.class dirGenRepos/serverSide/entities
+cp serverSide/entities/*.class dirGenRepos/serverSide/entities
+cp serverSide/objects/GeneralRepos.class 
+cp interfaces/GeneralReposInterface.class dirGenRepos/interfaces
 cp infrastructure/*.class dirGenRepos/infrastructure
 cp genclass.jar dirGenRepos
 
 echo "	Concentration Site"
 rm -rf dirCCS
-mkdir -p dirCCS dirCCS/serverSide dirCCS/serverSide/main dirCCS/serverSide/entities dirCCS/serverSide/sharedRegions \
-	dirCCS/serverSide/stubs dirCCS/infrastructure 
+mkdir -p dirCCS dirCCS/serverSide dirCCS/serverSide/main dirCCS/serverSide/entities dirCCS/serverSide/objects \
+	dirCCS/interfaces dirCCS/infrastructure 
 cp serverSide/main/ServerConcentrationSite.class dirCCS/serverSide/main
-cp serverSide/entities/ccsClientProxy.class dirCCS/serverSide/entities
-cp serverSide/sharedRegions/ConcentrationSiteInterface.class serverSide/sharedRegions/ConcentrationSite.class dirCCS/serverSide/sharedRegions
-cp serverSide/entities/mStates.class serverSide/entities/oStates.class \
-   dirCCS/serverSide/entities
-cp serverSide/stubs/GeneralReposStub.class dirCCS/serverSide/stubs
+cp serverSide/entities/*.class dirCCS/serverSide/entities
+cp serverSide/objects/ConcentrationSite.class dirCCS/serverSide/objects
 cp infrastructure/*.class dirCCS/infrastructure
+cp interfaces/*.class dirCCS/interfaces
 cp genclass.jar dirCCS
 
 echo "	Collection Site" 
 rm -rf dirCCL
-mkdir -p dirCCL dirCCL/serverSide dirCCL/serverSide/main dirCCL/serverSide/entities dirCCL/serverSide/sharedRegions \
-	dirCCL/serverSide/stubs dirCCL/infrastructure
+mkdir -p dirCCL dirCCL/serverSide dirCCL/serverSide/main dirCCL/serverSide/entities dirCCL/serverSide/objects \
+	dirCCL/interfaces dirCCL/infrastructure
 cp serverSide/main/ServerCollectionSite.class dirCCL/serverSide/main
-cp serverSide/entities/cclClientProxy.class dirCCL/serverSide/entities
-cp serverSide/sharedRegions/ControlCollectionSiteInterface.class serverSide/sharedRegions/ControlCollectionSite.class dirCCL/serverSide/sharedRegions
-cp serverSide/entities/mStates.class serverSide/entities/oStates.class \
-   dirCCL/serverSide/entities
-cp serverSide/stubs/GeneralReposStub.class dirCCL/serverSide/stubs
+cp serverSide/entities/*.class dirCCL/serverSide/entities
+cp serverSide/objects/ControlCollectionSite.class dirCCL/serverSide/objects
+cp interfaces/*.class dirCCL/interfaces
 cp infrastructure/*.class dirCCL/infrastructure
 cp genclass.jar dirCCL
 
 echo "	Assault Party" 
 rm -rf dirAP
-mkdir -p dirAP dirAP/serverSide dirAP/serverSide/main dirAP/serverSide/entities dirAP/serverSide/sharedRegions \
-	dirAP/serverSide/stubs dirAP/infrastructure
+mkdir -p dirAP dirAP/serverSide dirAP/serverSide/main dirAP/serverSide/entities dirAP/serverSide/objects \
+	dirAP/interfaces dirAP/infrastructure
 cp serverSide/main/ServerAssaultParty.class dirAP/serverSide/main
-cp serverSide/entities/aPClientProxy.class dirAP/serverSide/entities
-cp serverSide/sharedRegions/AssaultPartyInterface.class serverSide/sharedRegions/AssaultParty.class dirAP/serverSide/sharedRegions
-cp serverSide/entities/mStates.class serverSide/entities/oStates.class \
-   dirAP/serverSide/entities
-cp serverSide/stubs/GeneralReposStub.class dirAP/serverSide/stubs
+cp serverSide/entities/*.class dirAP/serverSide/entities
+cp serverSide/objects/AssaultParty.class dirAP/serverSide/objects
+cp interfaces/*.class dirAP/interfaces
 cp infrastructure/*.class dirAP/infrastructure
 cp genclass.jar dirAP
 
 echo "	Museum" 
 rm -rf dirMuseum
-mkdir -p dirMuseum dirMuseum/serverSide dirMuseum/serverSide/main dirMuseum/serverSide/entities dirMuseum/serverSide/sharedRegions \
-	dirMuseum/serverSide/stubs dirMuseum/infrastructure
+mkdir -p dirMuseum dirMuseum/serverSide dirMuseum/serverSide/main dirMuseum/serverSide/entities dirMuseum/serverSide/objects \
+	dirMuseum/interfaces dirMuseum/infrastructure
 cp serverSide/main/ServerMuseum.class dirMuseum/serverSide/main
-cp serverSide/entities/museumClientProxy.class dirMuseum/serverSide/entities
-cp serverSide/sharedRegions/MuseumInterface.class serverSide/sharedRegions/Museum.class dirMuseum/serverSide/sharedRegions
-cp serverSide/entities/mStates.class serverSide/entities/oStates.class \
-   dirMuseum/serverSide/entities
-cp serverSide/stubs/GeneralReposStub.class dirMuseum/serverSide/stubs
+cp serverSide/entities/*.class dirMuseum/serverSide/entities
+cp serverSide/objects/Museum.class dirMuseum/serverSide/sharedRegions
+cp interfaces/*.class dirMuseum/interfaces
 cp infrastructure/*.class dirMuseum/infrastructure
 cp genclass.jar dirMuseum
 
 echo "	MasterThief"
 rm -rf dirMClient
 mkdir -p dirMClient dirMClient/clientSide dirMClient/clientSide/main dirMClient/clientSide/entities \
-         dirMClient/clientSide/stubs dirMClient/infrastructure
+         dirMClient/interfaces dirMClient/infrastructure
 cp clientSide/main/ClientMasterThief.class dirMClient/clientSide/main
 cp clientSide/entities/mClient.class clientSide/entities/mStates.class dirMClient/clientSide/entities
-cp clientSide/stubs/AssaultPartyStub.class clientSide/stubs/ControlCollectionSiteStub.class  clientSide/stubs/ConcentrationSiteStub.class  clientSide/stubs/MuseumStub.class dirMClient/clientSide/stubs
+cp interfaces/*.class dirMClient/interfaces
 cp infrastructure/*.class dirMClient/infrastructure
 cp genclass.jar dirMClient
 
 echo "	OThieves"
 rm -rf dirOClient
-mkdir -p dirOClient dirOClient/serverSide dirOClient/serverSide/main dirOClient/clientSide dirOClient/clientSide/main dirOClient/clientSide/entities \
-         dirOClient/clientSide/stubs dirOClient/infrastructure
+mkdir -p dirOClient dirOClient/clientSide dirOClient/clientSide/main dirOClient/clientSide/entities \
+         dirOClient/interfaces dirOClient/infrastructure
 cp clientSide/main/ClientOrdinaryThief.class dirOClient/clientSide/main
 cp clientSide/entities/oClient.class clientSide/entities/oStates.class dirOClient/clientSide/entities
-cp clientSide/stubs/AssaultPartyStub.class clientSide/stubs/ControlCollectionSiteStub.class  clientSide/stubs/ConcentrationSiteStub.class  clientSide/stubs/MuseumStub.class dirOClient/clientSide/stubs
+cp interfaces/*.class dirOClient/interfaces
 cp infrastructure/*.class dirOClient/infrastructure
 cp genclass.jar dirOClient
 
 echo "Compressing execution environments."
+echo " RMI Registry"
+ŕm -rf dirRMIRegistry.zip
+zip -rq dirRMIRegistry.zip dirRMIRegistry
+echo "  Register Remote Objects"
+rm -f  dirRegistry.zip
+zip -rq dirRegistry.zip dirRegistry
 echo "	General Repository of Information"
 rm -f  dirGenRepos.zip
 zip -rq dirGenRepos.zip dirGenRepos

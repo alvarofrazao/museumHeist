@@ -225,7 +225,9 @@ public class AssaultParty implements APInterface {
                     try {
                         grStub.setThiefPosition(this.id, thid, thiefDist[curIdx]);
                     } catch (Exception e) {
-                        // TODO: handle exception
+                        GenericIO.writelnString(
+                                "Thief " + thid + "remote exception on setThiefPosition" + e.getMessage());
+                        System.exit(1);
                     }
                     moveRestrictIn[curIdx] = true;
                     if ((curIdx + 1) >= 3) {
@@ -254,13 +256,17 @@ public class AssaultParty implements APInterface {
                     try {
                         grStub.setThiefPosition(this.id, thid, roomDist);
                     } catch (Exception e) {
-                        // TODO: handle exception
+                        GenericIO.writelnString(
+                                "Thief " + thid + "remote exception on setThiefPosition" + e.getMessage());
+                        System.exit(1);
                     }
 
                     try {
                         grStub.setOrdinaryThiefState(thid, oStates.AT_A_ROOM);
                     } catch (Exception e) {
-                        // TODO: handle exception
+                        GenericIO.writelnString(
+                                "Thief " + thid + "remote exception on setOrdinaryThiefState" + e.getMessage());
+                        System.exit(1);
                     }
                     hasArrived += 1;
                     moveRestrictIn[curIdx] = true;
@@ -328,7 +334,9 @@ public class AssaultParty implements APInterface {
                     try {
                         grStub.setThiefPosition(this.id, thid, thiefDist[curIdx]);
                     } catch (Exception e) {
-                        // TODO: handle exception
+                        GenericIO.writelnString(
+                                "Thief " + thid + "remote exception on setThiefPosition" + e.getMessage());
+                        System.exit(1);
                     }
                     moveRestrictOut[curIdx] = true;
                     if ((curIdx + 1) >= 3) {
@@ -357,12 +365,16 @@ public class AssaultParty implements APInterface {
                     try {
                         grStub.setThiefPosition(this.id, thid, 0);
                     } catch (Exception e) {
-                        // TODO: handle exception
+                        GenericIO.writelnString(
+                                "Thief " + thid + "remote exception on setThiefPosition" + e.getMessage());
+                        System.exit(1);
                     }
                     try {
                         grStub.setOrdinaryThiefState(thid, oStates.COLLECTION_SITE);
                     } catch (Exception e) {
-                        // TODO: handle exception
+                        GenericIO.writelnString(
+                                "Thief " + thid + "remote exception on setOrdinaryThiefState" + e.getMessage());
+                        System.exit(1);
                     }
                     hasArrived++;
                     if (hasArrived == 3) {
@@ -436,7 +448,9 @@ public class AssaultParty implements APInterface {
             try {
                 grStub.setOrdinaryThiefState(thid, oStates.CRAWLING_OUTWARDS);
             } catch (Exception e) {
-                // TODO: handle exception
+                GenericIO.writelnString(
+                        "Thief " + thid + "remote exception on setOrdinaryThiefState" + e.getMessage());
+                System.exit(1);
             }
             return;
         } finally {
