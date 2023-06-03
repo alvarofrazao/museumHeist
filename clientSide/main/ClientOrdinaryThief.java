@@ -93,6 +93,7 @@ public class ClientOrdinaryThief {
             System.exit(1);
         }
 
+        System.out.print("Successfully looked up all objects\n");
         oClient[] thieves = new oClient[6];
 
         for(int i = 0; i < 6; i++){

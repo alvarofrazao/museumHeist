@@ -6,4 +6,4 @@ sshpass -f password scp dirCCS.zip sd206@l040101-ws07.ua.pt:test/museumHeist
 echo "Decompressing data sent to the concentration site node."
 sshpass -f password ssh sd206@l040101-ws07.ua.pt 'cd test/museumHeist ; unzip -uq dirCCS.zip'
 echo "Executing program at the concentration site node."
-sshpass -f password ssh sd206@l040101-ws07.ua.pt 'cd test/museumHeist/dirCCS ; java -cp .:genclass.jar serverSide.main.ServerConcentrationSite'
+sshpass -f password ssh sd206@l040101-ws07.ua.pt 'cd test/museumHeist/dirCCS ; ./ccs_d.sh'

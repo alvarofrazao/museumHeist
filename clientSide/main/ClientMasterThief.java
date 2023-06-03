@@ -91,6 +91,7 @@ public class ClientMasterThief {
             System.exit(1);
         }
 
+        System.out.print("Successfully looked up all objects\n");
         mClient masterThief = new mClient(ap, cclStub, ccsStub, 6);
 
         masterThief.start();

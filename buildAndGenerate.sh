@@ -8,6 +8,8 @@ echo " RMI Registry"
 rm -rf dirRMIRegistry
 mkdir dirRMIRegistry dirRMIRegistry/interfaces
 cp interfaces/*.class dirRMIRegistry/interfaces
+cp scripts/dirRMIRegistry/*.sh dirRMIRegistry
+
 
 echo " Register Remote Objects"
 rm -rf dirRegistry
@@ -17,7 +19,9 @@ cp serverSide/main/ServerRegisterRemoteObject.class dirRegistry/serverSide/main
 cp serverSide/objects/RegisterRemoteObject.class dirRegistry/serverSide/objects
 cp interfaces/Register.class dirRegistry/interfaces
 cp infrastructure/ExecParameters.class dirRegistry/infrastructure
-cp genclass.jar dirRegistry 
+cp genclass.jar dirRegistry
+cp scripts/dirRegistry/*.sh dirRegistry 
+cp scripts/dirRegistry/java.policy dirRegistry
 
 echo "	General Repository of Information"
 rm -rf dirGenRepos
@@ -25,10 +29,13 @@ mkdir -p dirGenRepos dirGenRepos/serverSide dirGenRepos/serverSide/main dirGenRe
          dirGenRepos/infrastructure dirGenRepos/interfaces
 cp serverSide/main/ServerGeneralRepos.class dirGenRepos/serverSide/main
 cp serverSide/entities/*.class dirGenRepos/serverSide/entities
-cp serverSide/objects/GeneralRepos.class 
-cp interfaces/GeneralReposInterface.class dirGenRepos/interfaces
+cp serverSide/objects/GeneralRepos.class dirGenRepos/serverSide/objects
+cp interfaces/*.class dirGenRepos/interfaces
 cp infrastructure/*.class dirGenRepos/infrastructure
 cp genclass.jar dirGenRepos
+cp scripts/dirGeneralRepos/java.policy dirGenRepos
+cp scripts/dirGeneralRepos/*.sh dirGenRepos
+cp scripts/java.policy dirGenRepos
 
 echo "	Concentration Site"
 rm -rf dirCCS
@@ -40,17 +47,25 @@ cp serverSide/objects/ConcentrationSite.class dirCCS/serverSide/objects
 cp infrastructure/*.class dirCCS/infrastructure
 cp interfaces/*.class dirCCS/interfaces
 cp genclass.jar dirCCS
+cp scripts/java.policy dirCCS
+cp scripts/ccs_d.sh dirCCS
+cp scripts/ccs_d_local.sh dirCCS
+
 
 echo "	Collection Site" 
 rm -rf dirCCL
 mkdir -p dirCCL dirCCL/serverSide dirCCL/serverSide/main dirCCL/serverSide/entities dirCCL/serverSide/objects \
 	dirCCL/interfaces dirCCL/infrastructure
-cp serverSide/main/ServerCollectionSite.class dirCCL/serverSide/main
+cp serverSide/main/ServerControlSite.class dirCCL/serverSide/main
 cp serverSide/entities/*.class dirCCL/serverSide/entities
 cp serverSide/objects/ControlCollectionSite.class dirCCL/serverSide/objects
 cp interfaces/*.class dirCCL/interfaces
 cp infrastructure/*.class dirCCL/infrastructure
 cp genclass.jar dirCCL
+cp scripts/java.policy dirCCL
+cp scripts/ccl_d.sh dirCCL
+cp scripts/ccl_d_local.sh dirCCL
+
 
 echo "	Assault Party" 
 rm -rf dirAP
@@ -62,6 +77,11 @@ cp serverSide/objects/AssaultParty.class dirAP/serverSide/objects
 cp interfaces/*.class dirAP/interfaces
 cp infrastructure/*.class dirAP/infrastructure
 cp genclass.jar dirAP
+cp scripts/java.policy dirAP
+cp scripts/ap1_d.sh dirAP
+cp scripts/ap2_d.sh dirAP
+cp scripts/ap1_d_local.sh dirAP
+cp scripts/ap2_d_local.sh dirAP
 
 echo "	Museum" 
 rm -rf dirMuseum
@@ -69,10 +89,13 @@ mkdir -p dirMuseum dirMuseum/serverSide dirMuseum/serverSide/main dirMuseum/serv
 	dirMuseum/interfaces dirMuseum/infrastructure
 cp serverSide/main/ServerMuseum.class dirMuseum/serverSide/main
 cp serverSide/entities/*.class dirMuseum/serverSide/entities
-cp serverSide/objects/Museum.class dirMuseum/serverSide/sharedRegions
+cp serverSide/objects/Museum.class dirMuseum/serverSide/objects
 cp interfaces/*.class dirMuseum/interfaces
 cp infrastructure/*.class dirMuseum/infrastructure
 cp genclass.jar dirMuseum
+cp scripts/java.policy dirMuseum
+cp scripts/mus_d.sh dirMuseum
+cp scripts/mus_d_local.sh dirMuseum
 
 echo "	MasterThief"
 rm -rf dirMClient
@@ -96,7 +119,7 @@ cp genclass.jar dirOClient
 
 echo "Compressing execution environments."
 echo " RMI Registry"
-ŕm -rf dirRMIRegistry.zip
+rm -rf dirRMIRegistry.zip
 zip -rq dirRMIRegistry.zip dirRMIRegistry
 echo "  Register Remote Objects"
 rm -f  dirRegistry.zip

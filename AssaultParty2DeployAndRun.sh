@@ -6,4 +6,4 @@ sshpass -f password scp dirAP.zip sd206@l040101-ws02.ua.pt:test/museumHeist
 echo "Decompressing data sent to the assault party node."
 sshpass -f password ssh sd206@l040101-ws02.ua.pt 'cd test/museumHeist ; unzip -uq dirAP.zip'
 echo "Executing program at the assault party node."
-sshpass -f password ssh sd206@l040101-ws02.ua.pt 'cd test/museumHeist/dirAP ; java -cp .:genclass.jar serverSide.main.ServerAssaultParty 1'
+sshpass -f password ssh sd206@l040101-ws02.ua.pt 'cd test/museumHeist/dirAP ; ./ap2_d.sh'
