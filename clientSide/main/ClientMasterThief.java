@@ -98,7 +98,12 @@ public class ClientMasterThief {
 
         masterThief.start();
 
-        while (masterThief.isAlive()) {
+        try {
+            masterThief.join();
+        } catch (InterruptedException e) {
+        }
+
+        if (!masterThief.isAlive()) {
             try {
                 museumStub.shutdown();
             } catch (Exception e) {
@@ -133,13 +138,7 @@ public class ClientMasterThief {
                 GenericIO.writelnString("AP1 generator remote exception on shutdown: " + e.getMessage());
                 System.exit(1);
             }
-            Thread.yield();
-
-            try {
-                masterThief.join();
-            } catch (InterruptedException e) {
-            }
-            GenericIO.writelnString("The masterThief has terminated.");
         }
+        GenericIO.writelnString("The masterThief has terminated.");
     }
 }
