@@ -23,6 +23,8 @@ public class ClientMasterThief {
         MuseumInterface museumStub = null;
         APInterface[] ap = new APInterface[2];
 
+        System.setProperty("java.rmi.server.logCalls", "true");
+
         try {
             registry = LocateRegistry.getRegistry(rmiRegHostName, rmiRegPortNumb);
         } catch (RemoteException e) {
@@ -34,11 +36,11 @@ public class ClientMasterThief {
         try {
             cclStub = (CCLInterface) registry.lookup(ExecParameters.nameEntryControlSite);
         } catch (RemoteException e) {
-            GenericIO.writelnString("BarberShop lookup exception: " + e.getMessage());
+            GenericIO.writelnString("CCL lookup exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            GenericIO.writelnString("BarberShop not bound exception: " + e.getMessage());
+            GenericIO.writelnString("CCL not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -46,11 +48,11 @@ public class ClientMasterThief {
         try {
             ccsStub = (CCSInterface) registry.lookup(ExecParameters.nameEntryConcentrationSite);
         } catch (RemoteException e) {
-            GenericIO.writelnString("BarberShop lookup exception: " + e.getMessage());
+            GenericIO.writelnString("CCS lookup exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            GenericIO.writelnString("BarberShop not bound exception: " + e.getMessage());
+            GenericIO.writelnString("CCS not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -58,11 +60,11 @@ public class ClientMasterThief {
         try {
             museumStub = (MuseumInterface) registry.lookup(ExecParameters.nameEntryMuseum);
         } catch (RemoteException e) {
-            GenericIO.writelnString("BarberShop lookup exception: " + e.getMessage());
+            GenericIO.writelnString("Museum lookup exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            GenericIO.writelnString("BarberShop not bound exception: " + e.getMessage());
+            GenericIO.writelnString("Museum not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -70,11 +72,11 @@ public class ClientMasterThief {
         try {
             ap[0] = (APInterface) registry.lookup(ExecParameters.nameEntryAssaultParty0);
         } catch (RemoteException e) {
-            GenericIO.writelnString("BarberShop lookup exception: " + e.getMessage());
+            GenericIO.writelnString("AP lookup exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            GenericIO.writelnString("BarberShop not bound exception: " + e.getMessage());
+            GenericIO.writelnString("AP not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -82,11 +84,11 @@ public class ClientMasterThief {
         try {
             ap[1] = (APInterface) registry.lookup(ExecParameters.nameEntryAssaultParty1);
         } catch (RemoteException e) {
-            GenericIO.writelnString("BarberShop lookup exception: " + e.getMessage());
+            GenericIO.writelnString("AP lookup exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         } catch (NotBoundException e) {
-            GenericIO.writelnString("BarberShop not bound exception: " + e.getMessage());
+            GenericIO.writelnString("AP not bound exception: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
@@ -96,7 +98,12 @@ public class ClientMasterThief {
 
         masterThief.start();
 
-        while (masterThief.isAlive()) {
+        try {
+            masterThief.join();
+        } catch (InterruptedException e) {
+        }
+
+        if (!masterThief.isAlive()) {
             try {
                 museumStub.shutdown();
             } catch (Exception e) {
@@ -131,13 +138,7 @@ public class ClientMasterThief {
                 GenericIO.writelnString("AP1 generator remote exception on shutdown: " + e.getMessage());
                 System.exit(1);
             }
-            Thread.yield();
-
-            try {
-                masterThief.join();
-            } catch (InterruptedException e) {
-            }
-            GenericIO.writelnString("The masterThief has terminated.");
         }
+        GenericIO.writelnString("The masterThief has terminated.");
     }
 }

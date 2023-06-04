@@ -1,5 +1,6 @@
 package serverSide.objects;
 
+import java.rmi.RemoteException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -187,7 +188,7 @@ public class ControlCollectionSite implements CCLInterface {
     }
 
     public ReturnInt getNextRoom() {
-        ReturnInt ret = new ReturnInt(nextRoom, 99);
+        ReturnInt ret = new ReturnInt(nextRoom, 9);
         return ret;
     }
 
@@ -201,7 +202,7 @@ public class ControlCollectionSite implements CCLInterface {
      * 
      * @return true or false, depending on the status of the heist
      */
-    public ReturnBoolean amINeeded(int thid, boolean fc, int ap) {
+    public ReturnBoolean amINeeded(int thid, boolean fc, int ap) throws RemoteException{
         try {
             lock.lock();
             boolean fc_local = fc;
@@ -255,7 +256,7 @@ public class ControlCollectionSite implements CCLInterface {
      * 
      * @return
      */
-    public ReturnInt prepareAssaultParty() {
+    public ReturnInt prepareAssaultParty() throws RemoteException{
         try {
             lock.lock();
             ReturnInt ret;
@@ -272,7 +273,7 @@ public class ControlCollectionSite implements CCLInterface {
             nextRoom = this.computeNextRoom();
             thiefSlots = 3;
             if (nextRoom == -1) {
-                ret = new ReturnInt(-1, 99);
+                ret = new ReturnInt(-1, 9);
                 return ret;
             }
             try {
@@ -291,7 +292,7 @@ public class ControlCollectionSite implements CCLInterface {
                 }
             }
             partyRunStatus[nextParty] = true;
-            ret = new ReturnInt(nextParty, 99);
+            ret = new ReturnInt(nextParty, 9);
             return ret;
         } finally {
             lock.unlock();
@@ -329,7 +330,7 @@ public class ControlCollectionSite implements CCLInterface {
      * canvas is processed in a method call
      * 
      */
-    public void collectACanvas() {
+    public void collectACanvas() throws RemoteException{
         try {
             lock.lock();
             int roomRead;
@@ -353,7 +354,6 @@ public class ControlCollectionSite implements CCLInterface {
                     canvasCond.signalAll();
                     handIn = true;
                     try {
-                        System.out.println("Master thread holding in COLCAN");
                         canvasRecvCond.await();
                     } catch (Exception f) {
                     }
@@ -365,7 +365,6 @@ public class ControlCollectionSite implements CCLInterface {
             } catch (Exception e) {
                 // TODO: handle exception
             }
-            System.out.println("Master thread leaving COLCAN");
         } finally {
             lock.unlock();
         }
@@ -376,14 +375,12 @@ public class ControlCollectionSite implements CCLInterface {
      * Method for the handing in of canvases
      * 
      */
-    public void handACanvas(int thid, boolean canvas, int ap, int room) {
+    public void handACanvas(int thid, boolean canvas, int ap, int room) throws RemoteException{
         try {
             lock.lock();
             queueSize++;
 
             while (!handIn) {
-                System.out.println(
-                        "Thread id: " + thid + " holding in HNDCAN");
                 canvasRecvCond.signalAll();
                 try {
                     canvasCond.await();
@@ -400,7 +397,7 @@ public class ControlCollectionSite implements CCLInterface {
                 canvasHandInQueue.write(canvas);
             } catch (Exception e) {
             }
-            System.out.println("Thread id: " + thid + " from room: " + room + " handed " + canvas + " canvas");
+            //System.out.println("Thread id: " + thid + " from room: " + room + " handed " + canvas + " canvas");
             try {
                 grStub.setThiefCanvas(ap, thid, 0);
             } catch (Exception e) {
@@ -412,7 +409,7 @@ public class ControlCollectionSite implements CCLInterface {
                 // TODO: handle exception
             }
             canvasRecvCond.signal();
-            System.out.println("Thread id: " + thid + " leaving HNDCAN");
+            //System.out.println("Thread id: " + thid + " leaving HNDCAN");
         } finally {
             lock.unlock();
         }
@@ -423,7 +420,7 @@ public class ControlCollectionSite implements CCLInterface {
      * 
      * @return Integer value dependent on the current situation of the heist
      */
-    public ReturnInt appraiseSit() {
+    public ReturnInt appraiseSit() throws RemoteException{
         try {
             lock.lock();
             ReturnInt ret;
@@ -435,50 +432,57 @@ public class ControlCollectionSite implements CCLInterface {
                 }
             }
 
-            System.out.println("EMTPY ROOMS: " + emptyCounterSit);
-            System.out.println("QUEUE SIZE: " + queueSize);
+            //System.out.println("EMTPY ROOMS: " + emptyCounterSit);
+            //System.out.println("QUEUE SIZE: " + queueSize);
 
             if (emptyCounterSit == emptyRooms.length) {
                 if (queueSize != 0) {
-                    ret = new ReturnInt(1, 99);
+                    ret = new ReturnInt(1, 9);
+                    // ret = 1;
                     return ret;
                 }
-                System.out.println("Master thread waiting for ths to terminate");
+                //System.out.println("Master thread waiting for ths to terminate");
 
                 if (availableThieves < 6) {
-                    ret = new ReturnInt(1, 99);
+                    ret = new ReturnInt(1, 9);
+                    // ret = 1;
                     return ret;
                 } else {
                     this.heistRun = false;
-                    ret = new ReturnInt(2, 99);
+                    ret = new ReturnInt(2, 9);
+                    // ret = 2;
                     return ret;
                 }
             }
 
             if (availableThieves >= 3) {
-                ret = new ReturnInt(0, 99);
+                ret = new ReturnInt(0, 9);
+                // ret = 0;
                 return ret;
             }
 
             for (int i = 0; i < 2; i++) {
                 if (partyRunStatus[i]) {
-                    ret = new ReturnInt(1, 99);
+                    ret = new ReturnInt(1, 9);
+                    // ret = 1;
                     return ret;
                 }
             }
             if (availableThieves >= 3) {
-                ret = new ReturnInt(0, 99);
+                ret = new ReturnInt(0, 9);
+                // ret = 0;
                 return ret;
             }
 
             while (availableThieves < 3) {
-                System.out.println("Master thread waiting for ths to continue");
+                //System.out.println("Master thread waiting for ths to continue");
                 try {
                     readyCond.await();
                 } catch (Exception e) {
                 }
             }
-            ret = new ReturnInt(0, 99);
+            ret = new ReturnInt(0, 9);
+            // ret = 0;
             return ret;
         } finally {
             lock.unlock();
@@ -489,10 +493,9 @@ public class ControlCollectionSite implements CCLInterface {
     /***
      * Transitory method for initiating the simulation
      */
-    public void startOperations() {
+    public void startOperations() throws RemoteException{
         try {
             lock.lock();
-            System.out.println("startOperations");
             try {
                 grStub.setMasterThiefState(mStates.DECIDING_WHAT_TO_DO);
             } catch (Exception e) {
@@ -510,10 +513,9 @@ public class ControlCollectionSite implements CCLInterface {
      * Transitory method for closing off the simulation: signals all Ordinary Thief
      * threads upon exiting
      */
-    public void sumUpResults() {
+    public void sumUpResults() throws RemoteException{
         try {
             lock.lock();
-            System.out.println("sumResults");
             try {
                 grStub.setMasterThiefState(mStates.PRESENTING_THE_REPORT);
                 grStub.finalResult(this.totalPaintings);

@@ -25,6 +25,4 @@ public interface CCLInterface extends Remote{
     public void sumUpResults() throws RemoteException;
 
     public void shutdown() throws RemoteException;
-
-
 }

@@ -107,13 +107,12 @@ public class mClient extends Thread{
     private int appraiseSit(){
 
         ReturnInt ret = null;
-
         try {
             ret = controlSite.appraiseSit();
         } catch (RemoteException e) {
             GenericIO.writelnString("masterThief" + " remote exception on appraiseSit: " + e.getMessage());
             System.exit(1);
-        }
+        } 
         return ret.getIntVal();
     }
 
