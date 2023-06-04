@@ -18,6 +18,12 @@ xterm  -T "CollectionSite" -hold -e "./CollectionSiteDeployAndRun.sh" &
 xterm  -T "ConcentrationSite" -hold -e "./ConcentrationSiteDeployAndRun.sh" &
 xterm  -T "AssaultParty(0)" -hold -e "./AssaultParty1DeployAndRun.sh" &
 xterm  -T "AssaultParty(1)" -hold -e "./AssaultParty2DeployAndRun.sh" &
-sleep 20
-xterm  -T "Master" -hold -e "./mClientDeployAndRun.sh" &
+sleep 15
+
 xterm  -T "Ordinary" -hold -e "./oClientDeployAndRun.sh" &
+
+sleep 5
+
+xterm  -T "Master" -hold -e "./mClientDeployAndRun.sh" &
+
+

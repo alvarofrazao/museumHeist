@@ -14,7 +14,7 @@ public class ExecParameters {
 
     public static final int ccsPortNum = 22251;
 
-    public static final String cclHostName = "l040101-ws06.ua.pt";
+    public static final String cclHostName = "l040101-ws04.ua.pt";
 
     public static final int cclPortNum = 22258;
 
