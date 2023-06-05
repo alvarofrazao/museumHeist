@@ -23,5 +23,5 @@ clientSide_msg/
 serverSide_msg/
 /ExecParameters
 /ExecParameters_local
-
+*.class
 
