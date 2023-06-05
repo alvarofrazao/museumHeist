@@ -1,12 +1,11 @@
 package clientSide.entities;
 
-
 import java.rmi.RemoteException;
 
 import interfaces.*;
 import genclass.*;
 
-public class mClient extends Thread{
+public class mClient extends Thread {
 
     /**
      * Master Thief state variable
@@ -32,7 +31,7 @@ public class mClient extends Thread{
      * Reference to the Concentration Site shared region
      */
     private CCSInterface concentrationSite;
-    
+
     public mClient(APInterface[] assaultParties, CCLInterface controlSite, CCSInterface concentrationSite, int id) {
         this.state = mStates.PLANNING_THE_HEIST;
         this.assaultParties = assaultParties;
@@ -49,7 +48,7 @@ public class mClient extends Thread{
         state = i;
     }
 
-    public int getID(){
+    public int getID() {
         return id;
     }
 
@@ -62,40 +61,45 @@ public class mClient extends Thread{
         boolean heistRun = true;
         int party;
         int nextroom;
-        while (heistRun){
-                System.out.println("apsit");
-                switch(appraiseSit()){
-                    case 0:
-                        System.out.println("prepap");
-                        party = prepareAssaultParty();         
-                        System.out.println("party: " + party);
-                        System.out.println("setup-ap");
-                        nextroom = getNextRoom();
-                        setupParty(party,nextroom);
-                        System.out.println("sendap");
-                        sendAssaultParty();
-                        System.out.println("signdep");
-                        signalDeparture(party);
-                        break;
-                    case 1:
-                        System.out.println("tkrst");
-                        takeARest();
-                        System.out.println("colcanv");
-                        collectACanvas();
-                        break;
-                    case 2:
-                        System.out.println("sumupres");
-                        sumUpResults();
-                        heistRun = false;
-                        break;
-                    default:
-                        break;
-                }
+        while (heistRun) {
+            System.out.println("apsit");
+            switch (appraiseSit()) {
+                case 0:
+                    System.out.println("prepap");
+                    party = prepareAssaultParty();
+                    System.out.println("party: " + party);
+                    System.out.println("setup-ap");
+                    nextroom = getNextRoom();
+                    setupParty(party, nextroom);
+                    System.out.println("sendap");
+                    sendAssaultParty();
+                    System.out.println("signdep");
+                    signalDeparture(party);
+                    break;
+                case 1:
+                    System.out.println("tkrst");
+                    takeARest();
+                    System.out.println("colcanv");
+                    collectACanvas();
+                    break;
+                case 2:
+                    System.out.println("sumupres");
+                    sumUpResults();
+                    heistRun = false;
+                    break;
+                default:
+                    break;
+            }
 
         }
     }
 
-    private void startOperations(){
+    /***
+     * Transitory method for initiating the simulation
+     * 
+     * Remote Operation
+     */
+    private void startOperations() {
         try {
             controlSite.startOperations();
         } catch (RemoteException e) {
@@ -104,7 +108,15 @@ public class mClient extends Thread{
         }
     }
 
-    private int appraiseSit(){
+    /***
+     * Method for controlling the lifecycle of the Master Thief Thread
+     * 
+     * Remote operation
+     * 
+     * @return Integer value dependent on the current situation of the heist
+     * 
+     */
+    private int appraiseSit() {
 
         ReturnInt ret = null;
         try {
@@ -112,11 +124,20 @@ public class mClient extends Thread{
         } catch (RemoteException e) {
             GenericIO.writelnString("masterThief" + " remote exception on appraiseSit: " + e.getMessage());
             System.exit(1);
-        } 
+        }
         return ret.getIntVal();
     }
 
-    private int prepareAssaultParty(){
+    /***
+     * Sets up an Assault Party to be formed, assigning it a room and signaling the
+     * Ordinary Thief threads
+     * 
+     * Remote operation
+     * 
+     * @return index of party currently assembling
+     * 
+     */
+    private int prepareAssaultParty() {
 
         ReturnInt ret = null;
 
@@ -129,7 +150,14 @@ public class mClient extends Thread{
         return ret.getIntVal();
     }
 
-    private void setupParty(int party,int roomId){
+    /***
+     * Setups up AssaultParty variables for party formation
+     * 
+     * Remote operation
+     * 
+     * @param roomID index of the room assigned to the party
+     */
+    private void setupParty(int party, int roomId) {
         try {
             assaultParties[party].setupParty(roomId);
         } catch (RemoteException e) {
@@ -138,7 +166,14 @@ public class mClient extends Thread{
         }
     }
 
-    private void sendAssaultParty(){
+    /***
+     * Signals all Ordinary Thief threads waiting for the party to be sent and
+     * determines which party to form next
+     * 
+     * Remote operation
+     * 
+     */
+    private void sendAssaultParty() {
         try {
             concentrationSite.sendAssaultParty();
         } catch (RemoteException e) {
@@ -147,7 +182,13 @@ public class mClient extends Thread{
         }
     }
 
-    private void signalDeparture(int party){
+    /***
+     * Method that signals the start of the party's ingoing movement: the Master
+     * signals a single thread to start moving
+     * 
+     * Remote operation
+     */
+    private void signalDeparture(int party) {
         try {
             assaultParties[party].signalDeparture();
         } catch (RemoteException e) {
@@ -155,8 +196,13 @@ public class mClient extends Thread{
             System.exit(1);
         }
     }
-    
-    private void takeARest(){
+
+    /***
+     * Forces the Master Thief thread to sleep for a pre-determined amount of time
+     * 
+     * Remote operation
+     */
+    private void takeARest() {
         try {
             controlSite.takeARest();
         } catch (RemoteException e) {
@@ -165,7 +211,12 @@ public class mClient extends Thread{
         }
     }
 
-    private void collectACanvas(){
+    /***
+     * Method for the retrieval of canvases from the Collection Site. Only one
+     * canvas is processed in a method call
+     * Remote operation
+     */
+    private void collectACanvas() {
         try {
             controlSite.collectACanvas();
         } catch (RemoteException e) {
@@ -174,7 +225,13 @@ public class mClient extends Thread{
         }
     }
 
-    private void sumUpResults(){
+    /***
+     * Transitory method for closing off the simulation: signals all Ordinary Thief
+     * threads upon exiting
+     * 
+     * Remote operation
+     */
+    private void sumUpResults() {
         try {
             controlSite.sumUpResults();
         } catch (RemoteException e) {
@@ -183,7 +240,11 @@ public class mClient extends Thread{
         }
     }
 
-    private int getNextRoom(){
+    /**
+     * Getter for the index of the next room to target
+     * Remote operation
+     */
+    private int getNextRoom() {
         ReturnInt ret = null;
 
         try {

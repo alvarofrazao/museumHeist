@@ -175,12 +175,19 @@ public class oClient extends Thread {
         }
     }
 
+    /***
+     * Controls the lifecycle of the Ordinary Thief threads
+     * 
+     * Remote operation
+     * 
+     * @return true or false, depending on the status of the heist
+     */
     private boolean amINeeded() {
 
         ReturnBoolean ret = null; // return value
 
         try {
-            ret = controlSite.amINeeded(this.thiefID,this.firstCycle,this.curAP);
+            ret = controlSite.amINeeded(this.thiefID, this.firstCycle, this.curAP);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on amINeeded: " + e.getMessage());
             System.exit(1);
@@ -188,6 +195,13 @@ public class oClient extends Thread {
         return ret.getBooleanVal();
     }
 
+    /***
+     * Prepares the thief to be added to the current working Assault Party
+     * 
+     * Remote operation
+     * 
+     * @return aParties index of the assigned Assault Party
+     */
     private int prepareExcursion() {
 
         ReturnInt ret = null;
@@ -201,6 +215,13 @@ public class oClient extends Thread {
         return ret.getIntVal();
     }
 
+    /***
+     * Assigns thief to party, and blocks waiting for departure signal.
+     * 
+     * Remote operation
+     * 
+     * @return Room index that was assigned to the party
+     */
     private int addThief(int partyid) {
 
         ReturnInt ret = null;
@@ -216,6 +237,15 @@ public class oClient extends Thread {
         return ret.getIntVal();
     }
 
+    /**
+     * Returns the distance to a specific room
+     * 
+     * Remote operation
+     * 
+     * @param roomID room to get distance to
+     * @return distance to chosen room
+     * 
+     */
     private int getRoomDistance(int roomId) {
 
         ReturnInt ret = null;
@@ -229,6 +259,13 @@ public class oClient extends Thread {
         return ret.getIntVal();
     }
 
+    /***
+     * Method for the ingoing movement, each thief moves until it is S units away
+     * from the one behind them, then stops and signals another thief to move,
+     * repeating the process until all three arrive at the Museum Room
+     * 
+     * Remote operation
+     */
     private void crawlIn(int dist) {
         try {
             arrayAP[curAP].crawlIn(dist, this.thiefID, this.partyPos);
@@ -238,6 +275,13 @@ public class oClient extends Thread {
         }
     }
 
+    /***
+     * Method for the outgoing movement, each thief moves until it is S units away
+     * from the one behind them, then stops and signals another thief to move,
+     * repeating the process until all three arrive at the Collection Site
+     * 
+     * Remote operation
+     */
     private void crawlOut(int dist) {
 
         try {
@@ -248,12 +292,21 @@ public class oClient extends Thread {
         }
     }
 
+    /**
+     * Computes whether or not the thief successfully stole a canvas from the room
+     * 
+     * Remote operation
+     * 
+     * @param roomID
+     * @return Whether or not the thief thread managed to get a canvas
+     * 
+     */
     private boolean rollACanvas(int room) {
 
         ReturnBoolean ret = null; // return value
 
         try {
-            ret = museum.rollACanvas(room,this.thiefID,curAP);
+            ret = museum.rollACanvas(room, this.thiefID, curAP);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on rollACanvas: " + e.getMessage());
             System.exit(1);
@@ -261,18 +314,29 @@ public class oClient extends Thread {
         return ret.getBooleanVal();
     }
 
+    /***
+     * Method for the handing in of canvases
+     * 
+     * Remote operation
+     */
     private void handACanvas() {
         try {
-            controlSite.handACanvas(this.thiefID,this.carryingCanvas,this.curAP,this.currentRoomID);
+            controlSite.handACanvas(this.thiefID, this.carryingCanvas, this.curAP, this.currentRoomID);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on handACanvas: " + e.getMessage());
             System.exit(1);
         }
     }
 
-    private void reverseDirection(){
+    /***
+     * Method that signals the start of the party's ingoing movement: the Master
+     * signals a single thread to start moving
+     * 
+     * Remote operation
+     */
+    private void reverseDirection() {
         try {
-            arrayAP[curAP].reverseDirection(this.thiefID,this.partyPos);
+            arrayAP[curAP].reverseDirection(this.thiefID, this.partyPos);
         } catch (RemoteException e) {
             GenericIO.writelnString("Thief " + thiefID + " remote exception on reverseDirection: " + e.getMessage());
             System.exit(1);

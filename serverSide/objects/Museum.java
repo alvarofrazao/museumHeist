@@ -14,7 +14,6 @@ public class Museum implements MuseumInterface {
 
     private int[] museumRoomsDistance;
     private int[] museumRoomsPaintings;
-    // private final GeneralRepos repos;
     private final GeneralReposInterface grStub;
     private ReentrantLock lock;
 
@@ -44,8 +43,6 @@ public class Museum implements MuseumInterface {
 
             museumRoomsPaintings[i] = (int) ((Math.random() * (MAX_P - MIN_P)) + MIN_P);
             lock.lock();
-            // repos.setRoomDistanceAndPaintings(i, museumRoomsDistance[i],
-            // museumRoomsPaintings[i]);
             try {
                 grStub.setRoomDistanceAndPaintings(i, museumRoomsDistance[i], museumRoomsPaintings[i]);
             } catch (Exception e) {

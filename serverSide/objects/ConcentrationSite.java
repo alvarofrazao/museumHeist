@@ -90,8 +90,6 @@ public class ConcentrationSite implements CCSInterface{
      * Prepares the thief to be added to the current working Assault Party
      * 
      * @return aParties index of the assigned Assault Party
-     * @throws InterruptedException
-     * @throws MemException
      */
 
     public ReturnInt prepareExcursion(int thid) {

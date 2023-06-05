@@ -193,7 +193,7 @@ public class ControlCollectionSite implements CCLInterface {
     }
 
     public ReturnBoolean getHeistStatus() {
-        ReturnBoolean ret = new ReturnBoolean(heistRun,false);
+        ReturnBoolean ret = new ReturnBoolean(heistRun, false);
         return ret;
     }
 
@@ -202,7 +202,7 @@ public class ControlCollectionSite implements CCLInterface {
      * 
      * @return true or false, depending on the status of the heist
      */
-    public ReturnBoolean amINeeded(int thid, boolean fc, int ap) throws RemoteException{
+    public ReturnBoolean amINeeded(int thid, boolean fc, int ap) throws RemoteException {
         try {
             lock.lock();
             boolean fc_local = fc;
@@ -254,9 +254,9 @@ public class ControlCollectionSite implements CCLInterface {
      * Sets up an Assault Party to be formed, assigning it a room and signaling the
      * Ordinary Thief threads
      * 
-     * @return
+     * @return index of party currently assembling
      */
-    public ReturnInt prepareAssaultParty() throws RemoteException{
+    public ReturnInt prepareAssaultParty() throws RemoteException {
         try {
             lock.lock();
             ReturnInt ret;
@@ -303,7 +303,6 @@ public class ControlCollectionSite implements CCLInterface {
     /***
      * Forces the Master Thief thread to sleep for a pre-determined amount of time
      * 
-     * @throws InterruptedException
      */
     public void takeARest() {
         try {
@@ -330,7 +329,7 @@ public class ControlCollectionSite implements CCLInterface {
      * canvas is processed in a method call
      * 
      */
-    public void collectACanvas() throws RemoteException{
+    public void collectACanvas() throws RemoteException {
         try {
             lock.lock();
             int roomRead;
@@ -375,7 +374,7 @@ public class ControlCollectionSite implements CCLInterface {
      * Method for the handing in of canvases
      * 
      */
-    public void handACanvas(int thid, boolean canvas, int ap, int room) throws RemoteException{
+    public void handACanvas(int thid, boolean canvas, int ap, int room) throws RemoteException {
         try {
             lock.lock();
             queueSize++;
@@ -397,7 +396,8 @@ public class ControlCollectionSite implements CCLInterface {
                 canvasHandInQueue.write(canvas);
             } catch (Exception e) {
             }
-            //System.out.println("Thread id: " + thid + " from room: " + room + " handed " + canvas + " canvas");
+            // System.out.println("Thread id: " + thid + " from room: " + room + " handed "
+            // + canvas + " canvas");
             try {
                 grStub.setThiefCanvas(ap, thid, 0);
             } catch (Exception e) {
@@ -409,7 +409,7 @@ public class ControlCollectionSite implements CCLInterface {
                 // TODO: handle exception
             }
             canvasRecvCond.signal();
-            //System.out.println("Thread id: " + thid + " leaving HNDCAN");
+            // System.out.println("Thread id: " + thid + " leaving HNDCAN");
         } finally {
             lock.unlock();
         }
@@ -420,7 +420,7 @@ public class ControlCollectionSite implements CCLInterface {
      * 
      * @return Integer value dependent on the current situation of the heist
      */
-    public ReturnInt appraiseSit() throws RemoteException{
+    public ReturnInt appraiseSit() throws RemoteException {
         try {
             lock.lock();
             ReturnInt ret;
@@ -432,20 +432,14 @@ public class ControlCollectionSite implements CCLInterface {
                 }
             }
 
-            //System.out.println("EMTPY ROOMS: " + emptyCounterSit);
-            //System.out.println("QUEUE SIZE: " + queueSize);
-
             if (emptyCounterSit == emptyRooms.length) {
                 if (queueSize != 0) {
                     ret = new ReturnInt(1, 9);
-                    // ret = 1;
                     return ret;
                 }
-                //System.out.println("Master thread waiting for ths to terminate");
 
                 if (availableThieves < 6) {
                     ret = new ReturnInt(1, 9);
-                    // ret = 1;
                     return ret;
                 } else {
                     this.heistRun = false;
@@ -457,32 +451,28 @@ public class ControlCollectionSite implements CCLInterface {
 
             if (availableThieves >= 3) {
                 ret = new ReturnInt(0, 9);
-                // ret = 0;
                 return ret;
             }
 
             for (int i = 0; i < 2; i++) {
                 if (partyRunStatus[i]) {
                     ret = new ReturnInt(1, 9);
-                    // ret = 1;
                     return ret;
                 }
             }
             if (availableThieves >= 3) {
                 ret = new ReturnInt(0, 9);
-                // ret = 0;
                 return ret;
             }
 
             while (availableThieves < 3) {
-                //System.out.println("Master thread waiting for ths to continue");
+                // System.out.println("Master thread waiting for ths to continue");
                 try {
                     readyCond.await();
                 } catch (Exception e) {
                 }
             }
             ret = new ReturnInt(0, 9);
-            // ret = 0;
             return ret;
         } finally {
             lock.unlock();
@@ -493,7 +483,7 @@ public class ControlCollectionSite implements CCLInterface {
     /***
      * Transitory method for initiating the simulation
      */
-    public void startOperations() throws RemoteException{
+    public void startOperations() throws RemoteException {
         try {
             lock.lock();
             try {
@@ -513,7 +503,7 @@ public class ControlCollectionSite implements CCLInterface {
      * Transitory method for closing off the simulation: signals all Ordinary Thief
      * threads upon exiting
      */
-    public void sumUpResults() throws RemoteException{
+    public void sumUpResults() throws RemoteException {
         try {
             lock.lock();
             try {
@@ -529,6 +519,10 @@ public class ControlCollectionSite implements CCLInterface {
         }
     }
 
+    /**
+     * Operation server shutdown.
+     * 
+     */
     public void shutdown() {
         ServerControlSite.shutdown();
     }

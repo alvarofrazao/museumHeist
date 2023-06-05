@@ -21,5 +21,7 @@ dirRegistry.zip
 dirRMIRegistry.zip
 clientSide_msg/
 serverSide_msg/
+/ExecParameters
+/ExecParameters_local
 
 

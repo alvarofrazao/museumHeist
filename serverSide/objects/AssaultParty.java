@@ -312,7 +312,6 @@ public class AssaultParty implements APInterface {
      * from the one behind them, then stops and signals another thief to move,
      * repeating the process until all three arrive at the Collection Site
      * 
-     * @throws InterruptedException
      */
 
     public void crawlOut(int distance, int thid, int ppos) {
@@ -463,7 +462,6 @@ public class AssaultParty implements APInterface {
      * Method that signals the start of the party's ingoing movement: the Master
      * signals a single thread to start moving
      * 
-     * @throws InterruptedException
      */
 
     public void signalDeparture() {
